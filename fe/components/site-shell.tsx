@@ -3,30 +3,38 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Icon } from "@/components/icons";
 
-type MenuNode = {
+export type MenuNode = {
   id: string;
   label: string;
   href?: string;
   children?: MenuNode[];
 };
 
-const navigation: {
+export type NavItem = {
   id: string;
   label: string;
   href?: string;
   items?: MenuNode[];
-}[] = [
+};
+
+export const globalNavigation: NavItem[] = [
+  {
+    id: "beranda",
+    label: "Beranda",
+    href: "/",
+  },
   {
     id: "profil",
     label: "Profil",
     items: [
-      { id: "sejarah", label: "Sejarah", href: "#tentang" },
-      { id: "visi", label: "Visi & Misi", href: "#tentang" },
-      { id: "struktur", label: "Struktur Organisasi", href: "#tentang" },
-      { id: "akreditasi", label: "Akreditasi", href: "#tentang" },
-      { id: "fasilitas", label: "Fasilitas Kampus", href: "#kehidupan" },
+      { id: "sejarah", label: "Sejarah", href: "/#tentang" },
+      { id: "visi", label: "Visi & Misi", href: "/profil/visi-misi" },
+      { id: "struktur", label: "Struktur Organisasi", href: "/#tentang" },
+      { id: "akreditasi", label: "Akreditasi", href: "/#tentang" },
+      { id: "fasilitas", label: "Fasilitas Kampus", href: "/#kehidupan" },
     ],
   },
   {
@@ -34,7 +42,7 @@ const navigation: {
     label: "Akademik",
     href: "/akademik/fakultas",
     items: [
-      { id: "fakultas", label: "Daftar Fakultas", href: "#program" },
+      { id: "fakultas", label: "Daftar Fakultas", href: "/akademik/fakultas" },
       {
         id: "program-studi",
         label: "Program Studi",
@@ -43,96 +51,74 @@ const navigation: {
             id: "humaniora",
             label: "Humaniora dan Desain",
             children: [
-              { id: "desain", label: "S1 Desain Komunikasi Visual", href: "#program" },
-              { id: "jepang", label: "S1 Bahasa Jepang", href: "#program" },
-              { id: "inggris-d3", label: "D3 Bahasa Inggris", href: "#program" },
-              { id: "inggris-s1", label: "S1 Bahasa Inggris", href: "#program" },
+              { id: "desain", label: "S1 Desain Komunikasi Visual", href: "/#program" },
+              { id: "jepang", label: "S1 Bahasa Jepang", href: "/#program" },
+              { id: "inggris-d3", label: "D3 Bahasa Inggris", href: "/#program" },
+              { id: "inggris-s1", label: "S1 Bahasa Inggris", href: "/#program" },
             ],
           },
           {
             id: "bisnis",
             label: "Sains dan Bisnis",
             children: [
-              { id: "digital", label: "S1 Bisnis Digital", href: "#program" },
-              { id: "informasi", label: "S1 Sistem Informasi", href: "#program" },
-              { id: "informatika", label: "S1 Informatika", href: "#program" },
+              { id: "digital", label: "S1 Bisnis Digital", href: "/#program" },
+              { id: "informasi", label: "S1 Sistem Informasi", href: "/#program" },
+              { id: "informatika", label: "S1 Informatika", href: "/#program" },
             ],
           },
         ],
       },
-      { id: "kalender", label: "Kalender Akademik", href: "#kabar" },
-      { id: "kurikulum", label: "Kurikulum", href: "#program" },
+      { id: "kalender", label: "Kalender Akademik", href: "/#kabar" },
+      { id: "kurikulum", label: "Kurikulum", href: "/#program" },
     ],
   },
   {
     id: "pmb",
     label: "PMB",
+    href: "/#pmb",
+  },
+  {
+    id: "lppm",
+    label: "LPPM",
     items: [
-      { id: "jalur", label: "Jalur Pendaftaran", href: "#pmb" },
-      { id: "biaya", label: "Biaya Kuliah", href: "#pmb" },
-      { id: "beasiswa", label: "Beasiswa", href: "#pmb" },
+      { id: "lppm-profil", label: "Profil LPPM", href: "/#kabar" },
+      { id: "penelitian", label: "Penelitian", href: "/#kabar" },
+      { id: "pengabdian", label: "Pengabdian Masyarakat", href: "/#kabar" },
+      { id: "publikasi", label: "Publikasi Ilmiah", href: "/#kabar" },
     ],
   },
-  { id: "lppm", label: "LPPM", href: "#kabar" },
   {
     id: "kehidupan",
     label: "Kehidupan Kampus",
     items: [
-      { id: "ukm", label: "Kegiatan Mahasiswa (UKM)", href: "#kehidupan" },
-      { id: "berita", label: "Berita Terkini", href: "#kabar" },
-      { id: "pengumuman", label: "Pengumuman", href: "#kabar" },
-      { id: "agenda", label: "Agenda Acara", href: "#kabar" },
+      { id: "ukm", label: "Kegiatan Mahasiswa (UKM)", href: "/#kehidupan" },
+      { id: "berita", label: "Berita Terkini", href: "/#kabar" },
+      { id: "pengumuman", label: "Pengumuman", href: "/#kabar" },
+      { id: "agenda", label: "Agenda Acara", href: "/#kabar" },
     ],
   },
   {
     id: "alumni",
     label: "Alumni",
     items: [
-      { id: "ikatan", label: "Ikatan Alumni", href: "#footer" },
-      { id: "tracer", label: "Tracer Study (Kuesioner Alumni)", href: "#footer" },
-      { id: "karier", label: "Info Lowongan Kerja (Career Center)", href: "#kabar" },
+      { id: "ikatan", label: "Ikatan Alumni", href: "/#footer" },
+      { id: "tracer", label: "Tracer Study (Kuesioner Alumni)", href: "/#footer" },
+      { id: "karier", label: "Info Lowongan Kerja (Career Center)", href: "/#kabar" },
     ],
   },
   {
     id: "lpm",
     label: "LPM",
-    items: [
-      { id: "laporan-lpm", label: "Laporan LPM", href: "#footer" },
-      { id: "kegiatan-lpm", label: "Kegiatan LPM", href: "#kabar" },
-    ],
+    href: "/#footer",
   },
-  { id: "laporan", label: "Laporan Tahunan Rektor", href: "#footer" },
+  {
+    id: "laporan",
+    label: "Laporan Tahunan Rektor",
+    href: "/#footer",
+  },
 ];
 
-function Icon({
-  name,
-  size = 20,
-}: {
-  name: "arrow" | "chevron" | "menu" | "x";
-  size?: number;
-}) {
-  const shared = {
-    fill: "none",
-    stroke: "currentColor",
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    strokeWidth: 1.7,
-  };
-  const shapes = {
-    arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
-    chevron: <path d="m7 10 5 5 5-5" />,
-    menu: <path d="M4 7h16M4 12h16M4 17h16" />,
-    x: <path d="m6 6 12 12M18 6 6 18" />,
-  };
-
-  return (
-    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" {...shared}>
-      {shapes[name]}
-    </svg>
-  );
-}
-
-function MenuTree({
+export function GlobalDropdownMenu({
   items,
   className = "menu-tree",
   onNavigate,
@@ -154,13 +140,11 @@ function MenuTree({
     });
   }
 
-  function destination(href?: string) {
+  function resolveHref(href?: string) {
     if (!href) return "#";
+    if (href.startsWith("/")) return href;
     if (pathname === "/") return href;
-    if (pathname === "/akademik/fakultas" && href === "#program") {
-      return "#program-list";
-    }
-    return href === "#footer" ? href : `/${href.slice(1)}`;
+    return `/${href}`;
   }
 
   return (
@@ -177,20 +161,20 @@ function MenuTree({
               onClick={() => toggleNode(item.id)}
               type="button"
             >
-              {item.label}
-              <Icon name="chevron" size={15} />
+              <span>{item.label}</span>
+              <Icon name="chevron" size={14} />
             </button>
           ) : (
-            <a
+            <Link
               className="menu-link"
-              href={destination(item.href)}
+              href={resolveHref(item.href)}
               onClick={onNavigate}
             >
               {item.label}
-            </a>
+            </Link>
           )}
           {item.children && (
-            <MenuTree
+            <GlobalDropdownMenu
               className="menu-children"
               items={item.children}
               onNavigate={onNavigate}
@@ -207,13 +191,48 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [lang, setLang] = useState<"ID" | "EN">("ID");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setActiveMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   function toggleMenu(id: string) {
     setActiveMenu((current) => (current === id ? null : id));
   }
 
-  function destination(href: string) {
-    return href.startsWith("#") && pathname !== "/" ? `/${href}` : href;
+  function resolveHref(href?: string) {
+    if (!href) return "#";
+    if (href.startsWith("/")) return href;
+    if (pathname === "/") return href;
+    return `/${href}`;
+  }
+
+  function isItemActive(item: NavItem): boolean {
+    if (item.id === "beranda") {
+      return pathname === "/";
+    }
+    if (item.id === "profil") {
+      return pathname.startsWith("/profil");
+    }
+    if (item.id === "akademik") {
+      return pathname.startsWith("/akademik");
+    }
+    if (item.href && item.href.startsWith("/") && pathname === item.href) {
+      return true;
+    }
+    return activeMenu === item.id;
   }
 
   return (
@@ -244,63 +263,132 @@ export function SiteHeader() {
           aria-label="Navigasi utama"
           className={`main-nav${mobileMenuOpen ? " mobile-open" : ""}`}
           onMouseLeave={() => setActiveMenu(null)}
+          ref={navRef}
         >
-          {navigation.map((item) => (
-            <div
-              className={`nav-item${activeMenu === item.id || item.href === pathname ? " is-active" : ""}${item.id === "laporan" ? " nav-item-long" : ""}`}
-              key={item.id}
-              onMouseEnter={() => {
-                if (item.items && !mobileMenuOpen) setActiveMenu(item.id);
-              }}
-            >
-              {item.items && !item.href ? (
-                <button
-                  aria-expanded={activeMenu === item.id}
-                  aria-haspopup="true"
-                  className="nav-trigger"
-                  onClick={() => {
-                    if (mobileMenuOpen) toggleMenu(item.id);
-                    else setActiveMenu(item.id);
-                  }}
-                  onFocus={() => {
-                    if (!mobileMenuOpen) setActiveMenu(item.id);
-                  }}
-                  type="button"
-                >
-                  {item.label}
-                  <Icon name="chevron" size={14} />
-                </button>
-              ) : (
-                <Link
-                  className="nav-trigger"
-                  href={destination(item.href ?? "#kabar")}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                  {item.items && <Icon name="chevron" size={14} />}
-                </Link>
-              )}
-              {item.items && activeMenu === item.id && (
-                <div className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}`}>
-                  <MenuTree
-                    items={item.items}
-                    onNavigate={() => {
+          {globalNavigation.map((item) => {
+            const isActive = isItemActive(item);
+            return (
+              <div
+                className={`nav-item${isActive ? " is-active" : ""}${item.id === "laporan" ? " nav-item-long" : ""}`}
+                key={item.id}
+                onMouseEnter={() => {
+                  if (item.items && !mobileMenuOpen) setActiveMenu(item.id);
+                }}
+              >
+                {item.items && !item.href ? (
+                  <button
+                    aria-expanded={activeMenu === item.id}
+                    aria-haspopup="true"
+                    className="nav-trigger"
+                    onClick={() => {
+                      if (mobileMenuOpen) toggleMenu(item.id);
+                      else setActiveMenu(item.id);
+                    }}
+                    onFocus={() => {
+                      if (!mobileMenuOpen) setActiveMenu(item.id);
+                    }}
+                    type="button"
+                  >
+                    {item.label}
+                    <Icon name="chevron" size={14} />
+                  </button>
+                ) : (
+                  <Link
+                    className="nav-trigger"
+                    href={resolveHref(item.href ?? "#kabar")}
+                    onClick={() => {
                       setMobileMenuOpen(false);
                       setActiveMenu(null);
                     }}
-                    pathname={pathname}
+                  >
+                    {item.label}
+                    {item.items && <Icon name="chevron" size={14} />}
+                  </Link>
+                )}
+                {item.items && activeMenu === item.id && (
+                  <div
+                    className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}`}
+                  >
+                    <GlobalDropdownMenu
+                      items={item.items}
+                      onNavigate={() => {
+                        setMobileMenuOpen(false);
+                        setActiveMenu(null);
+                      }}
+                      pathname={pathname}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          <div className="header-meta-actions">
+            {/* Language Switcher */}
+            <div aria-label="Pilih Bahasa" className="lang-switcher" role="group">
+              <button
+                className={`lang-btn${lang === "ID" ? " is-active" : ""}`}
+                onClick={() => setLang("ID")}
+                type="button"
+              >
+                ID
+              </button>
+              <span aria-hidden="true" className="lang-divider">|</span>
+              <button
+                className={`lang-btn${lang === "EN" ? " is-active" : ""}`}
+                onClick={() => setLang("EN")}
+                type="button"
+              >
+                EN
+              </button>
+            </div>
+
+            {/* Search Trigger */}
+            <div className="search-wrap">
+              <button
+                aria-expanded={searchOpen}
+                aria-label="Cari di situs"
+                className="search-toggle-btn"
+                onClick={() => setSearchOpen((prev) => !prev)}
+                type="button"
+              >
+                <Icon name="search" size={18} />
+              </button>
+              {searchOpen && (
+                <div className="header-search-box">
+                  <input
+                    aria-label="Kata kunci pencarian"
+                    autoFocus
+                    className="header-search-input"
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setSearchOpen(false);
+                    }}
+                    placeholder="Cari program, berita, info..."
+                    type="search"
+                    value={searchQuery}
                   />
+                  <button
+                    aria-label="Tutup pencarian"
+                    className="header-search-close"
+                    onClick={() => setSearchOpen(false)}
+                    type="button"
+                  >
+                    <Icon name="x" size={16} />
+                  </button>
                 </div>
               )}
             </div>
-          ))}
-          <Link
-            className="button button-primary nav-apply"
-            href={destination("#pmb")}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Daftar Sekarang <Icon name="arrow" size={16} />
-          </Link>
+
+            {/* Register CTA Button */}
+            <Link
+              className="button button-primary nav-apply"
+              href={resolveHref("#pmb")}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Daftar Sekarang <Icon name="arrow" size={16} />
+            </Link>
+          </div>
         </nav>
       </div>
     </header>
@@ -333,7 +421,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
         </div>
         <div className="footer-column">
           <h3>Universitas</h3>
-          <Link href="/#tentang">Profil Universitas</Link>
+          <Link href="/profil/visi-misi">Profil Universitas</Link>
           <Link href="/#footer">LPPM</Link>
           <Link href="/#footer">LPM</Link>
           <Link href="/#footer">Alumni</Link>
