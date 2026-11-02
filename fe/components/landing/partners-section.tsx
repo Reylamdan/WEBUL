@@ -1,4 +1,5 @@
 import { SectionHeading } from "./section-heading";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const defaultPartners = [
   "lia",
@@ -17,6 +18,7 @@ const defaultPartners = [
 
 export function PartnersSection({ partners = defaultPartners }: { partners?: string[] }) {
   return (
+    <ScrollReveal delay={70}>
     <section className="partners-section">
       <div className="content-wrap">
         <SectionHeading title="Mitra Kami" />
@@ -30,5 +32,6 @@ export function PartnersSection({ partners = defaultPartners }: { partners?: str
         </div>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

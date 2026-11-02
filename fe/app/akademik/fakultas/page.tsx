@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SiteFooter, SiteHeader } from "@/components/site-shell";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const facultyCards = [
   {
@@ -34,27 +34,34 @@ function ArrowIcon() {
 export default function FacultiesPage() {
   return (
     <main className="faculty-page">
-      <SiteHeader />
-
       <div aria-hidden="true" className="faculty-top-space" />
 
       <div className="faculty-content">
+        <ScrollReveal>
         <section aria-labelledby="faculty-title" className="faculty-intro faculty-wrap">
-          <nav aria-label="Breadcrumb" className="faculty-breadcrumb">
-            <Link href="/">Beranda</Link>
-            <span aria-hidden="true">/</span>
-            <span>Akademik</span>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">Fakultas</span>
-          </nav>
-          <span className="faculty-eyebrow">PENDIDIKAN UNIVERSITAS LIA</span>
-          <h1 id="faculty-title">Fakultas</h1>
-          <p>
-            Jelajahi fakultas dan program studi Universitas LIA, lengkap dengan
-            bidang fokus, program akademik, dan akses informasi resmi.
-          </p>
+          <div className="faculty-intro-copy">
+            <nav aria-label="Breadcrumb" className="faculty-breadcrumb">
+              <Link href="/">Beranda</Link>
+              <span aria-hidden="true">/</span>
+              <span>Akademik</span>
+              <span aria-hidden="true">/</span>
+              <span aria-current="page">Fakultas</span>
+            </nav>
+            <span className="faculty-eyebrow">PENDIDIKAN UNIVERSITAS LIA</span>
+            <h1 id="faculty-title">Fakultas</h1>
+            <p>
+              Jelajahi fakultas dan program studi Universitas LIA, lengkap dengan
+              bidang fokus, program akademik, dan akses informasi resmi.
+            </p>
+          </div>
+          <div aria-hidden="true" className="faculty-intro-visual">
+            <span className="faculty-intro-orbit" />
+            <span className="faculty-intro-visual-label">TEMUKAN BIDANGMU</span>
+          </div>
         </section>
+        </ScrollReveal>
 
+        <ScrollReveal delay={70}>
         <section
           aria-labelledby="faculty-program-title"
           className="faculty-programs faculty-wrap"
@@ -67,31 +74,35 @@ export default function FacultiesPage() {
           </div>
 
           <div className="faculty-card-grid">
-            {facultyCards.map((faculty) => (
-              <article className={`faculty-card ${faculty.image}`} key={faculty.name}>
+            {facultyCards.map((faculty, index) => (
+              <ScrollReveal delay={(index % 4) * 70} key={faculty.name}>
+              <article className={`faculty-card ${faculty.image}`}>
                 <a aria-label={`Pelajari ${faculty.name}`} href="#program-list">
                   <span className="faculty-card-eyebrow">FAKULTAS</span>
                   <strong>{faculty.name}</strong>
                   <span>{faculty.description}</span>
                 </a>
               </article>
+              </ScrollReveal>
             ))}
           </div>
 
           <div aria-label="Program studi" className="faculty-program-grid" id="program-list">
-            {programs.map((program) => (
-              <article className="faculty-program-card" key={`${program.level}-${program.name}`}>
+            {programs.map((program, index) => (
+              <ScrollReveal delay={(index % 4) * 70} key={`${program.level}-${program.name}`}>
+              <article className="faculty-program-card">
                 <span>{program.level}</span>
                 <h3>{program.name}</h3>
                 <a href="#program-list">
                   Lihat program studi <ArrowIcon />
                 </a>
               </article>
+              </ScrollReveal>
             ))}
           </div>
         </section>
+        </ScrollReveal>
 
-        <SiteFooter className="faculty-footer" />
       </div>
       <a
         aria-label="Hubungi Universitas LIA"

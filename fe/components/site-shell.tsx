@@ -30,10 +30,11 @@ export const globalNavigation: NavItem[] = [
     id: "profil",
     label: "Profil",
     items: [
-      { id: "sejarah", label: "Sejarah", href: "/#tentang" },
+      { id: "profil-universitas", label: "Profil Universitas", href: "/profil" },
+      { id: "sejarah", label: "Sejarah", href: "/profil/sejarah" },
       { id: "visi", label: "Visi & Misi", href: "/profil/visi-misi" },
-      { id: "struktur", label: "Struktur Organisasi", href: "/#tentang" },
-      { id: "akreditasi", label: "Akreditasi", href: "/#tentang" },
+      { id: "struktur", label: "Struktur Organisasi", href: "/profil#informasi" },
+      { id: "akreditasi", label: "Akreditasi", href: "/profil#informasi" },
       { id: "fasilitas", label: "Fasilitas Kampus", href: "/#kehidupan" },
     ],
   },
@@ -75,7 +76,7 @@ export const globalNavigation: NavItem[] = [
   {
     id: "pmb",
     label: "PMB",
-    href: "/#pmb",
+    href: "/pmb",
   },
   {
     id: "lppm",
@@ -305,9 +306,10 @@ export function SiteHeader() {
                     {item.items && <Icon name="chevron" size={14} />}
                   </Link>
                 )}
-                {item.items && activeMenu === item.id && (
+                {item.items && (
                   <div
-                    className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}`}
+                    aria-hidden={activeMenu !== item.id}
+                    className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}${activeMenu === item.id ? " is-open" : ""}`}
                   >
                     <GlobalDropdownMenu
                       items={item.items}
@@ -383,7 +385,7 @@ export function SiteHeader() {
             {/* Register CTA Button */}
             <Link
               className="button button-primary nav-apply"
-              href={resolveHref("#pmb")}
+              href="/pmb"
               onClick={() => setMobileMenuOpen(false)}
             >
               Daftar Sekarang <Icon name="arrow" size={16} />
@@ -421,7 +423,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
         </div>
         <div className="footer-column">
           <h3>Universitas</h3>
-          <Link href="/profil/visi-misi">Profil Universitas</Link>
+          <Link href="/profil">Profil Universitas</Link>
           <Link href="/#footer">LPPM</Link>
           <Link href="/#footer">LPM</Link>
           <Link href="/#footer">Alumni</Link>
@@ -430,7 +432,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
         <div className="footer-column">
           <h3>Informasi &amp; layanan</h3>
           <Link href="/akademik/fakultas">Akademik</Link>
-          <Link href="/#pmb">Penerimaan Mahasiswa Baru</Link>
+          <Link href="/pmb">Penerimaan Mahasiswa Baru</Link>
           <Link href="/#footer">SIAKAD UL</Link>
           <Link href="/#footer">Edlink</Link>
           <Link href="/#footer">Perpustakaan Universitas LIA</Link>

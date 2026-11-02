@@ -1,7 +1,9 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function CampusLifeSection() {
   return (
+    <ScrollReveal delay={210}>
     <section className="campus-life-section content-wrap" id="kehidupan">
       <div className="campus-life-image">
         <span className="life-art-person life-person-one" />
@@ -21,5 +23,6 @@ export function CampusLifeSection() {
         </a>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

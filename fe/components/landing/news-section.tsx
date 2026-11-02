@@ -1,4 +1,5 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "./section-heading";
 
 export interface StoryItem {
@@ -35,6 +36,7 @@ const defaultStories: StoryItem[] = [
 
 export function NewsSection({ stories = defaultStories }: { stories?: StoryItem[] }) {
   return (
+    <ScrollReveal delay={140}>
     <section className="news-section" id="kabar">
       <div className="content-wrap">
         <SectionHeading
@@ -43,8 +45,9 @@ export function NewsSection({ stories = defaultStories }: { stories?: StoryItem[
           title="Kabar dan inspirasi"
         />
         <div className="story-grid">
-          {stories.map((story) => (
-            <article className="story-card" key={story.title}>
+          {stories.map((story, index) => (
+            <ScrollReveal delay={(index % 4) * 70} key={story.title}>
+            <article className="story-card">
               <a
                 aria-label={`Baca ${story.title}`}
                 className={`story-image ${story.image}`}
@@ -64,9 +67,11 @@ export function NewsSection({ stories = defaultStories }: { stories?: StoryItem[
                 Baca selengkapnya <Icon name="arrow" size={15} />
               </a>
             </article>
+            </ScrollReveal>
           ))}
         </div>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

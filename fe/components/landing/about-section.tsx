@@ -1,7 +1,9 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function AboutSection() {
   return (
+    <ScrollReveal delay={140}>
     <section className="intro-section content-wrap" id="tentang">
       <div className="intro-copy">
         <span className="eyebrow">TENTANG UNIVERSITAS LIA</span>
@@ -39,7 +41,7 @@ export function AboutSection() {
             </div>
           </li>
         </ul>
-        <a className="text-link" href="/profil/visi-misi">
+        <a className="text-link" href="/profil">
           Tentang Universitas LIA <Icon name="arrow" size={16} />
         </a>
       </div>
@@ -60,5 +62,6 @@ export function AboutSection() {
         </span>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

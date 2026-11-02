@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { Icon } from "@/components/icons";
 import {
   AboutSection,
@@ -21,8 +20,6 @@ export default function Home() {
 
   return (
     <main>
-      <SiteHeader />
-
       <QuickLinks />
       <HeroSection onPlayVideo={() => setVideoOpen(true)} />
       <AboutSection />
@@ -32,8 +29,6 @@ export default function Home() {
       <CampusLifeSection />
       <AdmissionBanner />
       <PartnersSection />
-
-      <SiteFooter />
 
       <a
         aria-label="Hubungi Universitas LIA"

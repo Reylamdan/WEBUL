@@ -1,7 +1,10 @@
 import { Icon } from "@/components/icons";
+import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function AdmissionBanner() {
   return (
+    <ScrollReveal>
     <section className="admission-banner" id="pmb">
       <div className="admission-inner">
         <div>
@@ -13,14 +16,15 @@ export function AdmissionBanner() {
           </p>
         </div>
         <div className="admission-actions">
-          <a className="button button-light" href="#footer">
+          <Link className="button button-light" href="/pmb">
             Daftar Sekarang <Icon name="arrow" size={16} />
-          </a>
-          <a href="#footer">
+          </Link>
+          <Link href="/pmb#jalur-pendaftaran">
             Informasi jalur pendaftaran <Icon name="arrow" size={14} />
-          </a>
+          </Link>
         </div>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

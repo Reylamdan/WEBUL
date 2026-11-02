@@ -1,4 +1,5 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "./section-heading";
 
 export interface ProgramItem {
@@ -20,6 +21,7 @@ const defaultPrograms: ProgramItem[] = [
 
 export function ProgramSection({ programs = defaultPrograms }: { programs?: ProgramItem[] }) {
   return (
+    <ScrollReveal delay={210}>
     <section className="program-section content-wrap" id="program">
       <SectionHeading
         eyebrow="TEMUKAN MINATMU"
@@ -32,7 +34,8 @@ export function ProgramSection({ programs = defaultPrograms }: { programs?: Prog
       </p>
       <div className="program-grid">
         {programs.map((program, index) => (
-          <article className={`program-card program-${program.color}`} key={program.title}>
+          <ScrollReveal delay={(index % 4) * 70} key={program.title}>
+          <article className={`program-card program-${program.color}`}>
             <div className="program-card-top">
               <span className="program-number">0{index + 1}</span>
               <span className="program-card-icon">
@@ -48,11 +51,13 @@ export function ProgramSection({ programs = defaultPrograms }: { programs?: Prog
               </a>
             </div>
           </article>
+          </ScrollReveal>
         ))}
       </div>
       <a className="text-link programs-mobile-link" href="/akademik/fakultas">
         Lihat semua program <Icon name="arrow" size={16} />
       </a>
     </section>
+    </ScrollReveal>
   );
 }

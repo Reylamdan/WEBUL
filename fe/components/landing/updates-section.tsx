@@ -1,8 +1,10 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "./section-heading";
 
 export function UpdatesSection() {
   return (
+    <ScrollReveal delay={140}>
     <section className="updates-section content-wrap">
       <div className="update-column">
         <SectionHeading link="Lihat semua" title="Pengumuman" />
@@ -55,5 +57,6 @@ export function UpdatesSection() {
         </a>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function VisiMisiHero() {
   return (
+    <ScrollReveal>
     <section aria-labelledby="visi-misi-title" className="visi-hero visi-wrap">
       <div className="visi-hero-left">
         <nav aria-label="Breadcrumb" className="visi-breadcrumb">
           <Link href="/">Beranda</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/#tentang">Profil</Link>
+          <Link href="/profil">Profil</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">Visi &amp; Misi</span>
         </nav>
@@ -25,5 +27,6 @@ export function VisiMisiHero() {
         <div aria-hidden="true" className="visi-hero-placeholder" />
       </div>
     </section>
+    </ScrollReveal>
   );
 }

@@ -1,18 +1,22 @@
 import { VisiCard } from "./visi-card";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function LandasanTujuan() {
   const items = [
     {
       title: "Visi",
-      description: "Pernyataan visi resmi Universitas LIA akan ditempatkan di sini.",
+      description:
+        "Menjadi arah bersama dalam membangun pendidikan yang relevan, terbuka, dan berorientasi pada masa depan.",
     },
     {
       title: "Misi",
-      description: "Pernyataan misi resmi Universitas LIA akan ditempatkan di sini.",
+      description:
+        "Menghadirkan pengalaman belajar yang mendorong penguasaan ilmu, kreativitas, dan kesiapan berkarya.",
     },
   ];
 
   return (
+    <ScrollReveal delay={70}>
     <section aria-labelledby="landasan-title" className="visi-section visi-wrap">
       <div className="visi-section-header">
         <span className="visi-eyebrow">ARAH INSTITUSI</span>
@@ -20,7 +24,7 @@ export function LandasanTujuan() {
           Landasan dan Tujuan
         </h2>
         <p className="visi-section-desc">
-          Visi dan misi menjadi acuan dalam pengembangan pendidikan, layanan, dan tata kelola universitas.
+          Nilai pendidikan, pengembangan potensi, dan kesiapan menghadapi perubahan menjadi landasan perjalanan akademik.
         </p>
       </div>
 
@@ -34,5 +38,6 @@ export function LandasanTujuan() {
         ))}
       </div>
     </section>
+    </ScrollReveal>
   );
 }
