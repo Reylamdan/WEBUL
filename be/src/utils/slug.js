@@ -9,7 +9,7 @@ const trimHyphens = (value) => value.replace(/^-+|-+$/g, "");
 // "Wisuda Periode Oktober 2026!" -> "wisuda-periode-oktober-2026"
 // Huruf beraksen diubah ke huruf dasar ("Café" -> "cafe"). Judul tanpa huruf/angka sama sekali
 // (misalnya hanya simbol atau emoji) menghasilkan "berita".
-const slugify = (text, maxLength = SLUG_MAX_LENGTH) => {
+const slugify = (text, maxLength = SLUG_MAX_LENGTH, fallback = SLUG_FALLBACK) => {
   const slug = trimHyphens(
     String(text ?? "")
       .normalize("NFKD")
@@ -18,14 +18,14 @@ const slugify = (text, maxLength = SLUG_MAX_LENGTH) => {
       .replace(/[^a-z0-9]+/g, "-")
   );
   const cut = trimHyphens(slug.slice(0, maxLength));
-  return cut || SLUG_FALLBACK;
+  return cut || fallback;
 };
 
 // Menambah sufiks tanpa melewati batas panjang: ("wisuda", "2") -> "wisuda-2"
-const withSuffix = (base, suffix) => {
+const withSuffix = (base, suffix, fallback = SLUG_FALLBACK) => {
   const tail = `-${suffix}`;
-  const head = trimHyphens(base.slice(0, SLUG_MAX_LENGTH - tail.length)) || SLUG_FALLBACK;
+  const head = trimHyphens(base.slice(0, SLUG_MAX_LENGTH - tail.length)) || fallback;
   return `${head}${tail}`;
 };
 
-module.exports = { SLUG_MAX_LENGTH, SLUG_PATTERN, slugify, withSuffix };
+module.exports = { SLUG_MAX_LENGTH, SLUG_PATTERN, slugify, withSuffix, SLUG_FALLBACK };
