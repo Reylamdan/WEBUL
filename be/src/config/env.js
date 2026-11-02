@@ -71,6 +71,12 @@ if (!jwtSecret) {
   errors.push("JWT_SECRET terlalu pendek (minimal 32 karakter).");
 }
 
+// ---------- JWT_EXPIRES_IN (opsional, contoh: 30m, 8h, 7d; default 8h) ----------
+const jwtExpiresIn = read("JWT_EXPIRES_IN") || "8h";
+if (!/^[1-9]\d*[mhd]$/.test(jwtExpiresIn)) {
+  errors.push("JWT_EXPIRES_IN tidak valid (contoh: 30m, 8h, atau 7d).");
+}
+
 // ---------- Hentikan server jika ada yang salah ----------
 // Pesan hanya menyebut NAMA variabel, tidak pernah menampilkan nilainya.
 if (errors.length > 0) {
@@ -90,4 +96,5 @@ module.exports = Object.freeze({
   supabaseUrl,
   supabaseServiceRoleKey,
   jwtSecret,
+  jwtExpiresIn,
 });

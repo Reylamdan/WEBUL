@@ -13,12 +13,14 @@ const errorHandler = (err, req, res, next) => {
   let statusCode = 500;
   let code = "INTERNAL_ERROR";
   let message = "Terjadi kesalahan pada server";
+  let details;
 
   if (err && err.isOperational) {
     // Error yang sengaja dilempar lewat AppError
     statusCode = err.statusCode;
     code = err.code;
     message = err.message;
+    details = err.details;
   } else if (err && err.type === "entity.parse.failed") {
     statusCode = 400;
     code = "INVALID_JSON";
@@ -39,6 +41,11 @@ const errorHandler = (err, req, res, next) => {
   }
 
   const body = { success: false, message, code };
+
+  // Detail error (misalnya daftar kesalahan validasi), jika ada
+  if (details !== undefined) {
+    body.errors = details;
+  }
 
   // Stack trace hanya untuk development
   if (!env.isProduction && statusCode >= 500 && err && err.stack) {
