@@ -1399,6 +1399,191 @@ button {
   transform: translateY(-3px);
 }
 
+.faculty-page {
+  min-height: 100vh;
+  background: #eef4f7;
+}
+
+.faculty-top-space {
+  height: 100px;
+  background: #fff;
+}
+
+.faculty-content {
+  background: #eef4f7;
+}
+
+.faculty-wrap {
+  width: min(1080px, calc(100% - 64px));
+  margin-inline: auto;
+}
+
+.faculty-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: #78878b;
+  font-size: 10px;
+}
+
+.faculty-breadcrumb a:hover {
+  color: var(--blue);
+}
+
+.faculty-eyebrow {
+  display: block;
+  color: var(--blue);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .025em;
+}
+
+.faculty-eyebrow::before {
+  display: inline-block;
+  width: 15px;
+  height: 2px;
+  margin: 0 7px 3px 0;
+  background: #ed6a3b;
+  content: "";
+}
+
+.faculty-intro {
+  padding-top: 24px;
+  padding-bottom: 126px;
+}
+
+.faculty-intro h1 {
+  margin: 8px 0 8px;
+  color: #203844;
+  font-size: 32px;
+  line-height: 1.15;
+}
+
+.faculty-intro p,
+.faculty-section-heading p {
+  max-width: 700px;
+  margin: 0;
+  color: #75848a;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.faculty-section-heading h2 {
+  margin: 7px 0 5px;
+  color: #203844;
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.faculty-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 26px;
+}
+
+.faculty-card {
+  min-height: 148px;
+  overflow: hidden;
+  border-radius: 6px;
+  background-color: #1c5269;
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+}
+
+.faculty-humaniora {
+  background-image:
+    linear-gradient(0deg, #064c6bd9 0%, #064c6b65 62%, #102d3a26 100%),
+    url("https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=85");
+}
+
+.faculty-sains {
+  background-image:
+    linear-gradient(0deg, #064c6bd9 0%, #064c6b65 62%, #102d3a26 100%),
+    url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=85");
+}
+
+.faculty-card > a {
+  display: flex;
+  min-height: inherit;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px 24px;
+}
+
+.faculty-card > a:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.faculty-card-eyebrow {
+  margin-bottom: 5px;
+  font-size: 8px;
+  letter-spacing: .08em;
+}
+
+.faculty-card strong {
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.faculty-card > a > span:last-child {
+  margin-top: 5px;
+  font-size: 11px;
+}
+
+.faculty-program-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.faculty-program-card {
+  min-height: 112px;
+  padding: 16px 18px;
+  border: 1px solid #e0e8ec;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.faculty-program-card > span {
+  color: var(--blue);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.faculty-program-card h3 {
+  margin: 8px 0 12px;
+  color: #203844;
+  font-size: 15px;
+}
+
+.faculty-program-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--blue);
+  font-size: 10px;
+}
+
+.faculty-program-card a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.faculty-program-card a svg {
+  width: 13px;
+  height: 13px;
+}
+
+.faculty-footer {
+  margin-top: 0;
+}
+
 .video-dialog-backdrop {
   position: fixed;
   inset: 0;
@@ -1616,6 +1801,14 @@ button {
   .footer-main {
     grid-template-columns: 1fr 1fr;
     gap: 34px 48px;
+  }
+
+  .faculty-wrap {
+    width: calc(100% - 48px);
+  }
+
+  .faculty-card-grid {
+    gap: 14px;
   }
 }
 
@@ -1958,6 +2151,66 @@ button {
 
   .footer-bottom > div {
     gap: 17px;
+  }
+
+  .faculty-top-space {
+    height: 55px;
+  }
+
+  .faculty-wrap {
+    width: calc(100% - 40px);
+  }
+
+  .faculty-intro {
+    padding-top: 20px;
+    padding-bottom: 70px;
+  }
+
+  .faculty-breadcrumb {
+    margin-bottom: 18px;
+    font-size: 9px;
+  }
+
+  .faculty-intro h1 {
+    font-size: 28px;
+  }
+
+  .faculty-intro p,
+  .faculty-section-heading p {
+    font-size: 11px;
+  }
+
+  .faculty-section-heading h2 {
+    font-size: 21px;
+  }
+
+  .faculty-card-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .faculty-card {
+    min-height: 150px;
+  }
+
+  .faculty-card > a {
+    padding: 18px;
+  }
+
+  .faculty-program-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 10px;
+  }
+
+  .faculty-program-card {
+    min-height: 106px;
+    padding: 13px 12px;
+  }
+
+  .faculty-program-card h3 {
+    font-size: 13px;
   }
 
   .chat-button {
