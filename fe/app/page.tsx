@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+<<<<<<< Updated upstream
 
 type IconName =
   | "arrow"
@@ -307,6 +308,21 @@ function SectionHeading({
     </div>
   );
 }
+=======
+import { Icon } from "@/components/icons";
+import {
+  AboutSection,
+  AdmissionBanner,
+  CampusLifeSection,
+  HeroSection,
+  NewsSection,
+  PartnersSection,
+  ProgramSection,
+  QuickLinks,
+  UpdatesSection,
+  VideoModal,
+} from "@/components/landing";
+>>>>>>> Stashed changes
 
 export default function Home() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -319,6 +335,7 @@ export default function Home() {
 
   return (
     <main>
+<<<<<<< Updated upstream
       <header className="site-header">
         <div className="header-inner">
           <a aria-label="Universitas LIA, Beranda" className="brand" href="#">
@@ -674,6 +691,23 @@ export default function Home() {
       </footer>
 
       <a aria-label="Hubungi Universitas LIA" className="chat-button" href="mailto:humas@universitaslia.ac.id">
+=======
+      <QuickLinks />
+      <HeroSection onPlayVideo={() => setVideoOpen(true)} />
+      <AboutSection />
+      <ProgramSection />
+      <NewsSection />
+      <UpdatesSection />
+      <CampusLifeSection />
+      <AdmissionBanner />
+      <PartnersSection />
+
+      <a
+        aria-label="Hubungi Universitas LIA"
+        className="chat-button"
+        href="mailto:humas@universitaslia.ac.id"
+      >
+>>>>>>> Stashed changes
         <Icon name="message" size={21} />
       </a>
 
