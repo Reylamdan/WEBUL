@@ -209,38 +209,6 @@ export function SiteHeader() {
     };
   }, []);
 
-  useEffect(() => {
-    if (
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      typeof IntersectionObserver === "undefined"
-    ) {
-      return;
-    }
-
-    const elements = document.querySelectorAll<HTMLElement>(
-      "main section, main article, main .faculty-card, main .faculty-program-card, main .visi-card, main .profile-info-card, main .history-milestone",
-    );
-    const observer = new IntersectionObserver(
-      (entries, currentObserver) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            currentObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -32px 0px" },
-    );
-
-    elements.forEach((element, index) => {
-      element.classList.add("scroll-reveal");
-      element.style.setProperty("--scroll-reveal-delay", `${(index % 4) * 70}ms`);
-      observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, [pathname]);
-
   function toggleMenu(id: string) {
     setActiveMenu((current) => (current === id ? null : id));
   }

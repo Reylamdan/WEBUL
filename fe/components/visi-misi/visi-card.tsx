@@ -1,3 +1,5 @@
+import { ScrollReveal } from "@/components/scroll-reveal";
+
 export interface VisiCardProps {
   title: string;
   description: string;
@@ -10,6 +12,7 @@ export function VisiCard({
   className = "",
 }: VisiCardProps) {
   return (
+    <ScrollReveal>
     <article className={`visi-card ${className}`}>
       <div className="visi-card-accent" />
       <div className="visi-card-body">
@@ -17,5 +20,6 @@ export function VisiCard({
         <p className="visi-card-desc">{description}</p>
       </div>
     </article>
+    </ScrollReveal>
   );
 }

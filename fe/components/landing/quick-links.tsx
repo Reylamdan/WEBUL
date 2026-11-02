@@ -1,4 +1,5 @@
 import { Icon, IconName } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export interface QuickLinkItem {
   name: string;
@@ -17,23 +18,25 @@ const defaultQuickLinks: QuickLinkItem[] = [
 
 export function QuickLinks({ items = defaultQuickLinks }: { items?: QuickLinkItem[] }) {
   return (
-    <section aria-label="Layanan kampus" className="quick-links">
-      <div className="quick-links-inner">
-        {items.map((item) => (
-          <a className="quick-link" href={item.href ?? "#footer"} key={item.name}>
-            <span className="quick-icon">
-              <Icon name={item.icon} size={25} />
-            </span>
-            <span className="quick-copy">
-              <strong>{item.name}</strong>
-              <small>{item.detail}</small>
-            </span>
-            <span className="quick-arrow">
-              <Icon name="arrow" size={15} />
-            </span>
-          </a>
-        ))}
-      </div>
-    </section>
+    <ScrollReveal>
+      <section aria-label="Layanan kampus" className="quick-links">
+        <div className="quick-links-inner">
+          {items.map((item) => (
+            <a className="quick-link" href={item.href ?? "#footer"} key={item.name}>
+              <span className="quick-icon">
+                <Icon name={item.icon} size={25} />
+              </span>
+              <span className="quick-copy">
+                <strong>{item.name}</strong>
+                <small>{item.detail}</small>
+              </span>
+              <span className="quick-arrow">
+                <Icon name="arrow" size={15} />
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </ScrollReveal>
   );
 }

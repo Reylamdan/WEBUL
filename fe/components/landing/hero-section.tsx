@@ -1,7 +1,9 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function HeroSection({ onPlayVideo }: { onPlayVideo: () => void }) {
   return (
+    <ScrollReveal delay={70}>
     <section aria-labelledby="hero-title" className="hero">
       <div className="hero-backdrop">
         <div className="hero-shape hero-shape-one" />
@@ -46,5 +48,6 @@ export function HeroSection({ onPlayVideo }: { onPlayVideo: () => void }) {
         </small>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

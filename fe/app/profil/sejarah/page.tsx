@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Sejarah — Universitas LIA",
@@ -33,6 +34,7 @@ const milestones = [
 export default function HistoryPage() {
   return (
     <main className="history-page">
+      <ScrollReveal>
       <section aria-labelledby="history-title" className="history-hero profile-wrap">
         <div className="history-hero-copy">
           <nav aria-label="Breadcrumb" className="profile-breadcrumb">
@@ -56,7 +58,9 @@ export default function HistoryPage() {
           <span className="history-visual-label">SEJAK AWAL, TERUS BERTUMBUH</span>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={70}>
       <section aria-labelledby="history-journey-title" className="history-journey profile-wrap">
         <div className="profile-section-heading">
           <span className="profile-eyebrow">PERKEMBANGAN INSTITUSI</span>
@@ -81,7 +85,9 @@ export default function HistoryPage() {
           ))}
         </ol>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={140}>
       <section aria-label="Tentang Universitas LIA" className="history-callout profile-wrap">
         <div>
           <span className="profile-eyebrow">MELANGKAH KE DEPAN</span>
@@ -95,6 +101,7 @@ export default function HistoryPage() {
           Kembali ke profil <span aria-hidden="true">→</span>
         </Link>
       </section>
+      </ScrollReveal>
     </main>
   );
 }

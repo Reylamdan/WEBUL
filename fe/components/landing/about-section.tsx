@@ -1,7 +1,9 @@
 import { Icon } from "@/components/icons";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function AboutSection() {
   return (
+    <ScrollReveal delay={140}>
     <section className="intro-section content-wrap" id="tentang">
       <div className="intro-copy">
         <span className="eyebrow">TENTANG UNIVERSITAS LIA</span>
@@ -60,5 +62,6 @@ export function AboutSection() {
         </span>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

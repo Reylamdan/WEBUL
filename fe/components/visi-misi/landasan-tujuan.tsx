@@ -1,4 +1,5 @@
 import { VisiCard } from "./visi-card";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function LandasanTujuan() {
   const items = [
@@ -15,6 +16,7 @@ export function LandasanTujuan() {
   ];
 
   return (
+    <ScrollReveal delay={70}>
     <section aria-labelledby="landasan-title" className="visi-section visi-wrap">
       <div className="visi-section-header">
         <span className="visi-eyebrow">ARAH INSTITUSI</span>
@@ -36,5 +38,6 @@ export function LandasanTujuan() {
         ))}
       </div>
     </section>
+    </ScrollReveal>
   );
 }

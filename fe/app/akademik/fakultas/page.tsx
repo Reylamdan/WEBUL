@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const facultyCards = [
   {
@@ -36,6 +37,7 @@ export default function FacultiesPage() {
       <div aria-hidden="true" className="faculty-top-space" />
 
       <div className="faculty-content">
+        <ScrollReveal>
         <section aria-labelledby="faculty-title" className="faculty-intro faculty-wrap">
           <div className="faculty-intro-copy">
             <nav aria-label="Breadcrumb" className="faculty-breadcrumb">
@@ -57,7 +59,9 @@ export default function FacultiesPage() {
             <span className="faculty-intro-visual-label">TEMUKAN BIDANGMU</span>
           </div>
         </section>
+        </ScrollReveal>
 
+        <ScrollReveal delay={70}>
         <section
           aria-labelledby="faculty-program-title"
           className="faculty-programs faculty-wrap"
@@ -70,29 +74,34 @@ export default function FacultiesPage() {
           </div>
 
           <div className="faculty-card-grid">
-            {facultyCards.map((faculty) => (
-              <article className={`faculty-card ${faculty.image}`} key={faculty.name}>
+            {facultyCards.map((faculty, index) => (
+              <ScrollReveal delay={(index % 4) * 70} key={faculty.name}>
+              <article className={`faculty-card ${faculty.image}`}>
                 <a aria-label={`Pelajari ${faculty.name}`} href="#program-list">
                   <span className="faculty-card-eyebrow">FAKULTAS</span>
                   <strong>{faculty.name}</strong>
                   <span>{faculty.description}</span>
                 </a>
               </article>
+              </ScrollReveal>
             ))}
           </div>
 
           <div aria-label="Program studi" className="faculty-program-grid" id="program-list">
-            {programs.map((program) => (
-              <article className="faculty-program-card" key={`${program.level}-${program.name}`}>
+            {programs.map((program, index) => (
+              <ScrollReveal delay={(index % 4) * 70} key={`${program.level}-${program.name}`}>
+              <article className="faculty-program-card">
                 <span>{program.level}</span>
                 <h3>{program.name}</h3>
                 <a href="#program-list">
                   Lihat program studi <ArrowIcon />
                 </a>
               </article>
+              </ScrollReveal>
             ))}
           </div>
         </section>
+        </ScrollReveal>
 
       </div>
       <a

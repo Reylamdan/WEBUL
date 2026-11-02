@@ -1,4 +1,5 @@
 import { VisiCard } from "./visi-card";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function KomitmenKami() {
   const items = [
@@ -17,6 +18,7 @@ export function KomitmenKami() {
   ];
 
   return (
+    <ScrollReveal delay={140}>
     <section aria-labelledby="komitmen-title" className="visi-section visi-wrap">
       <div className="visi-section-header">
         <span className="visi-eyebrow">NILAI INSTITUSI</span>
@@ -38,5 +40,6 @@ export function KomitmenKami() {
         ))}
       </div>
     </section>
+    </ScrollReveal>
   );
 }

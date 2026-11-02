@@ -1,8 +1,10 @@
 import { Icon } from "@/components/icons";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function AdmissionBanner() {
   return (
+    <ScrollReveal>
     <section className="admission-banner" id="pmb">
       <div className="admission-inner">
         <div>
@@ -23,5 +25,6 @@ export function AdmissionBanner() {
         </div>
       </div>
     </section>
+    </ScrollReveal>
   );
 }

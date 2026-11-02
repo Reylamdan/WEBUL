@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Penerimaan Mahasiswa Baru — Universitas LIA",
@@ -92,6 +93,7 @@ const faqs = [
 export default function PmbPage() {
   return (
     <main className="pmb-page">
+      <ScrollReveal>
       <section aria-labelledby="pmb-title" className="pmb-hero pmb-wrap">
         <div className="pmb-hero-copy">
           <nav aria-label="Breadcrumb" className="pmb-breadcrumb">
@@ -134,7 +136,9 @@ export default function PmbPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={70}>
       <section
         aria-labelledby="pmb-program-title"
         className="pmb-section pmb-wrap"
@@ -167,7 +171,9 @@ export default function PmbPage() {
           Lihat informasi fakultas <span aria-hidden="true">→</span>
         </Link>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={140}>
       <section
         aria-labelledby="pmb-path-title"
         className="pmb-section pmb-section-tinted"
@@ -215,7 +221,9 @@ export default function PmbPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={210}>
       <section aria-label="Biaya, beasiswa, dan konsultasi" className="pmb-section pmb-wrap">
         <div className="pmb-section-heading">
           <span className="pmb-eyebrow">INFORMASI PENTING</span>
@@ -238,7 +246,9 @@ export default function PmbPage() {
           ))}
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal>
       <section aria-labelledby="pmb-experience-title" className="pmb-experience pmb-wrap">
         <div aria-hidden="true" className="pmb-experience-art">
           <span className="pmb-experience-orbit" />
@@ -262,7 +272,9 @@ export default function PmbPage() {
           </Link>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={70}>
       <section aria-labelledby="pmb-faq-title" className="pmb-faq pmb-section-tinted">
         <div className="pmb-wrap">
           <div className="pmb-section-heading">
@@ -279,7 +291,9 @@ export default function PmbPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={140}>
       <section aria-label="Hubungi penerimaan mahasiswa baru" className="pmb-cta">
         <div className="pmb-wrap pmb-cta-inner">
           <div>
@@ -295,6 +309,7 @@ export default function PmbPage() {
           </a>
         </div>
       </section>
+      </ScrollReveal>
     </main>
   );
 }

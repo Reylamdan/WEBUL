@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Profil Universitas — Universitas LIA",
@@ -38,6 +39,7 @@ const profileLinks = [
 export default function ProfilePage() {
   return (
     <main className="profile-page">
+      <ScrollReveal>
       <section aria-labelledby="profile-title" className="profile-hero profile-wrap">
         <div className="profile-hero-copy">
           <nav aria-label="Breadcrumb" className="profile-breadcrumb">
@@ -61,7 +63,9 @@ export default function ProfilePage() {
           <span className="profile-visual-caption">LEARNING WITHOUT LIMITS</span>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={70}>
       <section aria-labelledby="profile-about-title" className="profile-about profile-wrap">
         <div>
           <span className="profile-eyebrow">TENTANG KAMI</span>
@@ -87,7 +91,9 @@ export default function ProfilePage() {
           <span className="profile-about-caption">Bahasa · Teknologi · Bisnis</span>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal delay={140}>
       <section
         aria-labelledby="profile-info-title"
         className="profile-information profile-wrap"
@@ -111,6 +117,7 @@ export default function ProfilePage() {
           ))}
         </div>
       </section>
+      </ScrollReveal>
     </main>
   );
 }
