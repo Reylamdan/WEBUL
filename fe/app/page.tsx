@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { SiteFooter, SiteHeader } from "@/components/site-shell";
 
 type IconName =
   | "arrow"
@@ -101,151 +101,6 @@ function Icon({
   );
 }
 
-type MenuNode = {
-  id: string;
-  label: string;
-  href?: string;
-  children?: MenuNode[];
-};
-
-const navigation: {
-  id: string;
-  label: string;
-  href?: string;
-  items?: MenuNode[];
-}[] = [
-  {
-    id: "profil",
-    label: "Profil",
-    items: [
-      { id: "sejarah", label: "Sejarah", href: "#tentang" },
-      { id: "visi", label: "Visi & Misi", href: "#tentang" },
-      { id: "struktur", label: "Struktur Organisasi", href: "#tentang" },
-      { id: "akreditasi", label: "Akreditasi", href: "#tentang" },
-      { id: "fasilitas", label: "Fasilitas Kampus", href: "#kehidupan" },
-    ],
-  },
-  {
-    id: "akademik",
-    label: "Akademik",
-    items: [
-      { id: "fakultas", label: "Daftar Fakultas", href: "#program" },
-      {
-        id: "program-studi",
-        label: "Program Studi",
-        children: [
-          {
-            id: "humaniora",
-            label: "Humaniora dan Desain",
-            children: [
-              { id: "desain", label: "S1 Desain Komunikasi Visual", href: "#program" },
-              { id: "jepang", label: "S1 Bahasa Jepang", href: "#program" },
-              { id: "inggris-d3", label: "D3 Bahasa Inggris", href: "#program" },
-              { id: "inggris-s1", label: "S1 Bahasa Inggris", href: "#program" },
-            ],
-          },
-          {
-            id: "bisnis",
-            label: "Sains dan Bisnis",
-            children: [
-              { id: "digital", label: "S1 Bisnis Digital", href: "#program" },
-              { id: "informasi", label: "S1 Sistem Informasi", href: "#program" },
-              { id: "informatika", label: "S1 Informatika", href: "#program" },
-            ],
-          },
-        ],
-      },
-      { id: "kalender", label: "Kalender Akademik", href: "#kabar" },
-      { id: "kurikulum", label: "Kurikulum", href: "#program" },
-    ],
-  },
-  { id: "pmb", label: "PMB", items: [
-    { id: "jalur", label: "Jalur Pendaftaran", href: "#pmb" },
-    { id: "biaya", label: "Biaya Kuliah", href: "#pmb" },
-    { id: "beasiswa", label: "Beasiswa", href: "#pmb" },
-  ] },
-  { id: "lppm", label: "LPPM", href: "#kabar" },
-  {
-    id: "kehidupan",
-    label: "Kehidupan Kampus",
-    items: [
-      { id: "ukm", label: "Kegiatan Mahasiswa (UKM)", href: "#kehidupan" },
-      { id: "berita", label: "Berita Terkini", href: "#kabar" },
-      { id: "pengumuman", label: "Pengumuman", href: "#kabar" },
-      { id: "agenda", label: "Agenda Acara", href: "#kabar" },
-    ],
-  },
-  {
-    id: "alumni",
-    label: "Alumni",
-    items: [
-      { id: "ikatan", label: "Ikatan Alumni", href: "#footer" },
-      { id: "tracer", label: "Tracer Study (Kuesioner Alumni)", href: "#footer" },
-      { id: "karier", label: "Info Lowongan Kerja (Career Center)", href: "#kabar" },
-    ],
-  },
-  { id: "lpm", label: "LPM", items: [
-    { id: "laporan-lpm", label: "Laporan LPM", href: "#footer" },
-    { id: "kegiatan-lpm", label: "Kegiatan LPM", href: "#kabar" },
-  ] },
-  { id: "laporan", label: "Laporan Tahunan Rektor", href: "#footer" },
-];
-
-function MenuTree({
-  items,
-  className = "menu-tree",
-  onNavigate,
-}: {
-  items: MenuNode[];
-  className?: string;
-  onNavigate?: () => void;
-}) {
-  const [openNodes, setOpenNodes] = useState<Set<string>>(new Set());
-
-  function toggleNode(id: string) {
-    setOpenNodes((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  return (
-    <ul className={className}>
-      {items.map((item) => (
-        <li
-          className={`menu-branch${item.children ? " has-children" : ""}${openNodes.has(item.id) ? " is-open" : ""}`}
-          key={item.id}
-        >
-          {item.children ? (
-            <button
-              aria-expanded={openNodes.has(item.id)}
-              className="menu-link"
-              onClick={() => toggleNode(item.id)}
-              type="button"
-            >
-              {item.label}
-              <Icon name="chevron" size={15} />
-            </button>
-          ) : (
-            <a className="menu-link" href={item.href ?? "#"} onClick={onNavigate}>
-              {item.label}
-            </a>
-          )}
-          {item.children && (
-            <MenuTree
-              className="menu-children"
-              items={item.children}
-              onNavigate={onNavigate}
-            />
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 const quickLinks = [
   { name: "SIAKAD UL", detail: "Sistem informasi akademik", icon: "graduate" as const },
   { name: "E-Learning", detail: "Pembelajaran melalui Edlink", icon: "monitor" as const },
@@ -309,101 +164,11 @@ function SectionHeading({
 }
 
 export default function Home() {
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
-
-  function toggleMenu(id: string) {
-    setActiveMenu((current) => (current === id ? null : id));
-  }
 
   return (
     <main>
-      <header className="site-header">
-        <div className="header-inner">
-          <a aria-label="Universitas LIA, Beranda" className="brand" href="#">
-            <Image
-              alt="Universitas LIA"
-              className="brand-logo"
-              height={37}
-              priority
-              src="/Logo-Universitas-LIA-scaled.png"
-              width={165}
-            />
-          </a>
-
-          <button
-            aria-expanded={mobileMenuOpen}
-            aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
-            className="mobile-menu-toggle"
-            onClick={() => setMobileMenuOpen((open) => !open)}
-            type="button"
-          >
-            <Icon name={mobileMenuOpen ? "x" : "menu"} size={22} />
-          </button>
-
-          <nav
-            aria-label="Navigasi utama"
-            className={`main-nav${mobileMenuOpen ? " mobile-open" : ""}`}
-            onMouseLeave={() => setActiveMenu(null)}
-          >
-            {navigation.map((item) => (
-              <div
-                className={`nav-item${activeMenu === item.id ? " is-active" : ""}${item.id === "laporan" ? " nav-item-long" : ""}`}
-                key={item.id}
-                onMouseEnter={() => {
-                  if (item.items && !mobileMenuOpen) setActiveMenu(item.id);
-                }}
-              >
-                {item.items ? (
-                  <button
-                    aria-expanded={activeMenu === item.id}
-                    aria-haspopup="true"
-                    className="nav-trigger"
-                    onClick={() => {
-                      if (mobileMenuOpen) toggleMenu(item.id);
-                      else setActiveMenu(item.id);
-                    }}
-                    onFocus={() => {
-                      if (!mobileMenuOpen) setActiveMenu(item.id);
-                    }}
-                    type="button"
-                  >
-                    {item.label}
-                    <Icon name="chevron" size={14} />
-                  </button>
-                ) : (
-                  <a
-                    className="nav-trigger"
-                    href={item.href ?? "#kabar"}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </a>
-                )}
-                {item.items && activeMenu === item.id && (
-                  <div className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}`}>
-                    <MenuTree
-                      items={item.items}
-                      onNavigate={() => {
-                        setMobileMenuOpen(false);
-                        setActiveMenu(null);
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-            <a
-              className="button button-primary nav-apply"
-              href="#pmb"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Daftar Sekarang <Icon name="arrow" size={16} />
-            </a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section aria-label="Layanan kampus" className="quick-links">
         <div className="quick-links-inner">
@@ -622,56 +387,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="site-footer" id="footer">
-        <div className="footer-main content-wrap">
-          <div className="footer-about">
-            <a aria-label="Universitas LIA, Beranda" className="brand footer-brand" href="#">
-              <Image
-                alt="Universitas LIA"
-                className="brand-logo"
-                height={41}
-                src="/Logo-Universitas-LIA-scaled.png"
-                width={180}
-              />
-            </a>
-            <p>
-              Universitas LIA adalah titik temu antara teknologi dan kepakaran
-              dalam pengajaran bahasa asing.
-            </p>
-            <div className="social-links">
-              <a aria-label="Instagram" href="#footer">ig</a>
-              <a aria-label="YouTube" href="#footer">▶</a>
-              <a aria-label="LinkedIn" href="#footer">in</a>
-            </div>
-          </div>
-          <div className="footer-column">
-            <h3>Universitas</h3>
-            <a href="#tentang">Profil Universitas</a>
-            <a href="#footer">LPPM</a>
-            <a href="#footer">LPM</a>
-            <a href="#footer">Alumni</a>
-            <a href="#footer">Laporan Tahunan Rektor</a>
-          </div>
-          <div className="footer-column">
-            <h3>Informasi & layanan</h3>
-            <a href="#program">Akademik</a>
-            <a href="#pmb">Penerimaan Mahasiswa Baru</a>
-            <a href="#footer">SIAKAD UL</a>
-            <a href="#footer">Edlink</a>
-            <a href="#footer">Perpustakaan Universitas LIA</a>
-          </div>
-          <div className="footer-column footer-contact">
-            <h3>Hubungi kami</h3>
-            <p>Alamat: Jl. Pengadegan Timur Raya No.3</p>
-            <p>Email: humas@universitaslia.ac.id</p>
-            <p>WhatsApp: 0858-8103-6948</p>
-          </div>
-        </div>
-        <div className="footer-bottom content-wrap">
-          <small>© Universitas LIA. Seluruh hak cipta dilindungi.</small>
-          <div><a href="#footer">Kebijakan Privasi</a><a href="#footer">Peta Situs</a></div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <a aria-label="Hubungi Universitas LIA" className="chat-button" href="mailto:humas@universitaslia.ac.id">
         <Icon name="message" size={21} />
