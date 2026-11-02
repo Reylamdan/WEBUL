@@ -4,6 +4,7 @@ const AppError = require("../utils/AppError");
 const { throwDbError } = require("../utils/dbError");
 const { makeExcerpt } = require("../utils/excerpt");
 const { slugify, withSuffix } = require("../utils/slug");
+const { getCoverPublicUrl, removeCoverObjectQuietly } = require("../utils/coverStorage");
 
 // Kode error Postgres
 const UNIQUE_VIOLATION = "23505";
@@ -27,6 +28,7 @@ const serializeNews = (row) => {
     slug: row.slug,
     excerpt: row.excerpt,
     coverImagePath: row.cover_image_path,
+    coverImageUrl: getCoverPublicUrl(row.cover_image_path),
     status: row.status,
     publishedAt: row.published_at,
     author: row.author ? { id: row.author.id, name: row.author.name } : null,
@@ -264,12 +266,28 @@ const updateNews = async (req, res) => {
 const deleteNews = async (req, res) => {
   const { id } = req.validated.params;
 
-  const { data, error } = await supabase.from("news").delete().eq("id", id).select("id");
+  const { data, error } = await supabase
+    .from("news")
+    .delete()
+    .eq("id", id)
+    .select("id, cover_image_path");
   if (error) throwDbError("news: hapus", error);
 
   if (!data || data.length === 0) throw newsNotFound();
 
+  // Row sudah terhapus. File cover dibersihkan setelahnya; kegagalan Storage
+  // hanya dicatat sebagai [ORPHAN] dan tidak mengubah respons sukses.
+  await removeCoverObjectQuietly(data[0].cover_image_path, "deleteNews: hapus file cover");
+
   return res.json({ success: true, message: "Berita berhasil dihapus" });
 };
 
-module.exports = { listNews, getNews, createNews, updateNews, deleteNews };
+module.exports = {
+  listNews,
+  getNews,
+  createNews,
+  updateNews,
+  deleteNews,
+  serializeNews,
+  DETAIL_COLUMNS,
+};
