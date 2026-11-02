@@ -3,8 +3,8 @@ const crypto = require("crypto");
 const supabase = require("../config/supabase");
 const AppError = require("../utils/AppError");
 const { throwDbError } = require("../utils/dbError");
-const { hashPassword, comparePassword } = require("../utils/Password");
-const { signAdminToken } = require("../utils/Token");
+const { hashPassword, comparePassword } = require("../utils/password");
+const { signAdminToken } = require("../utils/token");
 
 // Hash palsu untuk menyamakan waktu respons ketika email tidak terdaftar,
 // supaya penyerang tidak bisa menebak email mana yang valid dari kecepatan respons.

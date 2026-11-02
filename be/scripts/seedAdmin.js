@@ -5,7 +5,7 @@
 require("../src/config/env"); // memuat .env dan memvalidasi variabel wajib
 const supabase = require("../src/config/supabase");
 const { createAdminSchema } = require("../src/validators/authValidator");
-const { hashPassword } = require("../src/utils/Password");
+const { hashPassword } = require("../src/utils/password");
 
 const readAllStdin = () =>
   new Promise((resolve) => {
