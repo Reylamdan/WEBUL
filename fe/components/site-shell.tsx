@@ -51,11 +51,12 @@ export const globalNavigation: NavItem[] = [
           {
             id: "humaniora",
             label: "Humaniora dan Desain",
+            href: "/akademik/programstudi/humanioradesain",
             children: [
-              { id: "desain", label: "S1 Desain Komunikasi Visual", href: "/#program" },
-              { id: "jepang", label: "S1 Bahasa Jepang", href: "/#program" },
-              { id: "inggris-d3", label: "D3 Bahasa Inggris", href: "/#program" },
-              { id: "inggris-s1", label: "S1 Bahasa Inggris", href: "/#program" },
+              { id: "desain", label: "S1 Desain Komunikasi Visual", href: "/akademik/programstudi/humanioradesain/s1-dkv" },
+              { id: "jepang", label: "S1 Bahasa Jepang", href: "/akademik/programstudi/humanioradesain/s1-bjepang" },
+              { id: "inggris-d3", label: "D3 Bahasa Inggris", href: "/akademik/programstudi/humanioradesain/d3-bing" },
+              { id: "inggris-s1", label: "S1 Bahasa Inggris", href: "/akademik/programstudi/humanioradesain/s1-bing" },
             ],
           },
           {
@@ -130,7 +131,34 @@ export function GlobalDropdownMenu({
   onNavigate: () => void;
   pathname: string;
 }) {
-  const [openNodes, setOpenNodes] = useState<Set<string>>(new Set());
+  function resolveHref(href?: string) {
+    if (!href) return "#";
+    if (href.startsWith("/")) return href;
+    if (pathname === "/") return href;
+    return `/${href}`;
+  }
+
+  function isNodeActive(item: MenuNode): boolean {
+    if (item.href) {
+      const href = resolveHref(item.href);
+      if (pathname === href || pathname.startsWith(`${href}/`)) return true;
+    }
+    return item.children?.some(isNodeActive) ?? false;
+  }
+
+  function getActiveNodeIds(nodes: MenuNode[]): Set<string> {
+    const activeIds = new Set<string>();
+    for (const node of nodes) {
+      if (isNodeActive(node)) activeIds.add(node.id);
+      if (node.children) {
+        for (const id of getActiveNodeIds(node.children)) activeIds.add(id);
+      }
+    }
+    return activeIds;
+  }
+
+  const [openNodes, setOpenNodes] = useState<Set<string>>(() => getActiveNodeIds(items));
+  const activeNodeIds = getActiveNodeIds(items);
 
   function toggleNode(id: string) {
     setOpenNodes((current) => {
@@ -141,33 +169,41 @@ export function GlobalDropdownMenu({
     });
   }
 
-  function resolveHref(href?: string) {
-    if (!href) return "#";
-    if (href.startsWith("/")) return href;
-    if (pathname === "/") return href;
-    return `/${href}`;
-  }
-
   return (
     <ul className={className}>
       {items.map((item) => (
         <li
-          className={`menu-branch${item.children ? " has-children" : ""}${openNodes.has(item.id) ? " is-open" : ""}`}
+          className={`menu-branch${item.children ? " has-children" : ""}${openNodes.has(item.id) || activeNodeIds.has(item.id) ? " is-open" : ""}`}
           key={item.id}
         >
           {item.children ? (
-            <button
-              aria-expanded={openNodes.has(item.id)}
-              className="menu-link"
-              onClick={() => toggleNode(item.id)}
-              type="button"
-            >
-              <span>{item.label}</span>
-              <Icon name="chevron" size={14} />
-            </button>
+            <div className="menu-link menu-link-branch">
+              {item.href ? (
+                <Link
+                  aria-current={pathname === resolveHref(item.href) ? "page" : undefined}
+                  className={`menu-link-label${isNodeActive(item) ? " is-active" : ""}`}
+                  href={resolveHref(item.href)}
+                  onClick={onNavigate}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span className="menu-link-label">{item.label}</span>
+              )}
+              <button
+                aria-expanded={openNodes.has(item.id) || activeNodeIds.has(item.id)}
+                aria-label={`${openNodes.has(item.id) || activeNodeIds.has(item.id) ? "Tutup" : "Buka"} submenu ${item.label}`}
+                className="menu-link-toggle"
+                onClick={() => toggleNode(item.id)}
+                type="button"
+              >
+                <Icon name="chevron" size={14} />
+              </button>
+            </div>
           ) : (
             <Link
-              className="menu-link"
+              aria-current={pathname === resolveHref(item.href) ? "page" : undefined}
+              className={`menu-link${isNodeActive(item) ? " is-active" : ""}`}
               href={resolveHref(item.href)}
               onClick={onNavigate}
             >
@@ -263,7 +299,12 @@ export function SiteHeader() {
         <nav
           aria-label="Navigasi utama"
           className={`main-nav${mobileMenuOpen ? " mobile-open" : ""}`}
-          onMouseLeave={() => setActiveMenu(null)}
+          onMouseLeave={(event) => {
+            if (event.relatedTarget instanceof Node && navRef.current?.contains(event.relatedTarget)) {
+              return;
+            }
+            setActiveMenu(null);
+          }}
           ref={navRef}
         >
           {globalNavigation.map((item) => {
@@ -293,6 +334,28 @@ export function SiteHeader() {
                     {item.label}
                     <Icon name="chevron" size={14} />
                   </button>
+                ) : item.items ? (
+                  <div className="nav-trigger nav-trigger-with-toggle">
+                    <Link
+                      className="nav-trigger-link"
+                      href={resolveHref(item.href)}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setActiveMenu(null);
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      aria-expanded={activeMenu === item.id}
+                      aria-label={`${activeMenu === item.id ? "Tutup" : "Buka"} submenu ${item.label}`}
+                      className="nav-trigger-toggle"
+                      onClick={() => toggleMenu(item.id)}
+                      type="button"
+                    >
+                      <Icon name="chevron" size={14} />
+                    </button>
+                  </div>
                 ) : (
                   <Link
                     className="nav-trigger"

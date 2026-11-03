@@ -124,6 +124,37 @@ button {
   transition: color .18s ease;
 }
 
+.nav-trigger-with-toggle {
+  gap: 6px;
+}
+
+.nav-trigger-link {
+  display: inline-flex;
+  min-height: inherit;
+  flex: 1;
+  align-items: center;
+  color: inherit;
+}
+
+.nav-trigger-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  cursor: pointer;
+}
+
+.nav-trigger-toggle svg {
+  transition: transform .18s ease;
+}
+
+.nav-trigger-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
 .nav-trigger svg {
   color: var(--blue);
   transition: transform .18s ease;
@@ -184,6 +215,22 @@ button {
 
 .academic-dropdown {
   width: 290px;
+  transform: translateY(0);
+}
+
+.academic-dropdown .menu-children {
+  overflow: visible;
+  transform: translateX(0);
+}
+
+@media (min-width: 901px) {
+  .academic-dropdown .menu-branch:focus-within {
+    z-index: 3;
+  }
+
+  .academic-dropdown .menu-branch:hover {
+    z-index: 4;
+  }
 }
 
 .menu-tree {
@@ -215,6 +262,45 @@ button {
   text-align: left;
   font-size: 13px;
   line-height: 1.35;
+}
+
+.menu-link-branch {
+  padding: 0;
+}
+
+.menu-link-label {
+  display: flex;
+  min-width: 0;
+  min-height: 42px;
+  flex: 1;
+  align-items: center;
+  padding: 10px 0 10px 16px;
+  color: inherit;
+  line-height: 1.35;
+}
+
+.menu-link-label.is-active,
+.menu-link.is-active {
+  background: #0a6bad;
+}
+
+.menu-link-toggle {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.menu-link-toggle:hover,
+.menu-link-toggle:focus-visible {
+  background: #0a6bad;
+  outline: none;
 }
 
 .menu-link:hover,
@@ -261,6 +347,10 @@ button {
   transform: translateX(0);
   visibility: visible;
   transition-delay: 0s;
+}
+
+.academic-dropdown:not(.is-open) .menu-children {
+  visibility: hidden;
 }
 
 .header-meta-actions {
@@ -1941,6 +2031,19 @@ button {
     font-size: 14px;
   }
 
+  .nav-trigger-with-toggle {
+    width: 100%;
+  }
+
+  .nav-trigger-link {
+    min-height: 48px;
+  }
+
+  .nav-trigger-toggle {
+    min-width: 42px;
+    min-height: 48px;
+  }
+
   .nav-dropdown,
   .academic-dropdown {
     position: static;
@@ -1957,9 +2060,10 @@ button {
     margin-bottom: 10px;
   }
 
-  .menu-children {
+  .academic-dropdown .menu-children {
     position: static;
     width: 100%;
+    overflow: hidden;
     border: 0;
     background: #064879;
     box-shadow: none;
@@ -1971,6 +2075,10 @@ button {
 
   .menu-branch.is-open > .menu-link svg {
     transform: rotate(180deg);
+  }
+
+  .menu-link-branch {
+    min-height: 42px;
   }
 
   .nav-apply {

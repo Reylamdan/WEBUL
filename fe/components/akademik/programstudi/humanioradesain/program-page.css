@@ -1,0 +1,285 @@
+.hdProgramHero {
+  padding: 18px max(32px, calc((100% - 1080px) / 2)) 24px;
+  background: #eef4f7;
+}
+
+.hdProgramBreadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: #78878b;
+  font-size: 10px;
+}
+
+.hdProgramBreadcrumbs a:hover,
+.hdProgramSources a:hover {
+  color: #005b8c;
+  text-decoration: underline;
+}
+
+.hdProgramEyebrow {
+  display: block;
+  color: #005b8c;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.hdProgramEyebrow::before {
+  display: inline-block;
+  width: 15px;
+  height: 2px;
+  margin: 0 7px 3px 0;
+  background: #ed6a3b;
+  content: "";
+}
+
+.hdProgramHero h1 {
+  margin: 8px 0 6px;
+  color: #203844;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.hdProgramHero p {
+  margin: 0;
+  color: #75848a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.hdProgramContent {
+  width: min(1080px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 38px 0 28px;
+}
+
+.hdProgramOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 36px;
+}
+
+.hdProgramOverviewCopy h2 {
+  margin: 0 0 14px;
+  color: #203844;
+  font-size: 20px;
+}
+
+.hdProgramOverviewCopy p {
+  margin: 0 0 12px;
+  color: #748187;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.hdProgramSummaryCard {
+  padding: 20px 22px;
+  border: 1px solid #e1e9ed;
+  border-radius: 6px;
+  background: #eef4f7;
+}
+
+.hdProgramSummaryLevel {
+  color: #005b8c;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.hdProgramSummaryCard h2 {
+  margin: 8px 0 18px;
+  color: #203844;
+  font-size: 15px;
+}
+
+.hdProgramSummaryLabel {
+  margin: 0 0 5px;
+  color: #819096;
+  font-size: 10px;
+}
+
+.hdProgramAccreditation {
+  margin: 0;
+  color: #005b8c;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.hdProgramAccreditationNote {
+  margin: 10px 0 0;
+  color: #748187;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.hdProgramInformationGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.hdProgramInformationCard {
+  min-height: 125px;
+  padding: 20px 22px;
+  border: 1px solid #e1e9ed;
+  border-radius: 6px;
+  background: #eef4f7;
+}
+
+.hdProgramInformationCard h3 {
+  margin: 0 0 12px;
+  color: #203844;
+  font-size: 14px;
+}
+
+.hdProgramInformationCard p {
+  margin: 0;
+  color: #748187;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.hdProgramGraduatesNote {
+  margin: 10px 0 0;
+  color: #879398;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.hdProgramSources {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+  color: #7d898e;
+  font-size: 9px;
+}
+
+.hdProgramSources a {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.hdProgramAdmissionCallout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 16px 22px;
+  border-radius: 5px;
+  background: #eef4f7;
+}
+
+.hdProgramAdmissionCallout h2 {
+  margin: 0 0 5px;
+  color: #203844;
+  font-size: 15px;
+}
+
+.hdProgramAdmissionCallout p {
+  margin: 0;
+  color: #7a878c;
+  font-size: 10px;
+}
+
+.hdProgramAdmissionCallout a {
+  display: inline-flex;
+  min-width: 190px;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-radius: 3px;
+  background: #005b8c;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hdProgramAdmissionCallout a:hover {
+  background: #004d78;
+}
+
+.hdProgramAdmissionCallout svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 900px) {
+  .hdProgramHero {
+    padding-inline: 24px;
+  }
+
+  .hdProgramOverview {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hdProgramHero {
+    padding: 18px 20px 22px;
+  }
+
+  .hdProgramBreadcrumbs {
+    margin-bottom: 16px;
+    font-size: 9px;
+  }
+
+  .hdProgramHero h1 {
+    font-size: 25px;
+  }
+
+  .hdProgramHero p {
+    font-size: 11px;
+  }
+
+  .hdProgramContent {
+    width: calc(100% - 40px);
+    padding: 28px 0 24px;
+  }
+
+  .hdProgramOverview {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .hdProgramOverviewCopy h2 {
+    font-size: 18px;
+  }
+
+  .hdProgramOverviewCopy p {
+    font-size: 11px;
+  }
+
+  .hdProgramSummaryCard {
+    padding: 17px 18px;
+  }
+
+  .hdProgramInformationGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .hdProgramInformationCard {
+    min-height: 0;
+    padding: 17px 18px;
+  }
+
+  .hdProgramAdmissionCallout {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .hdProgramAdmissionCallout a {
+    min-width: 0;
+  }
+}
