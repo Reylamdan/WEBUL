@@ -82,12 +82,7 @@ export const globalNavigation: NavItem[] = [
   {
     id: "lppm",
     label: "LPPM",
-    items: [
-      { id: "lppm-profil", label: "Profil LPPM", href: "/#kabar" },
-      { id: "penelitian", label: "Penelitian", href: "/#kabar" },
-      { id: "pengabdian", label: "Pengabdian Masyarakat", href: "/#kabar" },
-      { id: "publikasi", label: "Publikasi Ilmiah", href: "/#kabar" },
-    ],
+    href: "/lppm",
   },
   {
     id: "kehidupan",
@@ -111,7 +106,33 @@ export const globalNavigation: NavItem[] = [
   {
     id: "lpm",
     label: "LPM",
-    href: "/#footer",
+    href: "/lpm",
+    items: [
+      { id: "lpm-profil", label: "Lembaga Penjaminan Mutu", href: "/lpm" },
+      { id: "lpm-laporan", label: "Laporan LPM", href: "/lpm/laporan" },
+      {
+        id: "lpm-laporan-ami",
+        label: "Laporan Tahunan Audit Mutu Internal LIA",
+        href: "/lpm/laporan-tahunan-audit-mutu-internal",
+      },
+      {
+        id: "lpm-ami-2025",
+        label: "Laporan Audit Mutu Internal 2025",
+        href: "/lpm/laporan-audit-mutu-internal-2025",
+      },
+      {
+        id: "lpm-laporan-rtm",
+        label: "Laporan Tahunan RTM dan RTL",
+        href: "/lpm/laporan-tahunan-rtm-rtl",
+      },
+      {
+        id: "lpm-rtm-2025",
+        label: "Laporan RTM dan RTL 2025",
+        href: "/lpm/laporan-rtm-rtl-2025",
+      },
+      { id: "lpm-kegiatan", label: "Kegiatan LPM", href: "/lpm/kegiatan" },
+      { id: "lpm-benchmarking", label: "Benchmarking", href: "/lpm/benchmarking" },
+    ],
   },
   {
     id: "laporan",
@@ -265,6 +286,9 @@ export function SiteHeader() {
     }
     if (item.id === "akademik") {
       return pathname.startsWith("/akademik");
+    }
+    if (item.id === "lpm") {
+      return pathname.startsWith("/lpm");
     }
     if (item.href && item.href.startsWith("/") && pathname === item.href) {
       return true;
