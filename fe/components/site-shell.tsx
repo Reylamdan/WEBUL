@@ -29,13 +29,13 @@ export const globalNavigation: NavItem[] = [
   {
     id: "profil",
     label: "Profil",
+    href: "/profil",
     items: [
-      { id: "profil-universitas", label: "Profil Universitas", href: "/profil" },
       { id: "sejarah", label: "Sejarah", href: "/profil/sejarah" },
       { id: "visi", label: "Visi & Misi", href: "/profil/visi-misi" },
-      { id: "struktur", label: "Struktur Organisasi", href: "/profil#informasi" },
-      { id: "akreditasi", label: "Akreditasi", href: "/profil#informasi" },
-      { id: "fasilitas", label: "Fasilitas Kampus", href: "/#kehidupan" },
+      { id: "struktur", label: "Struktur Organisasi", href: "/profil/struktur-organisasi" },
+      { id: "akreditasi", label: "Akreditasi", href: "/profil/akreditasi" },
+      { id: "fasilitas", label: "Fasilitas Kampus", href: "/profil/fasilitas-kampus" },
     ],
   },
   {
