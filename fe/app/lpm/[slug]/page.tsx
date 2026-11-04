@@ -8,11 +8,15 @@ export function generateStaticParams() {
     .map((section) => ({ slug: section.slug }));
 }
 
-type LpmParams = PageProps<"/lpm/[slug]">["params"];
+type LpmParams = Promise<{ slug: string }>;
+
+interface LpmPageProps {
+  params: LpmParams;
+}
 
 export default function LpmSectionPage({
   params,
-}: PageProps<"/lpm/[slug]">) {
+}: LpmPageProps) {
   return (
     <Suspense
       fallback={

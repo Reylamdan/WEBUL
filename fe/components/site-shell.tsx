@@ -90,7 +90,7 @@ export const globalNavigation: NavItem[] = [
     label: "Kehidupan Kampus",
     items: [
       { id: "ukm", label: "Kegiatan Mahasiswa (UKM)", href: "/#kehidupan" },
-      { id: "berita", label: "Berita Terkini", href: "/#kabar" },
+      { id: "berita", label: "Berita Terkini", href: "/kehidupan-kampus/berita-terkini" },
       { id: "pengumuman", label: "Pengumuman", href: "/#kabar" },
       { id: "agenda", label: "Agenda Acara", href: "/#kabar" },
     ],
@@ -303,8 +303,11 @@ export function SiteHeader() {
   }
 
   function isItemActive(item: NavItem): boolean {
+    if (pathname === "/") {
+      return item.id === "beranda";
+    }
     if (item.id === "beranda") {
-      return pathname === "/";
+      return false;
     }
     if (item.id === "profil") {
       return pathname.startsWith("/profil");
@@ -312,11 +315,39 @@ export function SiteHeader() {
     if (item.id === "akademik") {
       return pathname.startsWith("/akademik");
     }
+    if (item.id === "kehidupan") {
+      return pathname.startsWith("/kehidupan-kampus");
+    }
     if (item.id === "lpm") {
       return pathname.startsWith("/lpm");
     }
-    if (item.href && item.href.startsWith("/") && pathname === item.href) {
+    if (item.id === "lppm") {
+      return pathname.startsWith("/lppm");
+    }
+    if (item.id === "pmb") {
+      return pathname.startsWith("/pmb");
+    }
+    if (item.id === "laporan") {
+      return pathname.startsWith("/laporan-tahunan-rektor");
+    }
+    if (item.href && item.href.startsWith("/") && item.href !== "/" && pathname.startsWith(item.href)) {
       return true;
+    }
+    if (item.items) {
+      const hasActiveChild = (nodes: MenuNode[]): boolean => {
+        return nodes.some((node) => {
+          if (node.href && node.href.startsWith("/")) {
+            const pathOnly = node.href.split("#")[0];
+            if (pathOnly && pathOnly !== "/" && (pathname === pathOnly || pathname.startsWith(`${pathOnly}/`))) {
+              return true;
+            }
+          }
+          return node.children ? hasActiveChild(node.children) : false;
+        });
+      };
+      if (hasActiveChild(item.items)) {
+        return true;
+      }
     }
     return activeMenu === item.id;
   }

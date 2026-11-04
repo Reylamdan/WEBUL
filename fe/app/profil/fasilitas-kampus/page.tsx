@@ -4,7 +4,6 @@ import {
   FasilitasHero,
 } from "@/components/fasilitas-kampus";
 import { Icon } from "@/components/icons";
-import "./fasilitas.css";
 
 export const metadata: Metadata = {
   title: "Fasilitas Kampus — Universitas LIA",
