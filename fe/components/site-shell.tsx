@@ -136,7 +136,7 @@ export const globalNavigation: NavItem[] = [
   {
     id: "laporan",
     label: "Laporan Tahunan Rektor",
-    href: "/#footer",
+    href: "/laporan-tahunan-rektor",
   },
 ];
 
@@ -216,7 +216,31 @@ export function SiteHeader() {
   const [lang, setLang] = useState<"ID" | "EN">("ID");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFloating, setIsFloating] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+
+    function updateFloatingState() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        setIsFloating((current) => {
+          if (!current && scrollY > 56) return true;
+          if (current && scrollY < 12) return false;
+          return current;
+        });
+      });
+    }
+
+    updateFloatingState();
+    window.addEventListener("scroll", updateFloatingState, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateFloatingState);
+    };
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -261,28 +285,85 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="site-header">
+    <header className={`site-header${isFloating ? " is-floating" : ""}`}>
       <div className="header-inner">
-        <Link aria-label="Universitas LIA, Beranda" className="brand" href="/">
-          <Image
-            alt="Universitas LIA"
-            className="brand-logo"
-            height={37}
-            priority
-            src="/Logo-Universitas-LIA-scaled.png"
-            width={165}
-          />
-        </Link>
+        <div className="header-top-row">
+          <Link aria-label="Universitas LIA, Beranda" className="brand" href="/">
+            <Image
+              alt="Universitas LIA"
+              className="brand-logo"
+              height={37}
+              priority
+              src="/Logo-Universitas-LIA-scaled.png"
+              width={165}
+            />
+          </Link>
 
-        <button
-          aria-expanded={mobileMenuOpen}
-          aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
-          className="mobile-menu-toggle"
-          onClick={() => setMobileMenuOpen((open) => !open)}
-          type="button"
-        >
-          <Icon name={mobileMenuOpen ? "x" : "menu"} size={22} />
-        </button>
+          <div className="header-meta-actions">
+            <div aria-label="Pilih Bahasa" className="lang-switcher" role="group">
+              <button
+                className={`lang-btn${lang === "ID" ? " is-active" : ""}`}
+                onClick={() => setLang("ID")}
+                type="button"
+              >
+                ID
+              </button>
+              <button
+                className={`lang-btn${lang === "EN" ? " is-active" : ""}`}
+                onClick={() => setLang("EN")}
+                type="button"
+              >
+                EN
+              </button>
+            </div>
+
+            <div className="search-wrap">
+              <button
+                aria-expanded={searchOpen}
+                aria-label="Cari di situs"
+                className="search-toggle-btn"
+                onClick={() => setSearchOpen((prev) => !prev)}
+                type="button"
+              >
+                <Icon name="search" size={18} />
+              </button>
+              {searchOpen && (
+                <div className="header-search-box">
+                  <input
+                    aria-label="Kata kunci pencarian"
+                    autoFocus
+                    className="header-search-input"
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setSearchOpen(false);
+                    }}
+                    placeholder="Cari program, berita, info..."
+                    type="search"
+                    value={searchQuery}
+                  />
+                  <button
+                    aria-label="Tutup pencarian"
+                    className="header-search-close"
+                    onClick={() => setSearchOpen(false)}
+                    type="button"
+                  >
+                    <Icon name="x" size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
+            className="mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            type="button"
+          >
+            <Icon name={mobileMenuOpen ? "x" : "menu"} size={22} />
+          </button>
+        </div>
 
         <nav
           aria-label="Navigasi utama"
@@ -349,72 +430,13 @@ export function SiteHeader() {
             );
           })}
 
-          <div className="header-meta-actions">
-            {/* Language Switcher */}
-            <div aria-label="Pilih Bahasa" className="lang-switcher" role="group">
-              <button
-                className={`lang-btn${lang === "ID" ? " is-active" : ""}`}
-                onClick={() => setLang("ID")}
-                type="button"
-              >
-                ID
-              </button>
-              <span aria-hidden="true" className="lang-divider">|</span>
-              <button
-                className={`lang-btn${lang === "EN" ? " is-active" : ""}`}
-                onClick={() => setLang("EN")}
-                type="button"
-              >
-                EN
-              </button>
-            </div>
-
-            {/* Search Trigger */}
-            <div className="search-wrap">
-              <button
-                aria-expanded={searchOpen}
-                aria-label="Cari di situs"
-                className="search-toggle-btn"
-                onClick={() => setSearchOpen((prev) => !prev)}
-                type="button"
-              >
-                <Icon name="search" size={18} />
-              </button>
-              {searchOpen && (
-                <div className="header-search-box">
-                  <input
-                    aria-label="Kata kunci pencarian"
-                    autoFocus
-                    className="header-search-input"
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") setSearchOpen(false);
-                    }}
-                    placeholder="Cari program, berita, info..."
-                    type="search"
-                    value={searchQuery}
-                  />
-                  <button
-                    aria-label="Tutup pencarian"
-                    className="header-search-close"
-                    onClick={() => setSearchOpen(false)}
-                    type="button"
-                  >
-                    <Icon name="x" size={16} />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Register CTA Button */}
-            <Link
-              className="button button-primary nav-apply"
-              href="/pmb"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Daftar Sekarang <Icon name="arrow" size={16} />
-            </Link>
-          </div>
+          <Link
+            className="button button-primary nav-apply"
+            href="/pmb"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Daftar Sekarang <Icon name="arrow" size={16} />
+          </Link>
         </nav>
       </div>
     </header>
@@ -451,7 +473,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
           <Link href="/#footer">LPPM</Link>
           <Link href="/#footer">LPM</Link>
           <Link href="/#footer">Alumni</Link>
-          <Link href="/#footer">Laporan Tahunan Rektor</Link>
+          <Link href="/laporan-tahunan-rektor">Laporan Tahunan Rektor</Link>
         </div>
         <div className="footer-column">
           <h3>Informasi &amp; layanan</h3>
