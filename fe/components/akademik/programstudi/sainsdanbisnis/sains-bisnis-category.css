@@ -1,0 +1,302 @@
+.sbCategoryHero {
+  padding: 18px max(32px, calc((100% - 1080px) / 2)) 28px;
+  background: #eef4f7;
+}
+
+.sbCategoryBreadcrumbs,
+.sbProgramBreadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: #78878b;
+  font-size: 10px;
+}
+
+.sbCategoryBreadcrumbs a:hover,
+.sbCategorySources a:hover {
+  color: #005b8c;
+  text-decoration: underline;
+}
+
+.sbCategoryEyebrow,
+.sbProgramEyebrow {
+  display: block;
+  color: #005b8c;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.sbCategoryEyebrow::before,
+.sbProgramEyebrow::before {
+  display: inline-block;
+  width: 15px;
+  height: 2px;
+  margin: 0 7px 3px 0;
+  background: #ed6a3b;
+  content: "";
+}
+
+.sbCategoryHero h1,
+.sbProgramHero h1 {
+  margin: 8px 0 6px;
+  color: #203844;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.sbCategoryHero p,
+.sbProgramHero p {
+  margin: 0;
+  color: #75848a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.sbCategoryContent {
+  width: min(1080px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 34px 0 28px;
+}
+
+.sbCategoryBanner {
+  position: relative;
+  display: flex;
+  min-height: 175px;
+  overflow: hidden;
+  align-items: stretch;
+  border-radius: 6px;
+  background: #124e6a;
+  color: #fff;
+  isolation: isolate;
+}
+
+.sbCategoryBannerPanel {
+  flex: 1;
+  background-position: center;
+  background-size: cover;
+}
+
+.sbCategoryBannerPanelBusiness {
+  background-image:
+    linear-gradient(0deg, #064c6be8, #064c6b45),
+    url("https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=700&q=80");
+}
+
+.sbCategoryBannerPanelComputer {
+  border-inline: 5px solid #082c3c99;
+  background-image:
+    linear-gradient(0deg, #064c6be8, #064c6b45),
+    url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=700&q=80");
+}
+
+.sbCategoryBannerPanelScience {
+  background-image:
+    linear-gradient(0deg, #064c6be8, #064c6b45),
+    url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=700&q=80");
+}
+
+.sbCategoryBannerCopy {
+  position: absolute;
+  inset: auto 24px 20px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sbCategoryBannerCopy span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 9px;
+}
+
+.sbCategoryBannerCopy h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+}
+
+.sbCategoryBannerCopy p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.sbCategoryProgramList {
+  margin-top: 24px;
+}
+
+.sbCategoryProgramList h2 {
+  margin: 0 0 16px;
+  color: #203844;
+  font-size: 20px;
+}
+
+.sbCategoryProgramGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sbCategoryProgramCard {
+  display: flex;
+  min-height: 120px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px;
+  border: 1px solid #e0e8ec;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.sbCategoryProgramCard > span {
+  color: #005b8c;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.sbCategoryProgramCard h3 {
+  margin: 10px 0 auto;
+  color: #203844;
+  font-size: 15px;
+}
+
+.sbCategoryProgramCard a {
+  margin-top: 12px;
+  color: #005b8c;
+  font-size: 10px;
+}
+
+.sbCategoryProgramCard a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sbCategorySources,
+.sbProgramSources {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+  color: #7d898e;
+  font-size: 9px;
+}
+
+.sbCategorySources a,
+.sbProgramSources a {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.sbCategoryAdmission,
+.sbProgramAdmission {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 16px 22px;
+  border-radius: 5px;
+  background: #eef4f7;
+}
+
+.sbCategoryAdmission h2,
+.sbProgramAdmission h2 {
+  margin: 0 0 5px;
+  color: #203844;
+  font-size: 15px;
+}
+
+.sbCategoryAdmission p,
+.sbProgramAdmission p {
+  margin: 0;
+  color: #7a878c;
+  font-size: 10px;
+}
+
+.sbCategoryAdmission a,
+.sbProgramAdmission a {
+  display: inline-flex;
+  min-width: 190px;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 3px;
+  background: #005b8c;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sbCategoryAdmission a:hover,
+.sbProgramAdmission a:hover {
+  background: #004d78;
+}
+
+@media (max-width: 900px) {
+  .sbCategoryHero {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sbCategoryHero {
+    padding: 18px 20px 22px;
+  }
+
+  .sbCategoryBreadcrumbs {
+    margin-bottom: 16px;
+    font-size: 9px;
+  }
+
+  .sbCategoryHero h1 {
+    font-size: 25px;
+  }
+
+  .sbCategoryHero p {
+    font-size: 11px;
+  }
+
+  .sbCategoryContent {
+    width: calc(100% - 40px);
+    padding: 24px 0;
+  }
+
+  .sbCategoryBanner {
+    min-height: 155px;
+  }
+
+  .sbCategoryBannerCopy {
+    inset-inline: 17px;
+  }
+
+  .sbCategoryBannerCopy h2 {
+    font-size: 18px;
+  }
+
+  .sbCategoryProgramList {
+    margin-top: 20px;
+  }
+
+  .sbCategoryProgramGrid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .sbCategoryProgramCard {
+    min-height: 105px;
+    padding: 15px;
+  }
+
+  .sbCategoryAdmission,
+  .sbProgramAdmission {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .sbCategoryAdmission a,
+  .sbProgramAdmission a {
+    min-width: 0;
+  }
+}

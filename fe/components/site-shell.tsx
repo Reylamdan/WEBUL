@@ -62,10 +62,11 @@ export const globalNavigation: NavItem[] = [
           {
             id: "bisnis",
             label: "Sains dan Bisnis",
+            href: "/akademik/programstudi/sainsdanbisnis",
             children: [
-              { id: "digital", label: "S1 Bisnis Digital", href: "/#program" },
-              { id: "informasi", label: "S1 Sistem Informasi", href: "/#program" },
-              { id: "informatika", label: "S1 Informatika", href: "/#program" },
+              { id: "digital", label: "S1 Bisnis Digital", href: "/akademik/programstudi/sainsdanbisnis/s1-bisnis-digital" },
+              { id: "informatika", label: "S1 Informatika", href: "/akademik/programstudi/sainsdanbisnis/s1-informatika" },
+              { id: "informasi", label: "S1 Sistem Informasi", href: "/akademik/programstudi/sainsdanbisnis/s1-sistem-informasi" },
             ],
           },
         ],
@@ -334,7 +335,6 @@ export function SiteHeader() {
               width={165}
             />
           </Link>
-
           <div className="header-meta-actions">
             <div aria-label="Pilih Bahasa" className="lang-switcher" role="group">
               <button
