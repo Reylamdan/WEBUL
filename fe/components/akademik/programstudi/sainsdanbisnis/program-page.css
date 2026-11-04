@@ -1,0 +1,172 @@
+.sbProgramHero {
+  padding: 18px max(32px, calc((100% - 1080px) / 2)) 24px;
+  background: #eef4f7;
+}
+
+.sbProgramBreadcrumbs a:hover,
+.sbProgramSources a:hover {
+  color: #005b8c;
+  text-decoration: underline;
+}
+
+.sbProgramContent {
+  width: min(1080px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 38px 0 28px;
+}
+
+.sbProgramOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 36px;
+}
+
+.sbProgramOverview h2 {
+  margin: 0 0 14px;
+  color: #203844;
+  font-size: 20px;
+}
+
+.sbProgramOverview > div > p {
+  margin: 0 0 12px;
+  color: #748187;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.sbProgramSummary {
+  padding: 20px 22px;
+  border: 1px solid #e1e9ed;
+  border-radius: 6px;
+  background: #eef4f7;
+}
+
+.sbProgramSummary > span {
+  color: #005b8c;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.sbProgramSummary h2 {
+  margin: 8px 0 18px;
+  font-size: 15px;
+}
+
+.sbProgramSummary p {
+  margin: 0 0 5px;
+  color: #819096;
+  font-size: 10px;
+}
+
+.sbProgramSummary strong {
+  color: #005b8c;
+  font-size: 16px;
+}
+
+.sbProgramInformationGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.sbProgramInformationCard {
+  min-height: 125px;
+  padding: 20px 22px;
+  border: 1px solid #e1e9ed;
+  border-radius: 6px;
+  background: #eef4f7;
+}
+
+.sbProgramInformationCard h3 {
+  margin: 0 0 12px;
+  color: #203844;
+  font-size: 14px;
+}
+
+.sbProgramInformationCard p {
+  margin: 0;
+  color: #748187;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.sbProgramInformationCard small {
+  display: block;
+  margin-top: 12px;
+  color: #879398;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.sbProgramSources {
+  margin-top: 22px;
+}
+
+.sbProgramAdmission {
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .sbProgramHero {
+    padding-inline: 24px;
+  }
+
+  .sbProgramOverview {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sbProgramHero {
+    padding: 18px 20px 22px;
+  }
+
+  .sbProgramBreadcrumbs {
+    margin-bottom: 16px;
+    font-size: 9px;
+  }
+
+  .sbProgramHero h1 {
+    font-size: 25px;
+  }
+
+  .sbProgramHero p {
+    font-size: 11px;
+  }
+
+  .sbProgramContent {
+    width: calc(100% - 40px);
+    padding: 28px 0 24px;
+  }
+
+  .sbProgramOverview {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .sbProgramOverview h2 {
+    font-size: 18px;
+  }
+
+  .sbProgramOverview > div > p {
+    font-size: 11px;
+  }
+
+  .sbProgramSummary {
+    padding: 17px 18px;
+  }
+
+  .sbProgramInformationGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .sbProgramInformationCard {
+    min-height: 0;
+    padding: 17px 18px;
+  }
+}
