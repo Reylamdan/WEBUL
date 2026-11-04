@@ -1,7 +1,7 @@
 const supabase = require("../config/supabase");
 const AppError = require("../utils/AppError");
 const { throwDbError } = require("../utils/dbError");
-const { verifyAdminToken } = require("../utils/Token");
+const { verifyAdminToken } = require("../utils/token");
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

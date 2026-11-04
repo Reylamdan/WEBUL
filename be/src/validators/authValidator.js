@@ -1,5 +1,5 @@
 const { z } = require("zod");
-const { MAX_PASSWORD_BYTES, isWithinBcryptLimit } = require("../utils/Password");
+const { MAX_PASSWORD_BYTES, isWithinBcryptLimit } = require("../utils/password");
 
 // Email selalu disimpan dan dicari dalam huruf kecil.
 const emailField = z

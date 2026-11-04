@@ -1,0 +1,210 @@
+/* ==========================================================================
+   Fasilitas Kampus Page Styles
+   ========================================================================== */
+
+.fasilitas-page {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.fasilitas-content {
+  flex: 1;
+  padding-bottom: 90px;
+}
+
+.fasilitas-wrap {
+  width: min(1120px, calc(100% - 64px));
+  margin-inline: auto;
+}
+
+.fasilitas-hero {
+  display: grid;
+  grid-template-columns: 1.25fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+  padding-top: 36px;
+  padding-bottom: 44px;
+}
+
+.fasilitas-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #718087;
+  margin-bottom: 24px;
+}
+
+.fasilitas-breadcrumb a:hover {
+  color: var(--blue, #005b8c);
+}
+
+.fasilitas-breadcrumb span[aria-current="page"] {
+  color: #172a35;
+  font-weight: 600;
+}
+
+.fasilitas-hero-title {
+  margin: 0 0 16px;
+  color: #17262b;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.fasilitas-title-underline {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.fasilitas-title-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--blue, #005b8c);
+}
+
+.fasilitas-hero-subtitle {
+  margin: 0;
+  max-width: 520px;
+  color: #718087;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.fasilitas-placeholder-box {
+  width: 100%;
+  height: 180px;
+  background: #edf2f6;
+  border: 1px solid #e2e8ed;
+  border-radius: 12px;
+}
+
+.fasilitas-section {
+  padding-top: 36px;
+  padding-bottom: 24px;
+}
+
+.fasilitas-section-header {
+  margin-bottom: 24px;
+}
+
+.fasilitas-eyebrow {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--blue, #005b8c);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fasilitas-section-title {
+  margin: 0 0 6px;
+  color: #17262b;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.fasilitas-section-desc {
+  margin: 0;
+  max-width: 650px;
+  color: #718087;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.fasilitas-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.fasilitas-card {
+  border: 1px solid #dce4e8;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(16, 46, 67, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.fasilitas-card:hover {
+  border-color: #bcd0dc;
+  box-shadow: 0 4px 12px rgba(16, 46, 67, 0.06);
+  transform: translateY(-2px);
+}
+
+.fasilitas-card-image {
+  width: 100%;
+  height: 155px;
+  background: #edf2f6;
+  border: 1px solid #e2e8ed;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fasilitas-image-placeholder-text {
+  color: #8c9ba5;
+  font-size: 11px;
+  text-align: center;
+}
+
+.fasilitas-card-info {
+  padding: 2px 4px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fasilitas-card-title {
+  margin: 0;
+  color: #17262b;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.fasilitas-card-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+@media (max-width: 860px) {
+  .fasilitas-hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 24px;
+  }
+
+  .fasilitas-hero-title {
+    font-size: 30px;
+  }
+
+  .fasilitas-placeholder-box {
+    height: 140px;
+  }
+
+  .fasilitas-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
