@@ -130,9 +130,21 @@ const updateNewsSchema = strictBody({
   "Minimal satu field harus dikirim untuk memperbarui berita"
 );
 
+// ---------- Publik ----------
+// Slug pada URL publik. Aturannya sama dengan slug admin.
+const newsSlugParamsSchema = z.object({
+  slug: slugField,
+});
+
+// Query daftar publik: memakai ulang page/limit/search milik daftar admin, tanpa filter status
+// karena publik HANYA melihat published. Jika ?status= dikirim, diabaikan (key tak dikenal dibuang).
+const publicListNewsQuerySchema = listNewsQuerySchema.omit({ status: true });
+
 module.exports = {
   newsIdParamsSchema,
   listNewsQuerySchema,
   createNewsSchema,
   updateNewsSchema,
+  newsSlugParamsSchema,
+  publicListNewsQuerySchema,
 };

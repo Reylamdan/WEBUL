@@ -77,6 +77,39 @@ if (!/^[1-9]\d*[mhd]$/.test(jwtExpiresIn)) {
   errors.push("JWT_EXPIRES_IN tidak valid (contoh: 30m, 8h, atau 7d).");
 }
 
+// ---------- GEMINI (opsional: hanya dibutuhkan untuk terjemahan konten dinamis) ----------
+// Server tetap bisa berjalan tanpa dua variabel ini; endpoint terjemahan akan menjawab 503.
+// Tidak ada model bawaan/fallback: model dipilih eksplisit lewat GEMINI_MODEL supaya tidak
+// ada pergantian diam-diam ke model berbayar. Hanya model keluarga "Flash" yang diterima
+// (pastikan model yang Anda pilih memang bertanda "Free of charge" di
+// https://ai.google.dev/gemini-api/docs/pricing dan billing proyek AI Studio tetap nonaktif).
+const geminiApiKey = read("GEMINI_API_KEY");
+const geminiModel = read("GEMINI_MODEL");
+if (geminiModel && !/^gemini-[a-z0-9.\-]*flash[a-z0-9.\-]*$/i.test(geminiModel)) {
+  errors.push(
+    "GEMINI_MODEL tidak valid: hanya model Flash yang diizinkan (contoh: gemini-3.6-flash)."
+  );
+}
+
+// ---------- GROQ (opsional: hanya dibutuhkan untuk terjemahan konten dinamis) ----------
+// Server tetap bisa berjalan tanpa dua variabel ini; endpoint terjemahan akan menjawab 503.
+// Tidak ada model bawaan/fallback: model dipilih eksplisit lewat GROQ_MODEL (lihat daftar model
+// aktif di https://console.groq.com/docs/models) supaya tidak ada pergantian diam-diam.
+const groqApiKey = read("GROQ_API_KEY");
+const groqModel = read("GROQ_MODEL");
+if (groqModel && !/^[a-z0-9][a-z0-9._\-/]{1,63}$/i.test(groqModel)) {
+  errors.push("GROQ_MODEL tidak valid (contoh format: openai/gpt-oss-120b).");
+}
+
+// ---------- Provider terjemahan aktif ----------
+// Dipilih eksplisit; TIDAK ada perpindahan otomatis ke provider lain. Default: groq.
+// "gemini" hanya dipertahankan sementara selama masa migrasi (untuk rollback tanpa ubah kode).
+const TRANSLATION_PROVIDERS = ["groq", "gemini"];
+const translationProvider = (read("TRANSLATION_PROVIDER") || "groq").toLowerCase();
+if (!TRANSLATION_PROVIDERS.includes(translationProvider)) {
+  errors.push(`TRANSLATION_PROVIDER tidak valid (pilihan: ${TRANSLATION_PROVIDERS.join(", ")}).`);
+}
+
 // ---------- Hentikan server jika ada yang salah ----------
 // Pesan hanya menyebut NAMA variabel, tidak pernah menampilkan nilainya.
 if (errors.length > 0) {
@@ -97,4 +130,9 @@ module.exports = Object.freeze({
   supabaseServiceRoleKey,
   jwtSecret,
   jwtExpiresIn,
-});
+  geminiApiKey,
+  geminiModel,
+  groqApiKey,
+  groqModel,
+  translationProvider,
+});
