@@ -5030,6 +5030,59 @@ button {
 
 }
 
+@media (max-width: 560px) {
+  .lppm-focus-grid,
+  .lpm-entry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lppm-hero h1 {
+    font-size: 31px;
+  }
+
+  .lppm-hero-art {
+    min-height: 170px;
+  }
+
+  .lppm-art-card-research {
+    left: 7%;
+  }
+
+  .lppm-art-card-service {
+    right: 6%;
+  }
+
+  .lppm-statement-inner {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-block: 30px;
+  }
+
+  .lppm-statement-inner > p {
+    font-size: 18px;
+  }
+
+  .lppm-statement-inner > div {
+    padding-left: 14px;
+  }
+
+  .lppm-publication {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 30px;
+    padding: 20px;
+  }
+
+  .lpm-content-hero h1 {
+    font-size: 24px;
+  }
+
+  .lpm-entry-grid .lpm-entry-card {
+    min-height: auto;
+  }
+
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
