@@ -715,6 +715,14 @@ button {
   transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 
+.button.nav-apply {
+  border-radius: 3px;
+}
+
+.site-header.is-floating .button.nav-apply {
+  border-radius: 999px;
+}
+
 .button:hover {
   transform: translateY(-2px);
 }
@@ -2444,8 +2452,8 @@ button {
   .main-nav {
     position: absolute;
     top: 100%;
-    right: -20px;
-    left: -20px;
+    right: 0;
+    left: 0;
     display: flex;
     height: auto;
     min-height: 0;
@@ -2552,7 +2560,9 @@ button {
   }
 
   .nav-apply {
-    align-self: flex-start;
+    align-self: stretch;
+    width: 100%;
+    min-height: 42px;
     margin-top: 14px;
     margin-left: 0;
   }
