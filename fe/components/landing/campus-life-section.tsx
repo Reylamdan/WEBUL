@@ -18,7 +18,7 @@ export function CampusLifeSection() {
           Temukan teman, kembangkan minat, dan ciptakan pengalaman berharga
           bersama komunitas Universitas LIA.
         </p>
-        <a className="text-link" href="#footer">
+        <a className="text-link" href="/kehidupan-kampus/kegiatan-mahasiswa">
           Jelajahi kehidupan kampus <Icon name="arrow" size={16} />
         </a>
       </div>
