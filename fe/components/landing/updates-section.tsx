@@ -7,7 +7,7 @@ export function UpdatesSection() {
     <ScrollReveal delay={140}>
     <section className="updates-section content-wrap">
       <div className="update-column">
-        <SectionHeading link="Lihat semua" title="Pengumuman" />
+        <SectionHeading href="/kehidupan-kampus/pengumuman" link="Lihat semua" title="Pengumuman" />
         <a className="update-item" href="#kabar">
           <span className="update-date">
             <strong>18</strong>

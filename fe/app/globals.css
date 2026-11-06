@@ -9393,3 +9393,485 @@ section:not(.admission-banner):not(.hero):not(.pmb-cta) h2 {
 .hero-content p {
   color: #ffffff !important;
 }
+
+
+/* ==========================================================================
+   Pengumuman Page Styles (Kehidupan Kampus)
+   ========================================================================== */
+
+.pengumuman-page {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.pengumuman-wrap {
+  width: min(1120px, calc(100% - 64px));
+  margin-inline: auto;
+}
+
+/* Hero Section */
+.pengumuman-hero-section {
+  background: #f4f8fc;
+  padding-top: 36px;
+  padding-bottom: 38px;
+  border-bottom: 1px solid #e7eff7;
+}
+
+.pengumuman-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #718087;
+  margin-bottom: 20px;
+}
+
+.pengumuman-breadcrumb a {
+  color: #718087;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.pengumuman-breadcrumb a:hover {
+  color: var(--blue, #005b8c);
+}
+
+.pengumuman-breadcrumb span[aria-current="page"] {
+  color: #172a35;
+  font-weight: 600;
+}
+
+.pengumuman-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #556b78;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pengumuman-hero-title {
+  margin: 0 0 12px;
+  color: #17262b;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.pengumuman-hero-subtitle {
+  margin: 0 0 28px;
+  max-width: 720px;
+  color: #64748b;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* Official Information Highlight Box */
+.pengumuman-notice-box {
+  background: #ebf3fc;
+  border-radius: 10px;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pengumuman-notice-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #556b78;
+}
+
+.pengumuman-notice-text {
+  margin: 0;
+  color: #17262b;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* Main Section */
+.pengumuman-main-section {
+  background: #ffffff;
+  padding: 44px 0 68px;
+  flex: 1;
+}
+
+.pengumuman-content-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.pengumuman-section-header {
+  margin-bottom: 22px;
+}
+
+.pengumuman-section-title {
+  margin: 0 0 6px;
+  color: #17262b;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.pengumuman-section-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* Filter bar & Search */
+.pengumuman-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+
+.pengumuman-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.pengumuman-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 22px;
+  border-radius: 9999px;
+  border: 1px solid #dce4e8;
+  background: #ffffff;
+  color: #17262b;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pengumuman-pill:hover {
+  border-color: var(--blue, #005b8c);
+  color: var(--blue, #005b8c);
+  background: #f0f7fb;
+}
+
+.pengumuman-pill.is-active {
+  background: var(--blue, #005b8c);
+  color: #ffffff;
+  border-color: var(--blue, #005b8c);
+  box-shadow: 0 2px 8px rgba(0, 91, 140, 0.2);
+}
+
+.pengumuman-search-wrap {
+  min-width: 260px;
+  max-width: 320px;
+  width: 100%;
+}
+
+.pengumuman-search-input {
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid #dce4e8;
+  border-radius: 8px;
+  font-size: 12.5px;
+  background: #ffffff;
+  color: #17262b;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pengumuman-search-input:focus {
+  border-color: var(--blue, #005b8c);
+  box-shadow: 0 0 0 3px rgba(0, 91, 140, 0.1);
+}
+
+.pengumuman-search-input::placeholder {
+  color: #8c9ba5;
+}
+
+/* Announcement List Cards */
+.pengumuman-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.pengumuman-card {
+  border: 1px solid #dce4e8;
+  border-left: 4px solid var(--blue, #005b8c);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(16, 46, 67, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.pengumuman-card:hover {
+  border-color: #bcd0dc;
+  border-left-color: #00466e;
+  box-shadow: 0 4px 14px rgba(16, 46, 67, 0.06);
+  transform: translateY(-1px);
+}
+
+.pengumuman-card-main {
+  flex: 1;
+}
+
+.pengumuman-card-category {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #556b78;
+  margin-bottom: 4px;
+}
+
+.pengumuman-card-title {
+  margin: 0 0 5px;
+  color: #17262b;
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pengumuman-card-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.pengumuman-card-meta {
+  color: #8c9ba5;
+  font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.pengumuman-empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #718087;
+  font-size: 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #dce4e8;
+  margin-bottom: 36px;
+}
+
+/* Bottom Confirmation Banner */
+.pengumuman-footer-notice {
+  background: #ebf3fc;
+  border: 1px solid #d4e5f7;
+  border-radius: 10px;
+  padding: 22px 28px;
+}
+
+.pengumuman-footer-notice-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #17262b;
+}
+
+.pengumuman-footer-notice-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #5e717d;
+  line-height: 1.5;
+}
+
+/* Modal Detail Pengumuman */
+.pengumuman-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(16, 42, 53, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: pengumumanFadeIn 0.2s ease;
+}
+
+@keyframes pengumumanFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pengumuman-modal-box {
+  background: #ffffff;
+  border-radius: 12px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: pengumumanSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pengumumanSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pengumuman-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #edf1f3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.pengumuman-modal-title {
+  margin: 4px 0 4px;
+  color: #17262b;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pengumuman-modal-date {
+  color: #8c9ba5;
+  font-size: 11.5px;
+}
+
+.pengumuman-modal-close {
+  border: none;
+  background: transparent;
+  color: #718087;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  transition: color 0.15s, background 0.15s;
+}
+
+.pengumuman-modal-close:hover {
+  color: #17262b;
+  background: #f0f4f7;
+}
+
+.pengumuman-modal-body {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pengumuman-modal-desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: #17262b;
+  line-height: 1.6;
+}
+
+.pengumuman-modal-detail-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8ed;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.pengumuman-modal-detail-box p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.pengumuman-modal-contact-info {
+  font-size: 12px;
+  color: #718087;
+  line-height: 1.5;
+}
+
+.pengumuman-modal-contact-info strong {
+  color: #17262b;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.pengumuman-modal-contact-info a {
+  color: var(--blue, #005b8c);
+  text-decoration: underline;
+}
+
+.pengumuman-modal-footer {
+  padding: 14px 24px 18px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #edf1f3;
+  background: #fafbfc;
+}
+
+.pengumuman-modal-btn-close {
+  background: #0c2b54;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pengumuman-modal-btn-close:hover {
+  background: #00466e;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .pengumuman-hero-title {
+    font-size: 30px;
+  }
+
+  .pengumuman-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .pengumuman-search-wrap {
+    max-width: 100%;
+  }
+
+  .pengumuman-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .pengumuman-card-meta {
+    align-self: flex-start;
+  }
+}

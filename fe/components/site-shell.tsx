@@ -92,7 +92,7 @@ export const globalNavigation: NavItem[] = [
     items: [
       { id: "ukm", label: "Kegiatan Mahasiswa (UKM)", href: "/kehidupan-kampus/kegiatan-mahasiswa" },
       { id: "berita", label: "Berita Terkini", href: "/kehidupan-kampus/berita-terkini" },
-      { id: "pengumuman", label: "Pengumuman", href: "/#kabar" },
+      { id: "pengumuman", label: "Pengumuman", href: "/kehidupan-kampus/pengumuman" },
       { id: "agenda", label: "Agenda Acara", href: "/#kabar" },
     ],
   },
