@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 type LpmEntry = {
   title: string;
@@ -224,78 +225,84 @@ export function LpmContent({ slug }: { slug: string }) {
 
   return (
     <main className="lpm-content-page">
-      <section className="lpm-content-hero">
-        <div className="lpm-content-wrap">
-          <nav aria-label="Breadcrumb" className="profile-breadcrumb">
-            <Link href="/">Beranda</Link>
-            <span aria-hidden="true">/</span>
-            <span>LPM</span>
-            {section.slug !== "lembaga-penjaminan-mutu" ? (
-              <>
-                <span aria-hidden="true">/</span>
-                <span aria-current="page">{section.label}</span>
-              </>
-            ) : null}
-          </nav>
-          <span className="lpm-content-eyebrow">LEMBAGA PENJAMINAN MUTU</span>
-          <h1>{section.title}</h1>
-          <p>{section.description}</p>
-        </div>
-      </section>
+      <ScrollReveal>
+        <section className="lpm-content-hero">
+          <div className="lpm-content-wrap">
+            <nav aria-label="Breadcrumb" className="profile-breadcrumb">
+              <Link href="/">Beranda</Link>
+              <span aria-hidden="true">/</span>
+              <span>LPM</span>
+              {section.slug !== "lembaga-penjaminan-mutu" ? (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <span aria-current="page">{section.label}</span>
+                </>
+              ) : null}
+            </nav>
+            <span className="lpm-content-eyebrow">LEMBAGA PENJAMINAN MUTU</span>
+            <h1>{section.title}</h1>
+            <p>{section.description}</p>
+          </div>
+        </section>
+      </ScrollReveal>
 
-      <nav
-        aria-label="Navigasi halaman LPM"
-        className="lpm-section-nav lpm-content-wrap"
-      >
-        {lpmSections.map((item) => (
-          <Link
-            aria-current={item.slug === section.slug ? "page" : undefined}
-            className={item.slug === section.slug ? "is-current" : ""}
-            href={item.slug === "lembaga-penjaminan-mutu" ? "/lpm" : `/lpm/${item.slug}`}
-            key={item.slug}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-
-      <section
-        aria-labelledby="lpm-content-title"
-        className="lpm-content-section lpm-content-wrap"
-      >
-        <span className="lpm-content-eyebrow">
-          {section.isDirectory ? "ARSIP DAN INFORMASI" : "PENJAMINAN MUTU"}
-        </span>
-        <h2 id="lpm-content-title">{section.contentTitle}</h2>
-        <div
-          className={`lpm-entry-list${section.isDirectory ? " lpm-entry-grid" : ""}`}
+      <ScrollReveal delay={50}>
+        <nav
+          aria-label="Navigasi halaman LPM"
+          className="lpm-section-nav lpm-content-wrap"
         >
-          {section.entries.map((entry) => {
-            const content = (
-              <>
-                {entry.meta ? <span className="lpm-entry-meta">{entry.meta}</span> : null}
-                <h3>{entry.title}</h3>
-                <p>{entry.description}</p>
-                {entry.href ? (
-                  <span aria-hidden="true" className="lpm-entry-arrow">
-                    →
-                  </span>
-                ) : null}
-              </>
-            );
+          {lpmSections.map((item) => (
+            <Link
+              aria-current={item.slug === section.slug ? "page" : undefined}
+              className={item.slug === section.slug ? "is-current" : ""}
+              href={item.slug === "lembaga-penjaminan-mutu" ? "/lpm" : `/lpm/${item.slug}`}
+              key={item.slug}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </ScrollReveal>
 
-            return entry.href ? (
-              <Link className="lpm-entry-card" href={entry.href} key={entry.title}>
-                {content}
-              </Link>
-            ) : (
-              <article className="lpm-entry-card" key={entry.title}>
-                {content}
-              </article>
-            );
-          })}
-        </div>
-      </section>
+      <ScrollReveal delay={100}>
+        <section
+          aria-labelledby="lpm-content-title"
+          className="lpm-content-section lpm-content-wrap"
+        >
+          <span className="lpm-content-eyebrow">
+            {section.isDirectory ? "ARSIP DAN INFORMASI" : "PENJAMINAN MUTU"}
+          </span>
+          <h2 id="lpm-content-title">{section.contentTitle}</h2>
+          <div
+            className={`lpm-entry-list${section.isDirectory ? " lpm-entry-grid" : ""}`}
+          >
+            {section.entries.map((entry) => {
+              const content = (
+                <>
+                  {entry.meta ? <span className="lpm-entry-meta">{entry.meta}</span> : null}
+                  <h3>{entry.title}</h3>
+                  <p>{entry.description}</p>
+                  {entry.href ? (
+                    <span aria-hidden="true" className="lpm-entry-arrow">
+                      →
+                    </span>
+                  ) : null}
+                </>
+              );
+
+              return entry.href ? (
+                <Link className="lpm-entry-card" href={entry.href} key={entry.title}>
+                  {content}
+                </Link>
+              ) : (
+                <article className="lpm-entry-card" key={entry.title}>
+                  {content}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      </ScrollReveal>
     </main>
   );
 }

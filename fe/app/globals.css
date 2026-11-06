@@ -2115,8 +2115,10 @@ button {
 .faculty-intro h1 {
   margin: 8px 0 8px;
   color: #203844;
-  font-size: 32px;
-  line-height: 1.15;
+  font-size: clamp(34px, 4vw, 42px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.035em;
 }
 
 .faculty-intro p,
@@ -3074,9 +3076,10 @@ button {
 .visi-hero-title {
   margin: 0 0 16px;
   color: #17262b;
-  font-size: 40px;
-  font-weight: 800;
-  line-height: 1.15;
+  font-size: clamp(34px, 4vw, 42px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.035em;
 }
 
 .visi-title-underline {
@@ -7909,4 +7912,664 @@ button {
   .ukm-cta-button {
     width: 100%;
   }
+}
+
+/* Akreditasi Page Styles */
+.akreditasi-page {
+  min-height: calc(100vh - 114px);
+  background: #ffffff;
+}
+
+.akreditasi-content {
+  padding-bottom: 80px;
+}
+
+.section-hero-alt {
+  position: relative;
+  padding: 64px 0 48px;
+  background: linear-gradient(135deg, #f8faf9 0%, #eef5f3 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.section-hero-alt h1 {
+  margin: 12px 0 16px;
+  color: #1b303a;
+  font-size: clamp(34px, 4vw, 42px);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.2;
+}
+
+.section-hero-alt .section-lead {
+  max-width: 720px;
+  margin: 0;
+  color: #69787d;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+/* Akreditasi Section */
+.akreditasi-section {
+  padding: 48px 0;
+}
+
+.akreditasi-filters {
+  margin-bottom: 24px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #4a5c63;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: white;
+  color: #172a35;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color .2s ease;
+}
+
+.filter-select:hover,
+.filter-select:focus {
+  border-color: var(--blue);
+  outline: none;
+}
+
+.filter-search {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: white;
+  color: #172a35;
+  font-size: 13px;
+  min-width: 200px;
+  transition: border-color .2s ease;
+}
+
+.filter-search:focus {
+  border-color: var(--blue);
+  outline: none;
+}
+
+.filter-search::placeholder {
+  color: #9ca8ad;
+}
+
+/* Table Styles */
+.table-responsive {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+
+.akreditasi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.akreditasi-table thead {
+  background: #f8fafb;
+  border-bottom: 2px solid var(--line);
+}
+
+.akreditasi-table th {
+  padding: 14px 12px;
+  text-align: left;
+  color: #2c4149;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.akreditasi-table tbody tr {
+  border-bottom: 1px solid #f0f3f5;
+  transition: background-color .15s ease;
+}
+
+.akreditasi-table tbody tr:hover {
+  background-color: #f9fbfc;
+}
+
+.akreditasi-table td {
+  padding: 14px 12px;
+  color: #4a5c63;
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-terakreditasi {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Table Footer */
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.table-info {
+  margin: 0;
+  color: #6a7c83;
+  font-size: 13px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: white;
+  color: #4a5c63;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all .2s ease;
+}
+
+.pagination-btn:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.pagination-btn.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+}
+
+/* Responsive Table */
+@media (max-width: 1024px) {
+  .akreditasi-table {
+    font-size: 12px;
+  }
+
+  .akreditasi-table th,
+  .akreditasi-table td {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    flex-wrap: wrap;
+  }
+
+  .filter-search {
+    min-width: 100%;
+  }
+
+  .table-responsive {
+    border-radius: 4px;
+  }
+
+  .akreditasi-table {
+    font-size: 11px;
+  }
+
+  .akreditasi-table th,
+  .akreditasi-table td {
+    padding: 8px 6px;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Manajemen Arsip Page Styles */
+.manajemen-arsip-page {
+  min-height: calc(100vh - 114px);
+  background: #ffffff;
+}
+
+.manajemen-arsip-content {
+  padding-bottom: 80px;
+}
+
+.manajemen-arsip-section {
+  padding: 48px 0;
+}
+
+.arsip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.arsip-header h2 {
+  margin: 0;
+  color: #4a5c63;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.arsip-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-tambah {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 4px;
+  background: #28a745;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.btn-tambah:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.btn-hapus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 4px;
+  background: #dc3545;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.btn-hapus:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.arsip-filters {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8fafb;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.arsip-filters .filter-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-select-small {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: white;
+  color: #172a35;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.filter-search-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.filter-search-small {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: white;
+  color: #172a35;
+  font-size: 13px;
+  min-width: 200px;
+}
+
+.filter-search-small:focus {
+  border-color: var(--blue);
+  outline: none;
+}
+
+/* Arsip Table Styles */
+.arsip-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: white;
+}
+
+.arsip-table thead {
+  background: #f1f3f5;
+  border-bottom: 2px solid var(--line);
+}
+
+.arsip-table th {
+  padding: 12px 10px;
+  text-align: left;
+  color: #2c4149;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+}
+
+.arsip-table tbody tr {
+  border-bottom: 1px solid #f0f3f5;
+  transition: background-color .15s ease;
+}
+
+.arsip-table tbody tr:hover {
+  background-color: #f9fbfc;
+}
+
+.arsip-table td {
+  padding: 14px 10px;
+  color: #4a5c63;
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.file-icon {
+  font-size: 16px;
+}
+
+.file-name {
+  color: #495057;
+  font-size: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-edit,
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+
+.btn-edit {
+  background: #28a745;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #218838;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #c82333;
+}
+
+/* Responsive Arsip Table */
+@media (max-width: 1024px) {
+  .arsip-table {
+    font-size: 12px;
+  }
+
+  .file-item {
+    font-size: 11px;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 768px) {
+  .arsip-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .arsip-actions {
+    flex-direction: column;
+  }
+
+  .btn-tambah,
+  .btn-hapus {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .arsip-filters .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-search-group {
+    margin-left: 0;
+  }
+
+  .filter-search-small {
+    width: 100%;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .arsip-table {
+    min-width: 800px;
+  }
+}
+
+/* Standardized H1 across all pages */
+.faculty-page h1,
+.akreditasi-page h1,
+.manajemen-arsip-page h1,
+main h1 {
+  font-size: clamp(34px, 4vw, 42px);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.2;
+  color: #1b303a;
+}
+
+/* Standardized H2 across sections */
+section h2 {
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.25;
+}
+
+/* Default color untuk h2 di section dengan background terang */
+section:not(.admission-banner):not(.hero):not(.pmb-cta) h2 {
+  color: #20343c;
+}
+
+/* Override hero h1 for consistency */
+.hero h1 {
+  margin: 0;
+  color: #ffffff !important;
+  font-size: clamp(38px, 5vw, 52px) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.045em !important;
+  line-height: 1.1 !important;
+}
+
+/* ========================================
+   GLOBAL H1 STANDARDIZATION
+   Untuk menyeragamkan ukuran font di semua halaman
+   ======================================== */
+
+/* Override untuk semua profile, visi-misi, dan hero titles */
+.profile-hero-title,
+.visi-hero-title {
+  font-size: clamp(34px, 4vw, 42px) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.035em !important;
+}
+
+/* Override responsive profile dan visi hero titles */
+@media (max-width: 768px) {
+  .profile-hero-title,
+  .visi-hero-title {
+    font-size: clamp(28px, 8vw, 34px) !important;
+  }
+  
+  .faculty-intro h1 {
+    font-size: clamp(28px, 8vw, 34px) !important;
+  }
+}
+
+/* Standardisasi untuk semua h2 di sections */
+.faculty-section h2,
+.intro-section h2,
+.campus-life-section h2 {
+  font-size: clamp(26px, 3vw, 34px) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.03em !important;
+}
+
+/* Override untuk heading h2 di berbagai section */
+.arsip-header h2,
+.lpm-content-section > h2,
+.pmb-section-heading h2,
+.lppm-intro h2,
+.lppm-section-heading h2,
+.profile-about h2,
+.profile-section-heading h2 {
+  font-size: clamp(24px, 3vw, 32px) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.03em !important;
+  line-height: 1.25 !important;
+}
+
+/* Override untuk section heading yang lebih kecil */
+.update-column .section-heading h2,
+.partners-section .section-heading h2,
+.history-callout h2 {
+  font-size: clamp(20px, 2.5vw, 24px) !important;
+  font-weight: 600 !important;
+}
+
+/* Exception untuk section dengan background gelap - harus tetap putih */
+.admission-banner h2,
+.admission-inner h2 {
+  color: #ffffff !important;
+  font-size: clamp(22px, 3vw, 30px) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.025em !important;
+}
+
+/* PMB CTA dengan background biru juga harus putih */
+.pmb-cta h2 {
+  color: #ffffff !important;
+}
+
+/* Exception untuk Hero section - harus tetap putih */
+.hero h1,
+.hero-content h1 {
+  color: #ffffff !important;
+  font-size: clamp(38px, 5vw, 52px) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.045em !important;
+  line-height: 1.1 !important;
+}
+
+.hero-content,
+.hero-content p {
+  color: #ffffff !important;
 }

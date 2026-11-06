@@ -1,4 +1,2 @@
-export * from "./akreditasi-hero";
-export * from "./akreditasi-institusi";
-export * from "./akreditasi-program-studi";
-
+export { AkreditasiHero } from "./akreditasi-hero";
+export { AkreditasiTable } from "./akreditasi-table";

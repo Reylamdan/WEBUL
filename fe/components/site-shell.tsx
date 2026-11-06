@@ -71,6 +71,7 @@ export const globalNavigation: NavItem[] = [
           },
         ],
       },
+      { id: "akreditasi", label: "Akreditasi Program Studi", href: "/akademik/akreditasi" },
       { id: "kalender", label: "Kalender Akademik", href: "/akademik/kalender-akademik" },
       { id: "kurikulum", label: "Kurikulum", href: "/akademik/kurikulum" },
     ],
@@ -98,10 +99,11 @@ export const globalNavigation: NavItem[] = [
   {
     id: "alumni",
     label: "Alumni",
+    href: "/alumni",
     items: [
-      { id: "ikatan", label: "Ikatan Alumni", href: "/#footer" },
-      { id: "tracer", label: "Tracer Study (Kuesioner Alumni)", href: "/#footer" },
-      { id: "karier", label: "Info Lowongan Kerja (Career Center)", href: "/#kabar" },
+      { id: "ikatan", label: "Ikatan Alumni", href: "/alumni/ikatan-alumni" },
+      { id: "tracer", label: "Tracer Study (Kuesioner Alumni)", href: "/alumni/tracer-study" },
+      { id: "karier", label: "Info Lowongan Kerja (Career Center)", href: "/alumni/career-center" },
     ],
   },
   {
@@ -133,6 +135,7 @@ export const globalNavigation: NavItem[] = [
       },
       { id: "lpm-kegiatan", label: "Kegiatan LPM", href: "/lpm/kegiatan" },
       { id: "lpm-benchmarking", label: "Benchmarking", href: "/lpm/benchmarking" },
+      { id: "lpm-manajemen-arsip", label: "Manajemen Arsip", href: "/lpm/manajemen-arsip" },
     ],
   },
   {
@@ -329,6 +332,9 @@ export function SiteHeader() {
     }
     if (item.id === "laporan") {
       return pathname.startsWith("/laporan-tahunan-rektor");
+    }
+    if (item.id === "alumni") {
+      return pathname.startsWith("/alumni");
     }
     if (item.href && item.href.startsWith("/") && item.href !== "/" && pathname.startsWith(item.href)) {
       return true;

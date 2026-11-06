@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import "./kalender-akademik.css";
 
 const academicCalendars = [
@@ -25,40 +26,45 @@ function CalendarCard({
   src,
   width,
   height,
-}: (typeof academicCalendars)[number]) {
+  index,
+}: (typeof academicCalendars)[number] & { index: number }) {
   return (
-    <article aria-labelledby={`calendar-${id}`} className="academic-calendar-card">
-      <h2 id={`calendar-${id}`}>Kalender Akademik {title}</h2>
-      <div className="academic-calendar-image">
-        <Image
-          alt={`Kalender Akademik ${title}`}
-          height={height}
-          sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 1120px) calc(100vw - 64px), 1056px"
-          src={src}
-          width={width}
-        />
-      </div>
-    </article>
+    <ScrollReveal delay={index * 100}>
+      <article aria-labelledby={`calendar-${id}`} className="academic-calendar-card">
+        <h2 id={`calendar-${id}`}>Kalender Akademik {title}</h2>
+        <div className="academic-calendar-image">
+          <Image
+            alt={`Kalender Akademik ${title}`}
+            height={height}
+            sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 1120px) calc(100vw - 64px), 1056px"
+            src={src}
+            width={width}
+          />
+        </div>
+      </article>
+    </ScrollReveal>
   );
 }
 
 export function KalenderAkademikPage() {
   return (
     <main className="academic-calendar-page">
-      <header className="academic-calendar-heading">
-        <nav aria-label="Breadcrumb" className="academic-calendar-breadcrumb">
-          <Link href="/">Beranda</Link>
-          <span aria-hidden="true">›</span>
-          <span>Akademik</span>
-          <span aria-hidden="true">›</span>
-          <span aria-current="page">Kalender Akademik</span>
-        </nav>
-        <span className="academic-calendar-eyebrow">AKADEMIK UNIVERSITAS LIA</span>
-        <h1>Kalender Akademik</h1>
-      </header>
+      <ScrollReveal>
+        <header className="academic-calendar-heading">
+          <nav aria-label="Breadcrumb" className="academic-calendar-breadcrumb">
+            <Link href="/">Beranda</Link>
+            <span aria-hidden="true">›</span>
+            <span>Akademik</span>
+            <span aria-hidden="true">›</span>
+            <span aria-current="page">Kalender Akademik</span>
+          </nav>
+          <span className="academic-calendar-eyebrow">AKADEMIK UNIVERSITAS LIA</span>
+          <h1>Kalender Akademik</h1>
+        </header>
+      </ScrollReveal>
       <div className="academic-calendar-list">
-        {academicCalendars.map((calendar) => (
-          <CalendarCard key={calendar.src} {...calendar} />
+        {academicCalendars.map((calendar, index) => (
+          <CalendarCard index={index} key={calendar.src} {...calendar} />
         ))}
       </div>
     </main>
