@@ -1,6 +1,6 @@
 import {
+  ArchiveDirectory,
   ManajemenArsipHero,
-  ManajemenArsipTable,
 } from "@/components/lpm";
 
 export default function ManajemenArsipPage() {
@@ -9,7 +9,7 @@ export default function ManajemenArsipPage() {
       <div aria-hidden="true" className="faculty-top-space" />
       <div className="manajemen-arsip-content">
         <ManajemenArsipHero />
-        <ManajemenArsipTable />
+        <ArchiveDirectory />
       </div>
     </main>
   );

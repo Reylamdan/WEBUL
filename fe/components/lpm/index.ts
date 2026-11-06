@@ -1,2 +1,2 @@
-export { ManajemenArsipHero } from "./manajemen-arsip-hero";
-export { ManajemenArsipTable } from "./manajemen-arsip-table";
+export { ManajemenArsipHero } from "./manajemen-arsip/archive-hero";
+export { ArchiveDirectory } from "./manajemen-arsip/archive-directory";

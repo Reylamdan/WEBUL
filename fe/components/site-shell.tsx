@@ -111,31 +111,54 @@ export const globalNavigation: NavItem[] = [
     label: "LPM",
     href: "/lpm",
     items: [
-      { id: "lpm-profil", label: "Lembaga Penjaminan Mutu", href: "/lpm" },
-      { id: "lpm-laporan", label: "Laporan LPM", href: "/lpm/laporan" },
       {
-        id: "lpm-laporan-ami",
-        label: "Laporan Tahunan Audit Mutu Internal LIA",
-        href: "/lpm/laporan-tahunan-audit-mutu-internal",
+        id: "lpm-laporan",
+        label: "Laporan LPM",
+        href: "/lpm/laporan-lpm",
+        children: [
+          {
+            id: "lpm-laporan-ami",
+            label: "Laporan Tahunan Audit Mutu Internal Universitas LIA",
+            href: "/lpm/laporan-lpm/laporan-tahunan-audit-mutu-internal",
+            children: [
+              {
+                id: "lpm-ami-2025",
+                label: "Laporan Tahunan Audit Mutu Internal 2025",
+                href: "/lpm/laporan-lpm/laporan-tahunan-audit-mutu-internal/laporan-audit-mutu-internal-2025",
+              },
+            ],
+          },
+          {
+            id: "lpm-laporan-rtm",
+            label: "Laporan Tahunan RTM & RTL",
+            href: "/lpm/laporan-lpm/laporan-tahunan-rtm-rtl",
+            children: [
+              {
+                id: "lpm-rtm-2025",
+                label: "Laporan RTM dan RTL 2025",
+                href: "/lpm/laporan-lpm/laporan-tahunan-rtm-rtl/laporan-rtm-dan-rtl-2025",
+              },
+            ],
+          },
+          {
+            id: "lpm-manajemen-arsip",
+            label: "Management Arsip",
+            href: "/lpm/manajemen-arsip",
+          },
+        ],
       },
       {
-        id: "lpm-ami-2025",
-        label: "Laporan Audit Mutu Internal 2025",
-        href: "/lpm/laporan-audit-mutu-internal-2025",
+        id: "lpm-kegiatan",
+        label: "Kegiatan LPM",
+        href: "/lpm/kegiatan-lpm",
+        children: [
+          {
+            id: "lpm-benchmarking",
+            label: "Benchmarking",
+            href: "/lpm/kegiatan-lpm/benchmarking",
+          },
+        ],
       },
-      {
-        id: "lpm-laporan-rtm",
-        label: "Laporan Tahunan RTM dan RTL",
-        href: "/lpm/laporan-tahunan-rtm-rtl",
-      },
-      {
-        id: "lpm-rtm-2025",
-        label: "Laporan RTM dan RTL 2025",
-        href: "/lpm/laporan-rtm-rtl-2025",
-      },
-      { id: "lpm-kegiatan", label: "Kegiatan LPM", href: "/lpm/kegiatan" },
-      { id: "lpm-benchmarking", label: "Benchmarking", href: "/lpm/benchmarking" },
-      { id: "lpm-manajemen-arsip", label: "Manajemen Arsip", href: "/lpm/manajemen-arsip" },
     ],
   },
   {
@@ -150,11 +173,13 @@ export function GlobalDropdownMenu({
   className = "menu-tree",
   onNavigate,
   pathname,
+  expandActiveNodes = true,
 }: {
   items: MenuNode[];
   className?: string;
   onNavigate: () => void;
   pathname: string;
+  expandActiveNodes?: boolean;
 }) {
   function resolveHref(href?: string) {
     if (!href) return "#";
@@ -182,7 +207,9 @@ export function GlobalDropdownMenu({
     return activeIds;
   }
 
-  const [openNodes, setOpenNodes] = useState<Set<string>>(() => getActiveNodeIds(items));
+  const [openNodes, setOpenNodes] = useState<Set<string>>(() =>
+    expandActiveNodes ? getActiveNodeIds(items) : new Set(),
+  );
   const activeNodeIds = getActiveNodeIds(items);
 
   function toggleNode(id: string) {
@@ -198,7 +225,7 @@ export function GlobalDropdownMenu({
     <ul className={className}>
       {items.map((item) => (
         <li
-          className={`menu-branch${item.children ? " has-children" : ""}${openNodes.has(item.id) || activeNodeIds.has(item.id) ? " is-open" : ""}`}
+          className={`menu-branch${item.children ? " has-children" : ""}${!expandActiveNodes ? " lpm-menu-branch" : ""}${openNodes.has(item.id) || (expandActiveNodes && activeNodeIds.has(item.id)) ? " is-open" : ""}`}
           key={item.id}
         >
           {item.children ? (
@@ -216,8 +243,8 @@ export function GlobalDropdownMenu({
                 <span className="menu-link-label">{item.label}</span>
               )}
               <button
-                aria-expanded={openNodes.has(item.id) || activeNodeIds.has(item.id)}
-                aria-label={`${openNodes.has(item.id) || activeNodeIds.has(item.id) ? "Tutup" : "Buka"} submenu ${item.label}`}
+                aria-expanded={openNodes.has(item.id) || (expandActiveNodes && activeNodeIds.has(item.id))}
+                aria-label={`${openNodes.has(item.id) || (expandActiveNodes && activeNodeIds.has(item.id)) ? "Tutup" : "Buka"} submenu ${item.label}`}
                 className="menu-link-toggle"
                 onClick={() => toggleNode(item.id)}
                 type="button"
@@ -237,10 +264,11 @@ export function GlobalDropdownMenu({
           )}
           {item.children && (
             <GlobalDropdownMenu
-              className="menu-children"
+              className={`menu-children${!expandActiveNodes ? " lpm-menu-tree" : ""}`}
               items={item.children}
               onNavigate={onNavigate}
               pathname={pathname}
+              expandActiveNodes={expandActiveNodes}
             />
           )}
         </li>
@@ -517,7 +545,10 @@ export function SiteHeader() {
                     className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}${activeMenu === item.id ? " is-open" : ""}`}
                   >
                     <GlobalDropdownMenu
+                      className={item.id === "lpm" ? "menu-tree lpm-menu-tree" : "menu-tree"}
+                      expandActiveNodes={item.id !== "lpm"}
                       items={item.items}
+                      key={`${item.id}-${pathname}-${activeMenu === item.id}`}
                       onNavigate={() => {
                         setMobileMenuOpen(false);
                         setActiveMenu(null);
