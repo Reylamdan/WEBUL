@@ -71,7 +71,7 @@ export const globalNavigation: NavItem[] = [
           },
         ],
       },
-      { id: "kalender", label: "Kalender Akademik", href: "/#kabar" },
+      { id: "kalender", label: "Kalender Akademik", href: "/akademik/kalender-akademik" },
       { id: "kurikulum", label: "Kurikulum", href: "/akademik/kurikulum" },
     ],
   },
