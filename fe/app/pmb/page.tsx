@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { ImportantInformation } from "@/components/pmb/important-information";
 
 export const metadata: Metadata = {
   title: "Penerimaan Mahasiswa Baru — Universitas LIA",
@@ -48,27 +49,6 @@ const requirements = [
   {
     title: "Informasi pendaftaran",
     text: "Periksa kembali formulir dan dokumen tambahan pada panduan PMB terbaru.",
-  },
-];
-
-const supportTopics = [
-  {
-    title: "Biaya kuliah",
-    text: "Rincian biaya dapat berbeda menurut program studi dan periode penerimaan. Hubungi tim PMB untuk memperoleh informasi terbaru.",
-    href: "mailto:humas@universitaslia.ac.id?subject=Informasi%20Biaya%20Kuliah",
-    action: "Tanyakan biaya kuliah",
-  },
-  {
-    title: "Beasiswa",
-    text: "Tanyakan ketersediaan, jadwal, dan persyaratan beasiswa yang berlaku pada periode pendaftaran.",
-    href: "mailto:humas@universitaslia.ac.id?subject=Informasi%20Beasiswa",
-    action: "Tanyakan beasiswa",
-  },
-  {
-    title: "Konsultasi pendaftaran",
-    text: "Tim PMB dapat membantu menjawab pertanyaan tentang program studi dan langkah pendaftaran.",
-    href: "mailto:humas@universitaslia.ac.id?subject=Konsultasi%20PMB",
-    action: "Hubungi tim PMB",
   },
 ];
 
@@ -224,27 +204,19 @@ export default function PmbPage() {
       </ScrollReveal>
 
       <ScrollReveal delay={210}>
-      <section aria-label="Biaya, beasiswa, dan konsultasi" className="pmb-section pmb-wrap">
+      <section
+        aria-labelledby="pmb-important-title"
+        className="pmb-section pmb-wrap"
+      >
         <div className="pmb-section-heading">
           <span className="pmb-eyebrow">INFORMASI PENTING</span>
-          <h2>Rencanakan langkahmu</h2>
+          <h2 id="pmb-important-title">Informasi untuk calon mahasiswa</h2>
           <p>
-            Dapatkan informasi biaya, beasiswa, dan pendaftaran langsung dari
-            tim Universitas LIA.
+            Temukan informasi penting untuk membantu persiapan pendaftaran dan
+            kehidupan perkuliahanmu.
           </p>
         </div>
-        <div className="pmb-info-grid">
-          {supportTopics.map((topic, index) => (
-            <article className="pmb-info-card pmb-support-card" key={topic.title}>
-              <span className="pmb-info-icon" aria-hidden="true">
-                {["Rp", "★", "?"][index]}
-              </span>
-              <h3>{topic.title}</h3>
-              <p>{topic.text}</p>
-              <a href={topic.href}>{topic.action} <span aria-hidden="true">→</span></a>
-            </article>
-          ))}
-        </div>
+        <ImportantInformation />
       </section>
       </ScrollReveal>
 
