@@ -20,6 +20,7 @@ const informationItems = [
     title: "RPL",
     description: "Informasi Rekognisi Pembelajaran Lampau.",
     icon: "book",
+    href: "/pmb/jalur-rpl",
   },
   {
     title: "Cara Pembayaran",
