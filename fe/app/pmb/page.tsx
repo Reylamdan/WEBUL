@@ -70,6 +70,13 @@ const supportTopics = [
     href: "mailto:humas@universitaslia.ac.id?subject=Konsultasi%20PMB",
     action: "Hubungi tim PMB",
   },
+  {
+    title: "Jalur RPL",
+    text: "Cari tahu informasi penerimaan mahasiswa melalui jalur Rekognisi Pembelajaran Lampau.",
+    href: "https://www.universitaslia.ac.id/jalur-rpl/",
+    action: "Informasi Jalur RPL",
+    targetBlank: true,
+  },
 ];
 
 const faqs = [
@@ -224,24 +231,30 @@ export default function PmbPage() {
       </ScrollReveal>
 
       <ScrollReveal delay={210}>
-      <section aria-label="Biaya, beasiswa, dan konsultasi" className="pmb-section pmb-wrap">
+      <section aria-label="Informasi biaya, beasiswa, konsultasi, dan Jalur RPL" className="pmb-section pmb-wrap">
         <div className="pmb-section-heading">
           <span className="pmb-eyebrow">INFORMASI PENTING</span>
           <h2>Rencanakan langkahmu</h2>
           <p>
-            Dapatkan informasi biaya, beasiswa, dan pendaftaran langsung dari
-            tim Universitas LIA.
+            Dapatkan informasi biaya, beasiswa, jalur RPL, dan pendaftaran
+            langsung dari tim Universitas LIA.
           </p>
         </div>
-        <div className="pmb-info-grid">
+        <div className="pmb-info-grid pmb-support-grid">
           {supportTopics.map((topic, index) => (
             <article className="pmb-info-card pmb-support-card" key={topic.title}>
               <span className="pmb-info-icon" aria-hidden="true">
-                {["Rp", "★", "?"][index]}
+                {["Rp", "★", "?", "RPL"][index]}
               </span>
               <h3>{topic.title}</h3>
               <p>{topic.text}</p>
-              <a href={topic.href}>{topic.action} <span aria-hidden="true">→</span></a>
+              <a
+                href={topic.href}
+                rel={topic.targetBlank ? "noopener noreferrer" : undefined}
+                target={topic.targetBlank ? "_blank" : undefined}
+              >
+                {topic.action} <span aria-hidden="true">→</span>
+              </a>
             </article>
           ))}
         </div>
