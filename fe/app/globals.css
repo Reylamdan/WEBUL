@@ -584,12 +584,22 @@ button {
 }
 
 @media (min-width: 901px) {
-  .lpm-menu-branch:hover > .menu-children {
-    max-height: min(80vh, 520px);
-    opacity: 1;
-    transform: translateX(0);
-    visibility: visible;
-    transition-delay: 0s;
+  .menu-branch:not(:hover):not(:focus-within) > .menu-children {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    transform: translateX(8px) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .menu-branch:hover > .menu-children,
+  .menu-branch:focus-within > .menu-children {
+    max-height: min(80vh, 520px) !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transition-delay: 0s !important;
   }
 }
 
@@ -9873,5 +9883,1481 @@ section:not(.admission-banner):not(.hero):not(.pmb-cta) h2 {
 
   .pengumuman-card-meta {
     align-self: flex-start;
+  }
+}
+
+
+
+/* ==========================================================================
+   Unit dan Bagian / UPT Perpustakaan Page Styles
+   ========================================================================== */
+
+.upt-page {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.upt-content {
+  flex: 1;
+  padding-bottom: 90px;
+}
+
+.upt-wrap {
+  width: min(1120px, calc(100% - 64px));
+  margin-inline: auto;
+}
+
+/* Hero Section */
+.upt-hero {
+  display: grid;
+  grid-template-columns: 1.25fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+  padding-top: 36px;
+  padding-bottom: 44px;
+}
+
+.upt-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #718087;
+  margin-bottom: 20px;
+}
+
+.upt-breadcrumb a:hover {
+  color: var(--blue, #005b8c);
+}
+
+.upt-breadcrumb span[aria-current="page"] {
+  color: #172a35;
+  font-weight: 600;
+}
+
+.upt-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--blue, #005b8c);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.upt-hero-title {
+  margin: 0 0 16px;
+  color: #17262b;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.upt-title-underline {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.upt-title-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--blue, #005b8c);
+}
+
+.upt-hero-subtitle {
+  margin: 0;
+  max-width: 540px;
+  color: #718087;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.upt-placeholder-box {
+  width: 100%;
+  height: 190px;
+  background: #edf2f6;
+  border: 1px solid #e2e8ed;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.upt-placeholder-text {
+  color: #8c9ba5;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Sections */
+.upt-section {
+  padding-top: 32px;
+  padding-bottom: 28px;
+}
+
+.upt-section-header {
+  margin-bottom: 24px;
+}
+
+.upt-section-title {
+  margin: 0 0 8px;
+  color: #17262b;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.upt-section-desc {
+  margin: 0;
+  max-width: 720px;
+  color: #718087;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Tentang UPT Card */
+.upt-tentang-card {
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 32px 36px;
+  box-shadow: 0 1px 3px rgba(16, 46, 67, 0.02);
+}
+
+.upt-tentang-lead {
+  margin: 0 0 14px;
+  color: #17262b;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.upt-tentang-desc {
+  margin: 0 0 28px;
+  color: #718087;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.upt-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  padding-top: 24px;
+  border-top: 1px solid #edf1f3;
+}
+
+.upt-badge-card {
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: #f7fafc;
+  border: 1px solid #eef2f5;
+}
+
+.upt-badge-title {
+  margin: 0 0 6px;
+  color: #17262b;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.upt-badge-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Tugas dan Tanggung Jawab */
+.upt-tugas-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.upt-tugas-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border: 1px solid #dce4e8;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(16, 46, 67, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.upt-tugas-card:hover {
+  border-color: #bcd0dc;
+  box-shadow: 0 4px 14px rgba(16, 46, 67, 0.06);
+  transform: translateY(-2px);
+}
+
+.upt-tugas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.upt-tugas-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #edf5fa;
+  color: var(--blue, #005b8c);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.upt-tugas-category {
+  color: var(--blue, #005b8c);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.upt-tugas-card-title {
+  margin: 0 0 10px;
+  color: #17262b;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.upt-tugas-card-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* Layanan Pendukung Grid */
+.upt-layanan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.upt-layanan-card {
+  position: relative;
+  display: flex;
+  border: 1px solid #dce4e8;
+  border-radius: 10px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(16, 46, 67, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upt-layanan-card:hover {
+  border-color: #bcd0dc;
+  box-shadow: 0 4px 12px rgba(16, 46, 67, 0.05);
+}
+
+.upt-layanan-accent {
+  width: 4px;
+  flex-shrink: 0;
+  background: var(--blue, #005b8c);
+}
+
+.upt-layanan-body {
+  padding: 20px 22px;
+  flex: 1;
+}
+
+.upt-layanan-card-title {
+  margin: 0 0 6px;
+  color: #17262b;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.upt-layanan-card-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+/* Unit Hub Grid */
+.unit-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.unit-hub-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.unit-hub-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 155px;
+  padding: 22px 24px;
+  border: 1px solid #dce4e8;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(16, 46, 67, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.unit-hub-card:hover {
+  border-color: #bcd0dc;
+  box-shadow: 0 4px 14px rgba(16, 46, 67, 0.06);
+  transform: translateY(-2px);
+}
+
+.unit-hub-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.unit-hub-card-category {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #edf5fa;
+  color: var(--blue, #005b8c);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.unit-hub-card-arrow {
+  color: #8c9ba5;
+  font-size: 14px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.unit-hub-card:hover .unit-hub-card-arrow {
+  color: var(--blue, #005b8c);
+  transform: translate(2px, -2px);
+}
+
+.unit-hub-card-title {
+  margin: 0 0 8px;
+  color: #17262b;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.unit-hub-card-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+/* BAAKA Prosedur & Kegiatan — Seamless Modern List */
+.baaka-kegiatan-section {
+  padding-top: 36px;
+  padding-bottom: 40px;
+}
+
+.baaka-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.baaka-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 280px;
+  max-width: 480px;
+}
+
+.baaka-search-icon {
+  position: absolute;
+  left: 14px;
+  color: #8c9ba5;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.baaka-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 38px 0 40px;
+  font-size: 13px;
+  color: #17262b;
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.baaka-search-input:focus {
+  border-color: var(--blue, #005b8c);
+  box-shadow: 0 0 0 3px rgba(0, 91, 140, 0.12);
+}
+
+.baaka-search-clear {
+  position: absolute;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: #e2eaf0;
+  color: #556973;
+  border-radius: 50%;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.baaka-search-clear:hover {
+  background: #cbd8e2;
+  color: #17262b;
+}
+
+.baaka-toolbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.baaka-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.baaka-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #556973;
+  background: #f1f5f8;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.baaka-pill-btn:hover {
+  background: #e4edf3;
+  color: #17262b;
+}
+
+.baaka-pill-btn.is-active {
+  background: var(--blue, #005b8c);
+  color: #ffffff;
+}
+
+.baaka-pill-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.baaka-pill-btn.is-active .baaka-pill-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.baaka-toggle-all-btn {
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #005b8c;
+  background: transparent;
+  border: 1px solid #cfe0eb;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.baaka-toggle-all-btn:hover {
+  background: #f0f6fa;
+  border-color: #005b8c;
+}
+
+.baaka-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #718087;
+}
+
+.baaka-search-badge {
+  color: var(--blue, #005b8c);
+  font-weight: 600;
+}
+
+/* Unified Seamless List Container */
+.baaka-unified-list {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(16, 46, 67, 0.04);
+  overflow: hidden;
+}
+
+.baaka-list-row {
+  border-bottom: 1px solid #eef2f6;
+  transition: background-color 0.2s ease;
+}
+
+.baaka-list-row:last-child {
+  border-bottom: none;
+}
+
+.baaka-list-row:hover {
+  background: #fafcfe;
+}
+
+.baaka-list-row.is-open {
+  background: #fcfdfe;
+  box-shadow: inset 4px 0 0 #005b8c;
+}
+
+.baaka-row-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.baaka-row-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.baaka-row-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #f0f5f9;
+  color: #005b8c;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.baaka-row-title-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.baaka-row-title {
+  margin: 0;
+  color: #17262b;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.baaka-row-header:hover .baaka-row-title {
+  color: var(--blue, #005b8c);
+}
+
+.baaka-row-category {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: #edf4f8;
+  color: #4b6a7a;
+}
+
+/* Iconic Terracotta/Orange Circle Toggle Button (from user photo) */
+.baaka-row-action {
+  flex-shrink: 0;
+}
+
+.baaka-circle-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #df5625;
+  color: #ffffff;
+  transition: transform 0.25s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.baaka-row-header:hover .baaka-circle-toggle {
+  box-shadow: 0 2px 8px rgba(223, 86, 37, 0.35);
+  transform: scale(1.05);
+}
+
+.baaka-list-row.is-open .baaka-circle-toggle {
+  background: var(--blue, #005b8c);
+}
+
+.baaka-toggle-glyph {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Expanded Drawer */
+.baaka-row-drawer {
+  padding: 0 24px 24px 68px;
+  border-top: 1px dashed #e6edf2;
+  background: #fafcfe;
+}
+
+.baaka-drawer-inner {
+  padding-top: 18px;
+}
+
+.baaka-drawer-summary {
+  background: #ffffff;
+  border: 1px solid #e5edf2;
+  border-left: 3px solid #005b8c;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.baaka-summary-text {
+  margin: 0;
+  color: #3b4e57;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.baaka-drawer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+
+.baaka-col-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #17262b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.baaka-heading-icon {
+  font-size: 14px;
+}
+
+.baaka-steps-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.baaka-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.baaka-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #005b8c;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.baaka-step-desc {
+  color: #556973;
+  font-size: 13px;
+  line-height: 1.55;
+  flex: 1;
+}
+
+.baaka-req-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.baaka-req-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3b4e57;
+}
+
+.baaka-req-check {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.baaka-drawer-note {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.baaka-drawer-note p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+/* Empty State */
+.baaka-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  background: #ffffff;
+  border: 1px dashed #dce4e8;
+  border-radius: 12px;
+}
+
+.baaka-empty-icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.baaka-empty-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #17262b;
+}
+
+.baaka-empty-desc {
+  margin: 0 0 16px;
+  color: #718087;
+  font-size: 13px;
+}
+
+/* BAUSK Sarana dan Prasarana Grid */
+.bausk-sarpras-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.bausk-sarpras-card {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.bausk-sarpras-card:hover {
+  transform: translateY(-3px);
+  border-color: #bcd0dc;
+  box-shadow: 0 8px 24px rgba(16, 46, 67, 0.08);
+}
+
+.bausk-sarpras-img-box {
+  width: 100%;
+  height: 190px;
+  background: #edf2f6;
+  border-bottom: 1px solid #e5ecf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.bausk-sarpras-img-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(23, 42, 53, 0.78);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(4px);
+}
+
+.bausk-sarpras-body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.bausk-sarpras-title {
+  margin: 0 0 8px;
+  color: #17262b;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.bausk-sarpras-desc {
+  margin: 0;
+  color: #718087;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* BAUSK Laporan Audit Documents Grid */
+.bausk-audit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.bausk-audit-card {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.bausk-audit-card:hover {
+  transform: translateY(-3px);
+  border-color: #bcd0dc;
+  box-shadow: 0 8px 24px rgba(16, 46, 67, 0.08);
+}
+
+.bausk-audit-cover {
+  width: 100%;
+  height: 160px;
+  background: #f7f9fb;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  position: relative;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.bausk-audit-cover-ring {
+  position: absolute;
+  left: 8px;
+  top: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bausk-audit-ring-hole {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd8e2;
+  border: 1px solid #a8bcc9;
+}
+
+.bausk-audit-cover-label {
+  border: 1px solid #cfdce5;
+  background: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #005b8c;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.bausk-audit-year-pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #edf4f8;
+  color: #005b8c;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.bausk-audit-title {
+  margin: 0 0 6px;
+  color: #17262b;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.bausk-audit-opinion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 14px;
+  font-size: 12px;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.bausk-audit-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #eef2f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bausk-audit-auditor {
+  font-size: 11.5px;
+  color: #718087;
+}
+
+.bausk-audit-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #005b8c;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+}
+
+.bausk-audit-download-btn:hover {
+  color: #003e61;
+}
+
+/* Blueprint TIK Styles */
+.blueprint-doc-section {
+  padding-top: 24px;
+  padding-bottom: 28px;
+}
+
+.blueprint-doc-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 36px;
+  align-items: stretch;
+}
+
+.blueprint-cover-panel {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(16, 46, 67, 0.05);
+}
+
+.blueprint-cover-box {
+  width: 100%;
+  height: 320px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #071e30 0%, #005b8c 65%, #0284c7 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 24px rgba(0, 91, 140, 0.25);
+  margin-bottom: 20px;
+}
+
+.blueprint-cover-pattern {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+
+.blueprint-cover-wave {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+}
+
+.blueprint-cover-top {
+  position: relative;
+  z-index: 1;
+}
+
+.blueprint-cover-brand {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #93c5fd;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.blueprint-cover-inst {
+  font-size: 10.5px;
+  color: #e2e8f0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.blueprint-cover-center {
+  position: relative;
+  z-index: 1;
+}
+
+.blueprint-cover-title {
+  margin: 0 0 8px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.blueprint-cover-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.blueprint-cover-bottom {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blueprint-cover-meta {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+}
+
+.blueprint-cover-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.blueprint-btn-download {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: var(--blue, #005b8c);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  text-decoration: none;
+}
+
+.blueprint-btn-download:hover {
+  background: var(--blue-dark, #004d78);
+  transform: translateY(-1px);
+}
+
+/* Right Content Info */
+.blueprint-info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.blueprint-summary-card {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 20px rgba(16, 46, 67, 0.05);
+  margin-bottom: 24px;
+}
+
+.blueprint-summary-title {
+  margin: 0 0 12px;
+  color: #17262b;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.blueprint-summary-text {
+  margin: 0 0 18px;
+  color: #556973;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.blueprint-meta-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #edf2f6;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.blueprint-meta-item-label {
+  font-size: 11px;
+  color: #718087;
+  display: block;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.blueprint-meta-item-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: #17262b;
+}
+
+/* Strategic Pillars */
+.blueprint-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.blueprint-pillar-card {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  padding: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.blueprint-pillar-card:hover {
+  transform: translateY(-3px);
+  border-color: #bcd0dc;
+  box-shadow: 0 8px 24px rgba(16, 46, 67, 0.06);
+}
+
+.blueprint-pillar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.blueprint-pillar-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #eef6fa;
+  color: var(--blue, #005b8c);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.blueprint-pillar-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue, #005b8c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.blueprint-pillar-title {
+  margin: 0 0 10px;
+  color: #17262b;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.blueprint-pillar-desc {
+  margin: 0 0 16px;
+  color: #718087;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.blueprint-pillar-items {
+  margin: 0;
+  padding-left: 18px;
+  color: #556973;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.blueprint-pillar-items li {
+  margin-bottom: 6px;
+}
+
+.blueprint-pillar-items li:last-child {
+  margin-bottom: 0;
+}
+
+/* Roadmap Phases */
+.blueprint-roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.blueprint-roadmap-card {
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  padding: 24px 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.blueprint-roadmap-phase {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #edf4f8;
+  color: var(--blue, #005b8c);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+
+.blueprint-roadmap-title {
+  margin: 0 0 8px;
+  color: #17262b;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.blueprint-roadmap-desc {
+  margin: 0 0 14px;
+  color: #718087;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.blueprint-roadmap-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.blueprint-roadmap-tag {
+  padding: 3px 8px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #475569;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .upt-hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 24px;
+  }
+
+  .upt-hero-title {
+    font-size: 30px;
+  }
+
+  .upt-placeholder-box {
+    height: 140px;
+  }
+
+  .upt-tentang-card {
+    padding: 22px 20px;
+  }
+
+  .upt-badges-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .upt-tugas-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .upt-layanan-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .unit-hub-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .baaka-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .baaka-search-wrap {
+    max-width: 100%;
+  }
+
+  .baaka-toolbar-right {
+    justify-content: space-between;
+  }
+
+  .baaka-row-header {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .baaka-row-drawer {
+    padding: 0 16px 20px 16px;
+  }
+
+  .baaka-drawer-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .baaka-row-category {
+    display: none;
+  }
+
+  .bausk-sarpras-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .bausk-audit-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .blueprint-doc-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .blueprint-cover-box {
+    height: 260px;
+    padding: 20px;
+  }
+
+  .blueprint-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .blueprint-roadmap-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .blueprint-meta-list {
+    grid-template-columns: 1fr;
   }
 }

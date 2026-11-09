@@ -36,6 +36,50 @@ export const globalNavigation: NavItem[] = [
       { id: "struktur", label: "Struktur Organisasi", href: "/profil/struktur-organisasi" },
       { id: "akreditasi", label: "Akreditasi", href: "/profil/akreditasi" },
       { id: "fasilitas", label: "Fasilitas Kampus", href: "/profil/fasilitas-kampus" },
+      {
+        id: "unit-bagian",
+        label: "Unit dan Bagian",
+        href: "/profil/unit-dan-bagian",
+        children: [
+          {
+            id: "upt-komputer",
+            label: "UPT Komputer",
+            href: "/profil/unit-dan-bagian/upt-komputer",
+            children: [
+              {
+                id: "blueprint-tik",
+                label: "Blueprint TIK",
+                href: "/profil/unit-dan-bagian/blueprint-tik",
+              },
+            ],
+          },
+          {
+            id: "upt-perpustakaan",
+            label: "UPT Perpustakaan",
+            href: "/profil/unit-dan-bagian/upt-perpustakaan",
+          },
+          {
+            id: "upt-humas",
+            label: "UPT Humas dan Marketing",
+            href: "/profil/unit-dan-bagian/upt-humas-marketing",
+          },
+          {
+            id: "baaka",
+            label: "BAAKA",
+            href: "/profil/unit-dan-bagian/baaka",
+          },
+          {
+            id: "bausk",
+            label: "BAUSK",
+            href: "/profil/unit-dan-bagian/bausk",
+          },
+          {
+            id: "peraturan",
+            label: "Peraturan",
+            href: "/profil/unit-dan-bagian/peraturan",
+          },
+        ],
+      },
     ],
   },
   {
@@ -542,11 +586,11 @@ export function SiteHeader() {
                 {item.items && (
                   <div
                     aria-hidden={activeMenu !== item.id}
-                    className={`nav-dropdown${item.id === "akademik" ? " academic-dropdown" : ""}${activeMenu === item.id ? " is-open" : ""}`}
+                    className={`nav-dropdown${item.id === "akademik" || item.id === "profil" ? " academic-dropdown" : ""}${activeMenu === item.id ? " is-open" : ""}`}
                   >
                     <GlobalDropdownMenu
                       className={item.id === "lpm" ? "menu-tree lpm-menu-tree" : "menu-tree"}
-                      expandActiveNodes={item.id !== "lpm"}
+                      expandActiveNodes={false}
                       items={item.items}
                       key={`${item.id}-${pathname}-${activeMenu === item.id}`}
                       onNavigate={() => {

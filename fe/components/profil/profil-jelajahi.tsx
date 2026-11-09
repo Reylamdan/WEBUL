@@ -28,6 +28,11 @@ export function ProfilJelajahi() {
       description: "Ruang dan fasilitas pendukung kegiatan kampus.",
       href: "/profil/fasilitas-kampus",
     },
+    {
+      title: "Unit dan Bagian",
+      description: "Unit pelaksana teknis dan bagian tata kelola universitas.",
+      href: "/profil/unit-dan-bagian",
+    },
   ];
 
   return (
