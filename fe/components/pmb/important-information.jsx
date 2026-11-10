@@ -26,6 +26,7 @@ const informationItems = [
     title: "Cara Pembayaran",
     description: "Informasi panduan pembayaran perkuliahan.",
     icon: "monitor",
+    href: "/pmb/cara-pembayaran",
   },
   {
     title: "Fasilitas",

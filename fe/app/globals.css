@@ -4555,7 +4555,7 @@ button {
 
 .pmb-subsection {
   padding-top: 34px;
-  scroll-margin-top: 24px;
+  scroll-margin-top: 132px;
 }
 
 .pmb-section-heading-small {
@@ -6363,6 +6363,373 @@ body:has(.pmb-period-page) .site-header {
 
   .profile-card-body {
     padding: 18px 20px;
+  }
+}
+
+.pmb-payment-page {
+  flex: 1;
+  background: #fff;
+}
+
+.pmb-payment-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: 34px 52px;
+}
+
+.pmb-payment-hero::before {
+  position: absolute;
+  top: -110px;
+  right: max(4%, calc((100% - 1120px) / 2));
+  width: 360px;
+  height: 360px;
+  border: 1px solid #005b8c12;
+  border-radius: 50%;
+  background: radial-gradient(circle, #005b8c0d 0 45%, transparent 46%);
+  content: "";
+  pointer-events: none;
+}
+
+.pmb-payment-hero > * {
+  position: relative;
+}
+
+.pmb-payment-hero .pmb-breadcrumb {
+  margin-bottom: 24px;
+}
+
+.pmb-payment-hero-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #d9e8ed;
+  border-radius: 14px;
+  background: #edf5f8;
+  color: var(--blue);
+}
+
+.pmb-payment-hero h1 {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: 1.15;
+}
+
+.pmb-payment-hero > p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.pmb-payment-section {
+  padding-block: 48px 64px;
+}
+
+.pmb-payment-va {
+  background: #f3f7f9;
+}
+
+.pmb-payment-heading {
+  max-width: 700px;
+  margin-bottom: 26px;
+}
+
+.pmb-payment-heading h2 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: clamp(23px, 3vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.2;
+}
+
+.pmb-payment-heading > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.pmb-payment-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.pmb-payment-step {
+  display: flex;
+  min-width: 0;
+  gap: 11px;
+  padding: 17px 14px;
+  border: 1px solid #dfe8ec;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.pmb-payment-step-number {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eaf3f6;
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pmb-payment-step h3 {
+  margin: 1px 0 5px;
+  color: #203844;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.pmb-payment-step p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.pmb-payment-image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.pmb-payment-image-card {
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid #dfe8ec;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 6px 20px #173a4708;
+}
+
+.pmb-payment-image-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pmb-payment-image-card figcaption {
+  padding: 12px 15px;
+  color: #718087;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.pmb-payment-image-card figcaption strong {
+  color: #203844;
+}
+
+.pmb-payment-methods {
+  padding-top: 54px;
+}
+
+.pmb-payment-method-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+}
+
+.pmb-payment-method,
+.pmb-payment-technical-note {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #dfe8ec;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 6px 20px #173a4708;
+  scroll-margin-top: 24px;
+}
+
+.pmb-payment-method-number {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  margin-bottom: 13px;
+  border: 1px solid #d9e8ed;
+  border-radius: 50%;
+  background: #edf5f8;
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.pmb-payment-method h3,
+.pmb-payment-technical-note h3 {
+  margin: 0 0 13px;
+  color: #203844;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.pmb-payment-method ol {
+  counter-reset: payment-step;
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding: 0;
+  color: #52666e;
+  font-size: 13px;
+  line-height: 1.7;
+  list-style: none;
+}
+
+.pmb-payment-method > ol > li {
+  counter-increment: payment-step;
+  position: relative;
+  padding-left: 34px;
+}
+
+.pmb-payment-method > ol > li::before {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0f5f7;
+  color: #506d79;
+  content: counter(payment-step);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pmb-payment-method ol ol {
+  counter-reset: payment-substep;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.pmb-payment-method ol ol li {
+  counter-increment: payment-substep;
+  position: relative;
+  padding-left: 24px;
+}
+
+.pmb-payment-method ol ol li::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #fff;
+  content: counter(payment-substep, lower-alpha) ".";
+  font-size: 12px;
+}
+
+.pmb-payment-method strong,
+.pmb-payment-technical-note strong {
+  color: #203844;
+}
+
+.pmb-payment-note {
+  margin: 15px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid #d69a2d;
+  border-radius: 0 5px 5px 0;
+  background: #fff8e9;
+  color: #755818;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.pmb-payment-technical-note {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-color: #cfe2e9;
+  background: #f2f8fa;
+  box-shadow: none;
+}
+
+.pmb-payment-technical-note h4 {
+  margin: 0 0 6px;
+  color: #203844;
+  font-size: 12px;
+}
+
+.pmb-payment-technical-note h3 {
+  font-size: 14px;
+}
+
+.pmb-payment-technical-note p {
+  margin: 0;
+  color: #52666e;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.pmb-payment-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 25px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pmb-payment-back-link:hover {
+  color: var(--blue-dark);
+}
+
+@media (max-width: 960px) {
+  .pmb-payment-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .pmb-payment-hero {
+    padding-block: 26px 36px;
+  }
+
+  .pmb-payment-hero > p {
+    font-size: 12px;
+  }
+
+  .pmb-payment-section {
+    padding-block: 34px 44px;
+  }
+
+  .pmb-payment-steps,
+  .pmb-payment-image-grid,
+  .pmb-payment-method-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pmb-payment-steps {
+    gap: 9px;
+  }
+
+  .pmb-payment-step {
+    padding: 14px;
+  }
+
+  .pmb-payment-method,
+  .pmb-payment-technical-note {
+    padding: 18px;
+  }
+
+  .pmb-payment-method ol {
+    font-size: 12px;
   }
 }
 
