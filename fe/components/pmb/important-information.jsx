@@ -12,9 +12,11 @@ const informationItems = [
   },
   {
     title: "Biaya Kuliah",
-    description: "Tanyakan informasi biaya sesuai program studi pilihan.",
+    description: "Lihat informasi UKT berdasarkan gelombang pendaftaran.",
     icon: "file",
-    href: "mailto:humas@universitaslia.ac.id?subject=Informasi%20Biaya%20Kuliah",
+    href: "/pmb/biaya-kuliah",
+    target: "_blank",
+    rel: "noopener noreferrer",
   },
   {
     title: "RPL",
