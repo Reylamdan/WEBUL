@@ -46,6 +46,7 @@ const informationItems = [
     title: "Pengunduran Diri",
     description: "Informasi mengenai proses pengunduran diri mahasiswa.",
     icon: "arrow",
+    href: "/pengunduran-diri",
   },
   {
     title: "Mahasiswa Asing",
