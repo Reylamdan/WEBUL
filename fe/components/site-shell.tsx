@@ -645,9 +645,9 @@ export function SiteFooter({ className = "" }: { className?: string }) {
         <div className="footer-column">
           <h3>Universitas</h3>
           <Link href="/profil">Profil Universitas</Link>
-          <Link href="/#footer">LPPM</Link>
-          <Link href="/#footer">LPM</Link>
-          <Link href="/#footer">Alumni</Link>
+          <Link href="/lppm">LPPM</Link>
+          <Link href="/lpm">LPM</Link>
+          <Link href="/alumni">Alumni</Link>
           <Link href="/laporan-tahunan-rektor">Laporan Tahunan Rektor</Link>
         </div>
         <div className="footer-column">
@@ -656,7 +656,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
           <Link href="/pmb">Penerimaan Mahasiswa Baru</Link>
           <Link href="/#footer">SIAKAD UL</Link>
           <Link href="/#footer">Edlink</Link>
-          <Link href="/#footer">Perpustakaan Universitas LIA</Link>
+          <Link href="/profil/unit-dan-bagian/upt-perpustakaan">Perpustakaan Universitas LIA</Link>
         </div>
         <div className="footer-column footer-contact">
           <h3>Hubungi kami</h3>
