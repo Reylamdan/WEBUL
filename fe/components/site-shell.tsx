@@ -642,6 +642,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
           <h3>Informasi &amp; layanan</h3>
           <Link href="/akademik/fakultas">Akademik</Link>
           <Link href="/pmb">Penerimaan Mahasiswa Baru</Link>
+          <Link href="/pengunduran-diri">Pengunduran Diri</Link>
           <Link href="/#footer">SIAKAD UL</Link>
           <Link href="/#footer">Edlink</Link>
           <Link href="/profil/unit-dan-bagian/upt-perpustakaan">Perpustakaan Universitas LIA</Link>
