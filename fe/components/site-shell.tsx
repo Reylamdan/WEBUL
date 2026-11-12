@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
+import { GlobalSearch, SearchToggle } from "@/components/search/global-search";
 
 export type MenuNode = {
   id: string;
@@ -327,9 +328,18 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [lang, setLang] = useState<"ID" | "EN">("ID");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isFloating, setIsFloating] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const searchTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const closeSearch = useCallback(() => setSearchOpen(false), []);
+
+  function openSearch(event: React.MouseEvent<HTMLButtonElement>) {
+    searchTriggerRef.current = event.currentTarget;
+    setActiveMenu(null);
+    setMobileMenuOpen(false);
+    setSearchOpen(true);
+  }
 
   useEffect(() => {
     let frame = 0;
@@ -463,39 +473,7 @@ export function SiteHeader() {
             </div>
 
             <div className="search-wrap">
-              <button
-                aria-expanded={searchOpen}
-                aria-label="Cari di situs"
-                className="search-toggle-btn"
-                onClick={() => setSearchOpen((prev) => !prev)}
-                type="button"
-              >
-                <Icon name="search" size={18} />
-              </button>
-              {searchOpen && (
-                <div className="header-search-box">
-                  <input
-                    aria-label="Kata kunci pencarian"
-                    autoFocus
-                    className="header-search-input"
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") setSearchOpen(false);
-                    }}
-                    placeholder="Cari program, berita, info..."
-                    type="search"
-                    value={searchQuery}
-                  />
-                  <button
-                    aria-label="Tutup pencarian"
-                    className="header-search-close"
-                    onClick={() => setSearchOpen(false)}
-                    type="button"
-                  >
-                    <Icon name="x" size={16} />
-                  </button>
-                </div>
-              )}
+              <SearchToggle isOpen={searchOpen} onOpen={openSearch} />
             </div>
           </div>
 
@@ -605,6 +583,11 @@ export function SiteHeader() {
             );
           })}
 
+          <SearchToggle
+            className="global-search-nav-trigger"
+            isOpen={searchOpen}
+            onOpen={openSearch}
+          />
           <Link
             className="button button-primary nav-apply"
             href="/pmb"
@@ -614,6 +597,11 @@ export function SiteHeader() {
           </Link>
         </nav>
       </div>
+      <GlobalSearch
+        isOpen={searchOpen}
+        onClose={closeSearch}
+        triggerRef={searchTriggerRef}
+      />
     </header>
   );
 }
@@ -645,9 +633,9 @@ export function SiteFooter({ className = "" }: { className?: string }) {
         <div className="footer-column">
           <h3>Universitas</h3>
           <Link href="/profil">Profil Universitas</Link>
-          <Link href="/#footer">LPPM</Link>
-          <Link href="/#footer">LPM</Link>
-          <Link href="/#footer">Alumni</Link>
+          <Link href="/lppm">LPPM</Link>
+          <Link href="/lpm">LPM</Link>
+          <Link href="/alumni">Alumni</Link>
           <Link href="/laporan-tahunan-rektor">Laporan Tahunan Rektor</Link>
         </div>
         <div className="footer-column">
@@ -657,7 +645,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
           <Link href="/pengunduran-diri">Pengunduran Diri</Link>
           <Link href="/#footer">SIAKAD UL</Link>
           <Link href="/#footer">Edlink</Link>
-          <Link href="/#footer">Perpustakaan Universitas LIA</Link>
+          <Link href="/profil/unit-dan-bagian/upt-perpustakaan">Perpustakaan Universitas LIA</Link>
         </div>
         <div className="footer-column footer-contact">
           <h3>Hubungi kami</h3>
