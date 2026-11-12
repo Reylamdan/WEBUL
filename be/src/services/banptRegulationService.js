@@ -1,19 +1,26 @@
-// Manajemen Peraturan BAN-PT (tabel banpt_regulations, bucket publik banpt-regulations).
-//   - dokumen utama : kolom document_path (satu PDF)
+// Manajemen Peraturan BAN-PT (tabel banpt_regulations). File disimpan di Google Drive.
+//   - dokumen utama : kolom document_drive_file_id (+ document_size, document_md5)
 //   - lampiran      : kolom attachments (JSONB, array)
-//       [{ id, name, path, mimeType, size, uploadedAt }]
-// Path storage disimpan di database dan TIDAK PERNAH dikirim sebagai field; klien menerima URL
-// publik yang dibentuk dari helper Supabase.
+//       Drive : [{ id, name, driveFileId, md5, mimeType, size, uploadedAt }]
+//       Lama  : [{ id, name, path, mimeType, size, uploadedAt }]   (Supabase Storage, sebelum perpindahan)
+//
+// Kompatibilitas: data lama (document_path / attachments[].path di bucket publik Supabase) tetap terbaca
+// dan tetap dihapus dengan benar. File lama berpindah ke Drive hanya saat diganti oleh admin. Unggahan
+// BARU selalu ke Drive. ID Drive, path storage, dan checksum TIDAK PERNAH dikirim ke klien; klien menerima
+// link route backend (/api/banpt-regulations/... untuk publik, /api/files/<token> untuk admin).
 const crypto = require("crypto");
 const supabase = require("../config/supabase");
 const AppError = require("../utils/AppError");
 const { throwDbError } = require("../utils/dbError");
 const { cleanSearchTerm, escapeLikeTerm } = require("../utils/searchTerm");
 const storage = require("../utils/regulationStorage");
+const { uploadDriveFile, removeDriveFilesQuietly } = require("../utils/driveStorage");
+const { KINDS, buildFileLinks } = require("../utils/fileAccess");
 
 const TABLE = "banpt_regulations";
 const COLUMNS =
-  "id, regulation_number, regulation_year, determination_date, title, document_path, attachments, status, published_at, created_at, updated_at";
+  "id, regulation_number, regulation_year, determination_date, title, document_path, " +
+  "document_drive_file_id, document_size, document_md5, attachments, status, published_at, created_at, updated_at";
 const MAX_ATTACHMENTS = 20;
 
 const UNIQUE_VIOLATION = "23505";
@@ -25,6 +32,7 @@ const notFound = () =>
   new AppError("Peraturan BAN-PT tidak ditemukan", 404, "BANPT_REGULATION_NOT_FOUND");
 const attachmentNotFound = () =>
   new AppError("Lampiran tidak ditemukan", 404, "ATTACHMENT_NOT_FOUND");
+const documentNotFound = () => new AppError("Dokumen tidak ditemukan", 404, "DOCUMENT_NOT_FOUND");
 const conflict = () => new AppError("Data berubah, silakan coba lagi", 409, "REGULATION_CONFLICT");
 
 const mapWriteError = (context, error) => {
@@ -43,10 +51,13 @@ const mapWriteError = (context, error) => {
 };
 
 // ---------- serialisasi ----------
+// Lampiran valid = punya id dan salah satu sumber: file Drive (baru) atau path Supabase (lama).
 const readAttachments = (row) =>
   (Array.isArray(row.attachments) ? row.attachments : []).filter(
-    (a) => a && typeof a.id === "string" && typeof a.path === "string"
+    (a) => a && typeof a.id === "string" && (typeof a.driveFileId === "string" || typeof a.path === "string")
   );
+
+const hasDocument = (row) => Boolean(row.document_drive_file_id || row.document_path);
 
 const safeFileName = (value) =>
   String(value || "dokumen")
@@ -55,30 +66,64 @@ const safeFileName = (value) =>
     .replace(/\s+/g, "-")
     .slice(0, 100) || "dokumen";
 
+const mainFileName = (row) => `PerBAN-${safeFileName(row.regulation_number)}-${row.regulation_year}.pdf`;
+
+// Link file Drive. urlExpiresAt hanya ada untuk admin (link bertoken berumur 10 menit);
+// link publik bersifat tetap sehingga tidak punya masa berlaku.
+const driveLinks = (kind, ids, admin) => {
+  const links = buildFileLinks({ kind, ...ids }, { admin });
+  return {
+    url: links.url,
+    downloadUrl: links.downloadUrl,
+    ...(admin ? { urlExpiresAt: links.expiresAt } : {}),
+  };
+};
+
+const serializeMainDocument = (row, admin) => {
+  if (row.document_drive_file_id) {
+    return {
+      mimeType: "application/pdf",
+      size: row.document_size ?? null,
+      ...driveLinks(KINDS.regulationDocument, { recordId: row.id }, admin),
+    };
+  }
+  if (row.document_path) {
+    return {
+      mimeType: "application/pdf",
+      url: storage.getPublicUrl(row.document_path),
+      downloadUrl: storage.getPublicUrl(row.document_path, mainFileName(row)),
+    };
+  }
+  return null;
+};
+
+const serializeAttachment = (row, a, admin) => {
+  const base = {
+    id: a.id,
+    name: a.name,
+    mimeType: a.mimeType || "application/pdf",
+    size: a.size ?? null,
+    uploadedAt: a.uploadedAt ?? null,
+  };
+  if (a.driveFileId) {
+    return { ...base, ...driveLinks(KINDS.regulationAttachment, { recordId: row.id, attachmentId: a.id }, admin) };
+  }
+  return {
+    ...base,
+    url: storage.getPublicUrl(a.path),
+    downloadUrl: storage.getPublicUrl(a.path, a.name || "lampiran.pdf"),
+  };
+};
+
 const serialize = (row, { admin }) => {
-  const mainName = `PerBAN-${safeFileName(row.regulation_number)}-${row.regulation_year}.pdf`;
   const item = {
     id: row.id,
     regulationNumber: row.regulation_number,
     regulationYear: row.regulation_year,
     determinationDate: row.determination_date,
     title: row.title,
-    document: row.document_path
-      ? {
-          mimeType: "application/pdf",
-          url: storage.getPublicUrl(row.document_path),
-          downloadUrl: storage.getPublicUrl(row.document_path, mainName),
-        }
-      : null,
-    attachments: readAttachments(row).map((a) => ({
-      id: a.id,
-      name: a.name,
-      mimeType: a.mimeType || "application/pdf",
-      size: a.size ?? null,
-      uploadedAt: a.uploadedAt ?? null,
-      url: storage.getPublicUrl(a.path),
-      downloadUrl: storage.getPublicUrl(a.path, a.name || "lampiran.pdf"),
-    })),
+    document: serializeMainDocument(row, admin),
+    attachments: readAttachments(row).map((a) => serializeAttachment(row, a, admin)),
     publishedAt: row.published_at,
   };
   if (admin) {
@@ -87,6 +132,21 @@ const serialize = (row, { admin }) => {
     item.updatedAt = row.updated_at;
   }
   return item;
+};
+
+// Semua file yang dimiliki satu baris, dipisah per tempat penyimpanan (untuk pembersihan).
+const filesOf = (row) => {
+  const attachments = readAttachments(row);
+  return {
+    driveIds: [row.document_drive_file_id, ...attachments.map((a) => a.driveFileId)].filter(Boolean),
+    legacyPaths: [row.document_path, ...attachments.map((a) => a.path)].filter(Boolean),
+  };
+};
+
+// Pembersihan best-effort (tidak pernah melempar). Drive yang gagal masuk antrean drive_cleanup_queue.
+const cleanupFiles = async ({ driveIds = [], legacyPaths = [] }, context) => {
+  await removeDriveFilesQuietly(driveIds, context);
+  await storage.removeFilesQuietly(legacyPaths, context);
 };
 
 // ---------- query ----------
@@ -222,7 +282,7 @@ const adminUpdate = async (id, body) => {
   if (body.title !== undefined) patch.title = body.title;
   if (body.status !== undefined) {
     if (body.status === "published") {
-      requireDocumentToPublish(Boolean(current.document_path));
+      requireDocumentToPublish(hasDocument(current));
       if (!current.published_at) patch.published_at = new Date().toISOString();
     }
     patch.status = body.status;
@@ -250,10 +310,7 @@ const adminDelete = async (id) => {
   if (error) throwDbError(`${TABLE}: hapus`, error);
   if (!data || data.length === 0) throw notFound();
 
-  await storage.removeFilesQuietly(
-    [current.document_path, ...readAttachments(current).map((a) => a.path)],
-    `${TABLE}: hapus data`
-  );
+  await cleanupFiles(filesOf(current), `${TABLE}: hapus data`);
 };
 
 // Dipakai middleware: pastikan data ada sebelum file diproses
@@ -265,32 +322,42 @@ const loadForUpload = async (id) => {
 };
 
 // ---------- DOKUMEN UTAMA ----------
-// Unggah file baru -> compare-and-set kolom di database -> hapus file lama.
+// Unggah file baru ke Drive -> compare-and-set kolom di database -> hapus file lama (Drive atau Supabase).
 // Baris tidak pernah menunjuk ke file yang belum ada atau sudah hilang.
 const adminSetDocument = async (id, processed) => {
   const current = await findRow(id, `${TABLE}: ambil untuk dokumen`);
   if (!current) throw notFound();
-  const oldPath = current.document_path;
-  const newPath = storage.buildMainPath(id);
 
-  await storage.uploadPdf(newPath, processed.buffer);
+  const stored = await uploadDriveFile({ category: "banptRegulation", recordId: id, role: "document", processed });
 
   let query = supabase
     .from(TABLE)
-    .update({ document_path: newPath, updated_at: new Date().toISOString() })
+    .update({
+      document_drive_file_id: stored.fileId,
+      document_path: null,
+      document_size: stored.size,
+      document_md5: stored.md5,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id);
-  query = oldPath ? query.eq("document_path", oldPath) : query.is("document_path", null);
+  query = current.document_path ? query.eq("document_path", current.document_path) : query.is("document_path", null);
+  query = current.document_drive_file_id
+    ? query.eq("document_drive_file_id", current.document_drive_file_id)
+    : query.is("document_drive_file_id", null);
   const { data, error } = await query.select(COLUMNS).maybeSingle();
 
   if (error) {
-    await storage.removeFilesQuietly([newPath], `${TABLE}: kompensasi setelah DB gagal`);
+    await cleanupFiles({ driveIds: [stored.fileId] }, `${TABLE}: kompensasi setelah DB gagal`);
     throw mapWriteError(`${TABLE}: simpan dokumen`, error);
   }
   if (!data) {
-    await storage.removeFilesQuietly([newPath], `${TABLE}: kompensasi karena CAS gagal`);
+    await cleanupFiles({ driveIds: [stored.fileId] }, `${TABLE}: kompensasi karena CAS gagal`);
     throw conflict();
   }
-  await storage.removeFilesQuietly([oldPath], `${TABLE}: hapus dokumen lama`);
+  await cleanupFiles(
+    { driveIds: [current.document_drive_file_id].filter(Boolean), legacyPaths: [current.document_path].filter(Boolean) },
+    `${TABLE}: hapus dokumen lama`
+  );
   return serialize(data, { admin: true });
 };
 
@@ -306,20 +373,38 @@ const casAttachments = async (current, nextAttachments) =>
     .select(COLUMNS)
     .maybeSingle();
 
-const uploadMany = async (id, processedList) => {
+// items: [{ attachmentId, processed }]. Jika satu unggahan gagal, yang sudah terunggah dibersihkan.
+// ID lampiran dibuat di muka agar ikut tersimpan di appProperties file Drive (membantu rekonsiliasi).
+const uploadMany = async (id, items) => {
   const uploaded = [];
   try {
-    for (const processed of processedList) {
-      const filePath = storage.buildAttachmentPath(id);
-      await storage.uploadPdf(filePath, processed.buffer);
-      uploaded.push({ processed, path: filePath });
+    for (const { attachmentId, processed } of items) {
+      const stored = await uploadDriveFile({
+        category: "banptRegulation",
+        recordId: id,
+        role: "attachment",
+        attachmentId,
+        processed,
+      });
+      uploaded.push({ attachmentId, processed, stored });
     }
   } catch (error) {
-    await storage.removeFilesQuietly(uploaded.map((u) => u.path), `${TABLE}: kompensasi upload lampiran`);
+    await cleanupFiles({ driveIds: uploaded.map((u) => u.stored.fileId) }, `${TABLE}: kompensasi upload lampiran`);
     throw error;
   }
   return uploaded;
 };
+
+// Entri JSONB lampiran baru (sumber Drive). Sengaja dibangun dari nol, tanpa menyalin "path" lama.
+const attachmentEntry = ({ attachmentId, processed, stored }, uploadedAt) => ({
+  id: attachmentId,
+  name: processed.displayName,
+  driveFileId: stored.fileId,
+  md5: stored.md5,
+  mimeType: processed.mimeType,
+  size: stored.size,
+  uploadedAt,
+});
 
 const adminAddAttachments = async (id, processedList) => {
   const current = await findRow(id, `${TABLE}: ambil untuk lampiran`);
@@ -333,29 +418,27 @@ const adminAddAttachments = async (id, processedList) => {
     );
   }
 
-  const uploaded = await uploadMany(id, processedList);
+  const uploaded = await uploadMany(
+    id,
+    processedList.map((processed) => ({ attachmentId: crypto.randomUUID(), processed }))
+  );
   const now = new Date().toISOString();
-  const added = uploaded.map(({ processed, path }) => ({
-    id: crypto.randomUUID(),
-    name: processed.displayName,
-    path,
-    mimeType: processed.mimeType,
-    size: processed.size,
-    uploadedAt: now,
-  }));
+  const added = uploaded.map((u) => attachmentEntry(u, now));
+  const addedIds = added.map((a) => a.driveFileId);
 
   const { data, error } = await casAttachments(current, [...existing, ...added]);
   if (error) {
-    await storage.removeFilesQuietly(added.map((a) => a.path), `${TABLE}: kompensasi setelah DB gagal`);
+    await cleanupFiles({ driveIds: addedIds }, `${TABLE}: kompensasi setelah DB gagal`);
     throw mapWriteError(`${TABLE}: simpan lampiran`, error);
   }
   if (!data) {
-    await storage.removeFilesQuietly(added.map((a) => a.path), `${TABLE}: kompensasi karena CAS gagal`);
+    await cleanupFiles({ driveIds: addedIds }, `${TABLE}: kompensasi karena CAS gagal`);
     throw conflict();
   }
   return serialize(data, { admin: true });
 };
 
+// ID lampiran dipertahankan; lampiran lama (Supabase) yang diganti otomatis berpindah ke Drive.
 const adminReplaceAttachment = async (id, attachmentId, processed) => {
   const current = await findRow(id, `${TABLE}: ambil untuk lampiran`);
   if (!current) throw notFound();
@@ -363,28 +446,24 @@ const adminReplaceAttachment = async (id, attachmentId, processed) => {
   const index = existing.findIndex((a) => a.id === attachmentId);
   if (index < 0) throw attachmentNotFound();
 
-  const oldPath = existing[index].path;
-  const [{ path: newPath }] = await uploadMany(id, [processed]);
+  const old = existing[index];
+  const [uploaded] = await uploadMany(id, [{ attachmentId, processed }]);
   const next = [...existing];
-  next[index] = {
-    ...existing[index],
-    name: processed.displayName,
-    path: newPath,
-    mimeType: processed.mimeType,
-    size: processed.size,
-    uploadedAt: new Date().toISOString(),
-  };
+  next[index] = attachmentEntry(uploaded, new Date().toISOString());
 
   const { data, error } = await casAttachments(current, next);
   if (error) {
-    await storage.removeFilesQuietly([newPath], `${TABLE}: kompensasi setelah DB gagal`);
+    await cleanupFiles({ driveIds: [uploaded.stored.fileId] }, `${TABLE}: kompensasi setelah DB gagal`);
     throw mapWriteError(`${TABLE}: ganti lampiran`, error);
   }
   if (!data) {
-    await storage.removeFilesQuietly([newPath], `${TABLE}: kompensasi karena CAS gagal`);
+    await cleanupFiles({ driveIds: [uploaded.stored.fileId] }, `${TABLE}: kompensasi karena CAS gagal`);
     throw conflict();
   }
-  await storage.removeFilesQuietly([oldPath], `${TABLE}: hapus lampiran lama`);
+  await cleanupFiles(
+    { driveIds: [old.driveFileId].filter(Boolean), legacyPaths: [old.path].filter(Boolean) },
+    `${TABLE}: hapus lampiran lama`
+  );
   return serialize(data, { admin: true });
 };
 
@@ -399,8 +478,44 @@ const adminRemoveAttachment = async (id, attachmentId) => {
   if (error) throw mapWriteError(`${TABLE}: hapus lampiran`, error);
   if (!data) throw conflict();
 
-  await storage.removeFilesQuietly([target.path], `${TABLE}: hapus file lampiran`);
+  await cleanupFiles(
+    { driveIds: [target.driveFileId].filter(Boolean), legacyPaths: [target.path].filter(Boolean) },
+    `${TABLE}: hapus file lampiran`
+  );
   return serialize(data, { admin: true });
+};
+
+// ---------- PREVIEW / DOWNLOAD (dipakai fileController) ----------
+// attachmentId = null -> dokumen utama.
+//   published=true  -> jalur publik: draft / belum waktunya terbit dijawab 404 seperti data tidak ada
+//   published=false -> jalur admin (token berumur pendek): boleh data draft
+// File lama (Supabase) tidak lewat sini (masih memakai URL publik Supabase) -> 404 DOCUMENT_NOT_FOUND.
+const getDriveFile = async (id, attachmentId, { published }) => {
+  let query = supabase.from(TABLE).select(COLUMNS).eq("id", id);
+  if (published) query = publishedOnly(query);
+  const { data, error } = await query.maybeSingle();
+  if (error) throwDbError(`${TABLE}: ambil file`, error);
+  if (!data) throw notFound();
+
+  if (!attachmentId) {
+    if (!data.document_drive_file_id) throw documentNotFound();
+    return {
+      driveFileId: data.document_drive_file_id,
+      mimeType: "application/pdf",
+      fileName: mainFileName(data),
+      size: data.document_size ?? null,
+    };
+  }
+
+  const attachment = readAttachments(data).find((a) => a.id === attachmentId);
+  if (!attachment) throw attachmentNotFound();
+  if (!attachment.driveFileId) throw documentNotFound();
+  return {
+    driveFileId: attachment.driveFileId,
+    mimeType: attachment.mimeType || "application/pdf",
+    fileName: attachment.name || "lampiran.pdf",
+    size: attachment.size ?? null,
+  };
 };
 
 // ---------- OPSI FILTER (tahun untuk dropdown) ----------
@@ -435,5 +550,6 @@ module.exports = {
   adminAddAttachments,
   adminReplaceAttachment,
   adminRemoveAttachment,
+  getDriveFile,
   listFilterOptions,
 };

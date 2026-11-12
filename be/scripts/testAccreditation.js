@@ -182,6 +182,11 @@ const fakeSupabase = { from: (t) => new FakeQuery(t), storage: fakeStorage };
 const supabasePath = require.resolve(path.join(__dirname, "../src/config/supabase.js"));
 require.cache[supabasePath] = { id: supabasePath, filename: supabasePath, loaded: true, exports: fakeSupabase };
 
+// Google Drive palsu: dokumen program studi sekarang disimpan di Drive (institusi tetap Supabase Storage).
+const { createFakeDrive } = require("./lib/fakeDrive");
+const fd = createFakeDrive();
+const drivePath = fd.install();
+
 // Senyapkan log error yang SENGAJA dipicu, tapi simpan untuk diperiksa
 const logs = [];
 const origError = console.error;
@@ -190,7 +195,7 @@ console.error = (...a) => logs.push(a.join(" "));
 const loadFreshApp = () => {
   // Muat ulang app (dan pembatas rate limit yang tersimpan di memori) tanpa mengganti Supabase palsu
   for (const key of Object.keys(require.cache)) {
-    if (key.startsWith(path.join(__dirname, "..", "src")) && key !== supabasePath) delete require.cache[key];
+    if (key.startsWith(path.join(__dirname, "..", "src")) && key !== supabasePath && key !== drivePath) delete require.cache[key];
   }
   delete require.cache[require.resolve("../app")];
   return require("../app");
@@ -251,6 +256,7 @@ const reset = () => {
     { id: INACTIVE_ID, name: "Nonaktif", email: "n@x.id", is_active: false, last_login_at: null, created_at: "2026-01-01T00:00:00Z" },
   ];
   storage.objects.clear();
+  fd.reset();
   storage.failUpload = storage.failRemove = storage.failSign = false;
   faults.length = 0;
   hooks.beforeUpdate = null;
@@ -643,12 +649,19 @@ const reset = () => {
     const r = await call("DELETE", `${INST}/${c.id}`);
     assert.equal(r.status, 500); assert.ok(hasObject(p)); assert.ok(row(T_INST, c.id));
   });
-  await test("dokumen program studi memakai folder study-programs", async () => {
+  await test("dokumen program studi disimpan di Google Drive (bukan Supabase Storage); institusi tetap Supabase", async () => {
+    const supabaseBefore = storage.objects.size;
     const p = (await call("POST", PROG, { body: validProg() })).json.data.accreditation;
     const r = await call("PUT", `${PROG}/${p.id}/document`, { form: makeForm(pdfBytes("pp"), "prodi.pdf", "application/pdf") });
     assert.equal(r.status, 200);
-    assert.match(row(T_PROG, p.id).document_path, new RegExp(`^study-programs/${p.id}/`));
+    const stored = row(T_PROG, p.id);
+    assert.match(stored.document_drive_file_id, /^drv_/);
+    assert.equal(stored.document_path, null);
+    assert.equal(storage.objects.size, supabaseBefore, "tidak ada objek baru di Supabase Storage");
+    assert.equal(fd.live().length, 1);
+    assert.match(r.json.data.accreditation.document.url, /^\/api\/files\//);
     assert.equal((await call("DELETE", `${PROG}/${p.id}/document`)).status, 200);
+    assert.equal(fd.live().length, 0, "file Drive dibersihkan saat dokumen dihapus");
   });
 
   // ===================================================================

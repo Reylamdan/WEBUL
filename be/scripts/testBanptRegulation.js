@@ -1,5 +1,7 @@
 // Pengujian OFFLINE fitur Manajemen Peraturan BAN-PT.
-// Supabase (database + Storage) diganti versi palsu di memori: TIDAK ada data asli yang tersentuh.
+// Supabase (database + Storage lama) dan Google Drive diganti versi palsu di memori: TIDAK ada data asli yang tersentuh.
+// Dokumen utama & lampiran baru disimpan di Google Drive; seed data lama (document_path) menguji kompatibilitas.
+// Skenario khusus Drive (preview/download, token admin, migrasi data lama, antrean cleanup) ada di testGoogleDrive.js.
 // Request dikirim lewat HTTP sungguhan ke app Express (validator, middleware, controller, service ikut teruji).
 //
 //   node scripts/testBanptRegulation.js
@@ -20,7 +22,7 @@ const jwt = require("jsonwebtoken");
 
 // ---------- Supabase palsu ----------
 const db = {};
-const storage = { objects: new Map(), failUpload: false, failUploadAfter: null, uploads: 0, failRemove: false };
+const storage = { objects: new Map(), failRemove: false }; // Supabase Storage LAMA (hanya baca/hapus)
 const faults = [];
 const hooks = { beforeUpdate: null };
 const ADMIN_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
@@ -91,7 +93,8 @@ class FakeQuery {
     if (this.op === "insert") {
       const now = uniqueNow();
       const row = { id: crypto.randomUUID(), created_at: now, updated_at: now, ...this.payload };
-      if (rows.some((r) => r.regulation_number === row.regulation_number && r.regulation_year === row.regulation_year)) {
+      const uniqueKey = (r) => (this.table === "banpt_regulations" ? `${r.regulation_number}|${r.regulation_year}` : r.file_id ?? r.id);
+      if (rows.some((r) => uniqueKey(r) === uniqueKey(row))) {
         return { data: null, error: { code: "23505", message: "dup" } };
       }
       rows.push(row); result = [row];
@@ -117,14 +120,7 @@ class FakeQuery {
 }
 const fakeStorage = {
   from: (bucket) => ({
-    upload: async (p, buf, opts) => {
-      storage.uploads += 1;
-      if (storage.failUpload || (storage.failUploadAfter !== null && storage.uploads > storage.failUploadAfter)) return { data: null, error: { message: "upload boom" } };
-      if (storage.objects.has(`${bucket}/${p}`)) return { data: null, error: { message: "exists" } };
-      assert.equal(opts.upsert, false); assert.equal(opts.contentType, "application/pdf");
-      storage.objects.set(`${bucket}/${p}`, buf.length);
-      return { data: { path: p }, error: null };
-    },
+    upload: async () => { throw new Error("Unggahan baru TIDAK boleh ke Supabase Storage"); },
     remove: async (paths) => {
       if (storage.failRemove) return { data: null, error: { message: "remove boom" } };
       for (const p of paths) storage.objects.delete(`${bucket}/${p}`);
@@ -137,12 +133,16 @@ const fakeStorage = {
 const supabasePath = require.resolve(path.join(__dirname, "../src/config/supabase.js"));
 require.cache[supabasePath] = { id: supabasePath, filename: supabasePath, loaded: true, exports: { from: (t) => new FakeQuery(t), storage: fakeStorage } };
 
+const { createFakeDrive } = require("./lib/fakeDrive");
+const fd = createFakeDrive();
+const drivePath = fd.install();
+
 const logs = [];
 const origError = console.error;
 console.error = (...a) => logs.push(a.join(" "));
 
 const loadFreshApp = () => {
-  for (const key of Object.keys(require.cache)) if (key.startsWith(path.join(__dirname, "..", "src")) && key !== supabasePath) delete require.cache[key];
+  for (const key of Object.keys(require.cache)) if (key.startsWith(path.join(__dirname, "..", "src")) && key !== supabasePath && key !== drivePath) delete require.cache[key];
   delete require.cache[require.resolve("../app")];
   return require("../app");
 };
@@ -180,8 +180,8 @@ const ADMIN = "/api/admin/banpt-regulations";
 const PUB = "/api/banpt-regulations";
 const T = "banpt_regulations";
 const row = (id) => (db[T] || []).find((r) => r.id === id);
-const objects = () => [...storage.objects.keys()];
-const hasObj = (p) => storage.objects.has(`${BUCKET}/${p}`);
+const objects = () => fd.live().map((f) => f.id); // file AKTIF di Google Drive (yang di sampah tidak dihitung)
+const hasObj = (id) => fd.live().some((f) => f.id === id);
 const valid = (o = {}) => ({ regulationNumber: "1", regulationYear: 2024, determinationDate: "2024-03-01", title: "Instrumen Akreditasi Program Studi", ...o });
 
 const reset = () => {
@@ -191,7 +191,7 @@ const reset = () => {
     { id: INACTIVE_ID, name: "Nonaktif", email: "n@x.id", is_active: false, last_login_at: null, created_at: "2026-01-01T00:00:00Z" },
   ];
   db[T] = [];
-  storage.objects.clear(); storage.failUpload = false; storage.failUploadAfter = null; storage.failRemove = false; storage.uploads = 0;
+  storage.objects.clear(); storage.failRemove = false; fd.reset();
   faults.length = 0; hooks.beforeUpdate = null; logs.length = 0;
 };
 const create = async (o) => (await call("POST", ADMIN, { body: valid(o) })).json.data.regulation;
@@ -283,7 +283,9 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
   await test("respons admin tidak membocorkan path storage sebagai field", async () => {
     await withDoc(reg.id);
     const r = await call("GET", `${ADMIN}/${reg.id}`);
-    for (const k of ["document_path", "documentPath", "path"]) assert.ok(!r.text.includes(`"${k}"`), k);
+    for (const k of ["document_path", "documentPath", "path", "driveFileId", "document_drive_file_id", "md5", "document_md5"]) assert.ok(!r.text.includes(`"${k}"`), k);
+    const id = row(reg.id).document_drive_file_id;
+    assert.ok(id && !r.text.includes(id), "ID file Drive tidak boleh muncul di respons");
   });
 
   // ===================================================================
@@ -319,7 +321,7 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     const r = await call(url === DOC ? "PUT" : "POST", url, { form: f });
     assert.equal(r.status, status, `${status} diharapkan, dapat ${r.status} ${r.text.slice(0, 120)}`);
     if (code) assert.equal(r.json.code, code);
-    assert.equal(objects().length, 0, "tidak boleh ada file tersimpan"); assert.equal(row(v.id).document_path, null);
+    assert.equal(objects().length, 0, "tidak boleh ada file tersimpan"); assert.equal(row(v.id).document_drive_file_id ?? null, null);
   };
   await test("hanya PDF: PNG/JPG/DOCX/TXT ditolak 415", async () => {
     await rejects(DOC, one("document", png(), "a.png", "image/png"), 415, "UNSUPPORTED_FILE_TYPE");
@@ -346,7 +348,7 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     await rejects(DOC, one("document", big, "besar.pdf"), 413, "FILE_TOO_LARGE");
     const okBuf = Buffer.concat([Buffer.from("%PDF-1.4\n"), Buffer.alloc(20 * 1024 * 1024 - 100)]);
     const r = await call("PUT", DOC, { form: one("document", okBuf, "ok.pdf") });
-    assert.equal(r.status, 200); storage.objects.clear(); row(v.id).document_path = null;
+    assert.equal(r.status, 200); assert.equal(objects().length, 1); fd.state.files.clear(); row(v.id).document_drive_file_id = null;
   });
   await test("nama field salah / lebih dari satu file di /document / terlalu banyak file lampiran -> 400", async () => {
     await rejects(DOC, one("file", pdf(), "a.pdf"), 400, "VALIDATION_ERROR");
@@ -369,53 +371,58 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
   startServer; reset(); await startServer();
   const m = await create();
   const MD = `${ADMIN}/${m.id}/document`;
-  let firstPath;
-  await test("upload dokumen utama: path acak di server, URL publik dari helper Supabase", async () => {
+  let firstId;
+  await test("upload dokumen utama: tersimpan di Drive (bukan Supabase), nama pengguna tidak jadi path, link lewat backend", async () => {
     const r = await call("PUT", MD, { form: one("document", pdf("a"), "../../../etc/passwd/Nama Asli.pdf") });
-    assert.equal(r.status, 200);
-    firstPath = row(m.id).document_path;
-    assert.match(firstPath, new RegExp(`^regulations/${m.id}/main/[0-9a-f-]{36}\\.pdf$`));
-    assert.ok(!firstPath.includes("passwd") && !firstPath.includes("Nama"));
-    assert.ok(hasObj(firstPath));
+    assert.equal(r.status, 200, r.text);
+    firstId = row(m.id).document_drive_file_id;
+    assert.match(firstId, /^drv_/); assert.equal(row(m.id).document_path, null);
+    assert.ok(hasObj(firstId)); assert.equal(storage.objects.size, 0, "tidak ada objek di Supabase Storage");
+    const up = fd.state.calls.find((c) => c.op === "upload");
+    assert.ok(!up.name.includes("/") && !up.name.includes("passwd"), up.name);
+    assert.equal(up.parentId, "folder-regulasi-banpt");
     const d = r.json.data.regulation.document;
-    assert.equal(d.url, `https://fake-project.supabase.co/storage/v1/object/public/${BUCKET}/${firstPath}`);
-    assert.match(d.downloadUrl, /\?download=PerBAN-1-2024\.pdf$/); assert.equal(d.mimeType, "application/pdf");
-    assert.ok(!("path" in d) && !r.text.includes("service-role"));
+    assert.match(d.url, /^\/api\/files\/[\w-]+\.[\w-]+\.[\w-]+$/); assert.match(d.downloadUrl, /\?download=1$/);
+    assert.equal(d.mimeType, "application/pdf"); assert.ok(d.urlExpiresAt);
+    assert.ok(!("path" in d) && !("driveFileId" in d) && !r.text.includes(firstId) && !r.text.includes("service-role"));
   });
-  await test("ganti dokumen utama: file baru unik, file lama dihapus setelah DB menunjuk file baru", async () => {
+  await test("ganti dokumen utama: file baru unik, file lama dibersihkan setelah DB menunjuk file baru", async () => {
     const r = await call("PUT", MD, { form: one("document", pdf("b"), "baru.pdf") });
     assert.equal(r.status, 200);
-    const np = row(m.id).document_path;
-    assert.notEqual(np, firstPath); assert.ok(hasObj(np)); assert.ok(!hasObj(firstPath)); assert.equal(objects().length, 1);
+    const nid = row(m.id).document_drive_file_id;
+    assert.notEqual(nid, firstId); assert.ok(hasObj(nid)); assert.ok(!hasObj(firstId)); assert.equal(objects().length, 1);
+    const ops = fd.state.calls.filter((c) => ["upload", "remove"].includes(c.op)).map((c) => `${c.op}:${c.id}`);
+    assert.deepEqual(ops.slice(-2), [`upload:${nid}`, `remove:${firstId}`], "unggah baru dulu, hapus lama sesudahnya");
   });
   await test("upload gagal -> 502 STORAGE_ERROR, data & file lama tidak berubah", async () => {
-    const before = row(m.id).document_path; storage.failUpload = true;
+    const before = row(m.id).document_drive_file_id; fd.state.failUpload = true;
     const r = await call("PUT", MD, { form: one("document", pdf("c"), "c.pdf") });
-    storage.failUpload = false;
-    assert.equal(r.status, 502); assert.equal(r.json.code, "STORAGE_ERROR");
-    assert.equal(row(m.id).document_path, before); assert.ok(hasObj(before)); assert.equal(objects().length, 1);
+    fd.state.failUpload = false;
+    assert.equal(r.status, 502); assert.equal(r.json.code, "STORAGE_ERROR"); assert.ok(!r.text.includes("boom"));
+    assert.equal(row(m.id).document_drive_file_id, before); assert.ok(hasObj(before)); assert.equal(objects().length, 1);
   });
   await test("DB gagal saat simpan -> 500, file baru dibersihkan, file lama utuh", async () => {
-    const before = row(m.id).document_path;
+    const before = row(m.id).document_drive_file_id;
     faults.push({ table: T, op: "update", error: { message: "secret detail", code: "XX000" } });
     const r = await call("PUT", MD, { form: one("document", pdf("d"), "d.pdf") });
     assert.equal(r.status, 500); assert.equal(r.json.code, "DATABASE_ERROR"); assert.ok(!r.text.includes("secret detail"));
-    assert.equal(row(m.id).document_path, before); assert.deepEqual(objects(), [`${BUCKET}/${before}`]);
+    assert.equal(row(m.id).document_drive_file_id, before); assert.deepEqual(objects(), [before]);
   });
   await test("perubahan bersamaan (CAS gagal) -> 409, file baru dibersihkan, file pihak lain tidak ikut terhapus", async () => {
-    const original = row(m.id).document_path;
-    hooks.beforeUpdate = () => { row(m.id).document_path = "regulations/lain/main/x.pdf"; };
+    const original = row(m.id).document_drive_file_id;
+    hooks.beforeUpdate = () => { row(m.id).document_drive_file_id = "drv_diganti_pihak_lain"; };
     const r = await call("PUT", MD, { form: one("document", pdf("e"), "e.pdf") });
     assert.equal(r.status, 409); assert.equal(r.json.code, "REGULATION_CONFLICT");
-    assert.deepEqual(objects(), [`${BUCKET}/${original}`]);
-    row(m.id).document_path = original;
+    assert.deepEqual(objects(), [original]);
+    row(m.id).document_drive_file_id = original;
   });
-  await test("hapus file lama gagal -> tetap 200, dicatat [ORPHAN]", async () => {
-    const old = row(m.id).document_path; storage.failRemove = true;
+  await test("hapus file lama gagal -> tetap 200, dicatat [ORPHAN] + masuk antrean pembersihan", async () => {
+    const old = row(m.id).document_drive_file_id; fd.state.failRemove = true;
     const r = await call("PUT", MD, { form: one("document", pdf("f"), "f.pdf") });
-    storage.failRemove = false;
-    assert.equal(r.status, 200); assert.notEqual(row(m.id).document_path, old);
+    fd.state.failRemove = false;
+    assert.equal(r.status, 200); assert.notEqual(row(m.id).document_drive_file_id, old);
     assert.ok(logs.some((l) => l.includes("[ORPHAN]") && l.includes(old)));
+    assert.ok((db.drive_cleanup_queue || []).some((q) => q.file_id === old), "file lama harus ada di antrean");
   });
 
   // ===================================================================
@@ -429,9 +436,9 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     atts = r.json.data.regulation.attachments;
     assert.equal(atts.length, 3); assert.equal(new Set(atts.map((x) => x.id)).size, 3);
     assert.deepEqual(atts.map((x) => x.name), ["Lampiran 1.pdf", "Lampiran 2.pdf", "Lampiran 3.pdf"]);
-    for (const x of atts) { assert.match(x.url, /\/object\/public\/banpt-regulations\/regulations\/.+\/attachments\/.+\.pdf$/); assert.match(x.downloadUrl, /\?download=Lampiran/); assert.ok(!("path" in x)); }
+    for (const x of atts) { assert.match(x.url, /^\/api\/files\//); assert.match(x.downloadUrl, /\?download=1$/); assert.ok(!("path" in x) && !("driveFileId" in x) && !("md5" in x)); }
     assert.equal(objects().length, 3); assert.equal(row(a.id).attachments.length, 3);
-    for (const s of row(a.id).attachments) assert.ok(hasObj(s.path));
+    for (const s of row(a.id).attachments) { assert.ok(hasObj(s.driveFileId)); assert.equal(s.path, undefined); }
   });
   await test("menambah lampiran lagi tidak menimpa lampiran lama", async () => {
     const r = await call("POST", AA, { form: one("attachments", pdf("4"), "Lampiran 4.pdf") });
@@ -446,9 +453,9 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     assert.equal(r2.status, 415); assert.equal(objects().length, before);
   });
   await test("upload gagal di tengah -> file yang sudah terunggah dibersihkan, data tidak berubah", async () => {
-    const before = objects().length; storage.uploads = 0; storage.failUploadAfter = 1;
+    const before = objects().length; fd.state.uploads = 0; fd.state.failUploadAfter = 1;
     const r = await call("POST", AA, { form: form([["attachments", pdf("6"), "6.pdf"], ["attachments", pdf("7"), "7.pdf"], ["attachments", pdf("8"), "8.pdf"]]) });
-    storage.failUploadAfter = null;
+    fd.state.failUploadAfter = null;
     assert.equal(r.status, 502); assert.equal(objects().length, before); assert.equal(row(a.id).attachments.length, 4);
   });
   await test("DB gagal / CAS gagal saat simpan lampiran -> semua file baru dibersihkan", async () => {
@@ -461,12 +468,12 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     assert.equal(r.status, 409); assert.equal(objects().length, before); assert.equal(row(a.id).attachments.length, 4);
   });
   await test("ganti lampiran: id tetap, file baru, file lama dihapus", async () => {
-    const target = row(a.id).attachments[1]; const oldPath = target.path;
+    const target = row(a.id).attachments[1]; const oldPath = target.driveFileId;
     const r = await call("PUT", `${AA}/${target.id}`, { form: one("attachment", pdf("ganti"), "Pengganti.pdf") });
     assert.equal(r.status, 200);
     const now = r.json.data.regulation.attachments;
     assert.equal(now.length, 4); assert.equal(now[1].id, target.id); assert.equal(now[1].name, "Pengganti.pdf");
-    assert.ok(!hasObj(oldPath)); assert.ok(hasObj(row(a.id).attachments[1].path)); assert.equal(objects().length, 4);
+    assert.ok(!hasObj(oldPath)); assert.ok(hasObj(row(a.id).attachments[1].driveFileId)); assert.equal(objects().length, 4);
   });
   await test("ganti lampiran dengan file tidak valid / id tidak ada / gagal upload -> tidak ada perubahan", async () => {
     const t = row(a.id).attachments[0]; const snapshot = JSON.stringify(row(a.id).attachments);
@@ -474,14 +481,14 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     assert.equal((await call("PUT", `${AA}/${t.id}`, { form: one("attachment", pdf(), "x.png", "image/png") })).status, 415);
     const nf = await call("PUT", `${AA}/${MISSING}`, { form: one("attachment", pdf("z"), "z.pdf") });
     assert.equal(nf.status, 404); assert.equal(nf.json.code, "ATTACHMENT_NOT_FOUND");
-    storage.failUpload = true;
+    fd.state.failUpload = true;
     assert.equal((await call("PUT", `${AA}/${t.id}`, { form: one("attachment", pdf("z"), "z.pdf") })).status, 502);
-    storage.failUpload = false;
+    fd.state.failUpload = false;
     assert.equal(JSON.stringify(row(a.id).attachments), snapshot); assert.equal(objects().length, 4);
     assert.equal((await call("PUT", `${AA}/bukan-uuid`, { form: one("attachment", pdf(), "z.pdf") })).status, 400);
   });
   await test("hapus lampiran: file terhapus dari Storage, lampiran lain utuh; hapus lagi -> 404", async () => {
-    const [t, ...rest] = row(a.id).attachments; const p = t.path;
+    const [t, ...rest] = row(a.id).attachments; const p = t.driveFileId;
     const r = await call("DELETE", `${AA}/${t.id}`);
     assert.equal(r.status, 200); assert.equal(r.json.data.regulation.attachments.length, 3);
     assert.ok(!hasObj(p)); assert.equal(objects().length, 3);
@@ -491,10 +498,10 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
   await test("hapus lampiran: DB gagal -> file tidak dihapus; Storage gagal -> tetap 200 + [ORPHAN]", async () => {
     const t = row(a.id).attachments[0];
     faults.push({ table: T, op: "update", error: { message: "x", code: "XX000" } });
-    assert.equal((await call("DELETE", `${AA}/${t.id}`)).status, 500); assert.ok(hasObj(t.path)); assert.equal(row(a.id).attachments.length, 3);
-    storage.failRemove = true;
-    const r = await call("DELETE", `${AA}/${t.id}`); storage.failRemove = false;
-    assert.equal(r.status, 200); assert.ok(logs.some((l) => l.includes("[ORPHAN]") && l.includes(t.path)));
+    assert.equal((await call("DELETE", `${AA}/${t.id}`)).status, 500); assert.ok(hasObj(t.driveFileId)); assert.equal(row(a.id).attachments.length, 3);
+    fd.state.failRemove = true;
+    const r = await call("DELETE", `${AA}/${t.id}`); fd.state.failRemove = false;
+    assert.equal(r.status, 200); assert.ok(logs.some((l) => l.includes("[ORPHAN]") && l.includes(t.driveFileId)));
   });
   await test("batas jumlah lampiran per peraturan (20) -> 400 ATTACHMENT_LIMIT_REACHED", async () => {
     reset(); await startServer();
@@ -508,7 +515,7 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
   // ===================================================================
   console.log("\n7. Hapus peraturan beserta file Storage");
   reset(); await startServer();
-  await test("DELETE menghapus baris + dokumen utama + SEMUA lampiran dari Storage", async () => {
+  await test("DELETE menghapus baris + dokumen utama + SEMUA lampiran dari Drive", async () => {
     const c = await create(); await withDoc(c.id);
     await call("POST", `${ADMIN}/${c.id}/attachments`, { form: form([["attachments", pdf("1"), "1.pdf"], ["attachments", pdf("2"), "2.pdf"]]) });
     const other = await create({ regulationNumber: "77" }); await withDoc(other.id, "o");
@@ -516,20 +523,23 @@ const withDoc = async (id, tag = "m") => (await call("PUT", `${ADMIN}/${id}/docu
     const r = await call("DELETE", `${ADMIN}/${c.id}`);
     assert.equal(r.status, 200); assert.equal(r.json.success, true);
     assert.equal(row(c.id), undefined); assert.equal(objects().length, 1);
-    assert.ok(objects()[0].includes(other.id), "file milik peraturan lain tidak boleh ikut terhapus");
+    assert.equal(fd.live()[0].appProperties.recordId, other.id, "file milik peraturan lain tidak boleh ikut terhapus");
     assert.equal((await call("GET", `${ADMIN}/${c.id}`)).status, 404);
   });
-  await test("Storage gagal saat hapus -> data tetap terhapus (200), tiap file dicatat [ORPHAN]", async () => {
+  await test("Drive gagal saat hapus -> data tetap terhapus (200), tiap file dicatat [ORPHAN] dan diantrekan", async () => {
     const c = await create({ regulationNumber: "88" }); await withDoc(c.id);
     await call("POST", `${ADMIN}/${c.id}/attachments`, { form: one("attachments", pdf("1"), "1.pdf") });
-    const paths = [row(c.id).document_path, row(c.id).attachments[0].path];
-    storage.failRemove = true; const r = await call("DELETE", `${ADMIN}/${c.id}`); storage.failRemove = false;
+    const paths = [row(c.id).document_drive_file_id, row(c.id).attachments[0].driveFileId];
+    fd.state.failRemove = true; const r = await call("DELETE", `${ADMIN}/${c.id}`); fd.state.failRemove = false;
     assert.equal(r.status, 200); assert.equal(row(c.id), undefined);
-    for (const p of paths) assert.ok(logs.some((l) => l.includes("[ORPHAN]") && l.includes(p)), p);
+    for (const p of paths) {
+      assert.ok(logs.some((l) => l.includes("[ORPHAN]") && l.includes(p)), p);
+      assert.ok((db.drive_cleanup_queue || []).some((q) => q.file_id === p), `${p} harus masuk antrean`);
+    }
   });
   await test("DB gagal saat hapus -> 500 dan file TIDAK dihapus", async () => {
     const c = await create({ regulationNumber: "99" }); await withDoc(c.id, "k");
-    const p = row(c.id).document_path;
+    const p = row(c.id).document_drive_file_id;
     faults.push({ table: T, op: "delete", error: { message: "x", code: "XX000" } });
     assert.equal((await call("DELETE", `${ADMIN}/${c.id}`)).status, 500);
     assert.ok(hasObj(p)); assert.ok(row(c.id));

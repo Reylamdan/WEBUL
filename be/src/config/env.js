@@ -110,6 +110,86 @@ if (!TRANSLATION_PROVIDERS.includes(translationProvider)) {
   errors.push(`TRANSLATION_PROVIDER tidak valid (pilihan: ${TRANSLATION_PROVIDERS.join(", ")}).`);
 }
 
+// ---------- BACKEND_PUBLIC_URL (opsional) ----------
+// Alamat publik API ini, dipakai untuk membentuk link preview/download dokumen (/api/files/...,
+// /api/banpt-regulations/:id/document, dst.). Kosong = link relatif ("/api/..."), cukup jika frontend
+// dan API satu origin atau frontend memakai proxy ke API. Jika frontend dan API berbeda domain,
+// WAJIB diisi (contoh: https://api.universitaslia.ac.id), kalau tidak link akan menunjuk ke domain frontend.
+const rawBackendPublicUrl = read("BACKEND_PUBLIC_URL");
+let backendPublicUrl = "";
+if (rawBackendPublicUrl) {
+  try {
+    const url = new URL(rawBackendPublicUrl);
+    if (!["http:", "https:"].includes(url.protocol) || url.search || url.hash) throw new Error();
+    backendPublicUrl = rawBackendPublicUrl.replace(/\/+$/, "");
+  } catch {
+    errors.push("BACKEND_PUBLIC_URL bukan URL http/https yang valid (contoh: https://api.universitaslia.ac.id).");
+  }
+}
+
+// ---------- GOOGLE DRIVE (penyimpanan dokumen akreditasi prodi & regulasi BAN-PT) ----------
+// Opsional: tanpa konfigurasi ini server tetap berjalan, dokumen LAMA (Supabase Storage) tetap
+// terbaca, tetapi unggah dokumen baru dijawab 503 STORAGE_NOT_CONFIGURED.
+// Kredensial Service Account bisa diberikan lewat DUA cara (pilih salah satu):
+//   a) GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY   (cocok untuk hosting tanpa file)
+//   b) GOOGLE_SERVICE_ACCOUNT_KEY_FILE                      (path ke file JSON; cocok untuk lokal)
+// Pesan error hanya menyebut NAMA variabel, tidak pernah nilainya.
+const googleEmail = read("GOOGLE_SERVICE_ACCOUNT_EMAIL");
+// Banyak hosting menyimpan newline pada private key sebagai teks "\n"; dinormalkan di sini.
+const googlePrivateKey = read("GOOGLE_PRIVATE_KEY").replace(/\\n/g, "\n");
+const googleKeyFile = read("GOOGLE_SERVICE_ACCOUNT_KEY_FILE");
+const googleRootFolderId = read("GOOGLE_DRIVE_ROOT_FOLDER_ID");
+const googleDeleteMode = (read("GOOGLE_DRIVE_DELETE_MODE") || "trash").toLowerCase();
+
+const GOOGLE_DELETE_MODES = ["trash", "delete"];
+if (!GOOGLE_DELETE_MODES.includes(googleDeleteMode)) {
+  errors.push(`GOOGLE_DRIVE_DELETE_MODE tidak valid (pilihan: ${GOOGLE_DELETE_MODES.join(", ")}).`);
+}
+
+const googleDriveRequested = Boolean(googleEmail || googlePrivateKey || googleKeyFile || googleRootFolderId);
+let googleDriveEnabled = false;
+if (googleDriveRequested) {
+  const before = errors.length;
+
+  if (!googleRootFolderId) {
+    errors.push("GOOGLE_DRIVE_ROOT_FOLDER_ID belum diisi (konfigurasi Google Drive terisi sebagian).");
+  } else if (!/^[A-Za-z0-9_-]{10,}$/.test(googleRootFolderId)) {
+    errors.push("GOOGLE_DRIVE_ROOT_FOLDER_ID tidak valid (isi hanya ID folder, bukan URL).");
+  }
+
+  if (googleKeyFile && (googlePrivateKey || googleEmail)) {
+    errors.push(
+      "Pilih satu cara kredensial Google: GOOGLE_SERVICE_ACCOUNT_KEY_FILE atau GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY, jangan keduanya."
+    );
+  } else if (googleKeyFile) {
+    if (!require("fs").existsSync(googleKeyFile)) {
+      errors.push("GOOGLE_SERVICE_ACCOUNT_KEY_FILE menunjuk ke file yang tidak ditemukan.");
+    }
+  } else {
+    if (!googleEmail) {
+      errors.push("GOOGLE_SERVICE_ACCOUNT_EMAIL belum diisi (konfigurasi Google Drive terisi sebagian).");
+    } else if (!/^[^\s@]+@[^\s@]+$/.test(googleEmail)) {
+      errors.push("GOOGLE_SERVICE_ACCOUNT_EMAIL tidak valid.");
+    }
+    if (!googlePrivateKey) {
+      errors.push("GOOGLE_PRIVATE_KEY belum diisi (konfigurasi Google Drive terisi sebagian).");
+    } else if (!/-----BEGIN (?:RSA )?PRIVATE KEY-----[\s\S]+-----END (?:RSA )?PRIVATE KEY-----/.test(googlePrivateKey)) {
+      errors.push("GOOGLE_PRIVATE_KEY tidak valid (harus berformat PEM: -----BEGIN PRIVATE KEY----- ... -----END PRIVATE KEY-----).");
+    }
+  }
+
+  googleDriveEnabled = errors.length === before;
+}
+
+const googleDrive = Object.freeze({
+  enabled: googleDriveEnabled,
+  clientEmail: googleEmail,
+  privateKey: googlePrivateKey,
+  keyFile: googleKeyFile,
+  rootFolderId: googleRootFolderId,
+  deleteMode: googleDeleteMode,
+});
+
 // ---------- Hentikan server jika ada yang salah ----------
 // Pesan hanya menyebut NAMA variabel, tidak pernah menampilkan nilainya.
 if (errors.length > 0) {
@@ -121,11 +201,21 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
+// Peringatan (bukan error): di production, link dokumen relatif hanya benar jika frontend satu origin dengan API.
+if (isProduction && googleDriveEnabled && !backendPublicUrl) {
+  console.warn(
+    "[KONFIGURASI] BACKEND_PUBLIC_URL kosong: link dokumen berbentuk relatif (/api/...). " +
+      "Isi jika frontend dan API berada di domain berbeda."
+  );
+}
+
 module.exports = Object.freeze({
   nodeEnv: NODE_ENV,
   isProduction,
   port,
   frontendOrigins,
+  backendPublicUrl,
+  googleDrive,
   supabaseUrl,
   supabaseServiceRoleKey,
   jwtSecret,

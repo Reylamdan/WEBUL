@@ -41,6 +41,22 @@ const regulationUploadLimiter = rateLimit({
   },
 });
 
+// Pembatas preview/download dokumen (route publik /document, /attachments, dan /api/files/:token).
+// Setiap hit yang lolos otorisasi bisa menarik file dari Google Drive, jadi dibatasi terpisah dari
+// pembatas umum /api. Pembaca PDF memakai banyak request Range, sehingga batasnya cukup longgar.
+// Penghitung disimpan di memori (ter-reset saat server restart, tidak dibagi antar instance).
+const fileStreamLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 150,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Terlalu banyak permintaan file, coba lagi beberapa saat lagi",
+    code: "TOO_MANY_FILE_REQUESTS",
+  },
+});
+
 // Pembatas khusus login, berlaku di atas pembatas umum /api pada app.js.
 // Hanya percobaan GAGAL yang dihitung (status >= 400); login berhasil tidak dihitung.
 // Catatan: penghitung disimpan di memori, jadi ter-reset saat server restart.
@@ -57,4 +73,10 @@ const loginLimiter = rateLimit({
   },
 });
 
-module.exports = { loginLimiter, coverUploadLimiter, documentUploadLimiter, regulationUploadLimiter };
+module.exports = {
+  loginLimiter,
+  coverUploadLimiter,
+  documentUploadLimiter,
+  regulationUploadLimiter,
+  fileStreamLimiter,
+};

@@ -1,3 +1,4 @@
+
 const express = require("express");
 const healthRoutes = require("./healthRoutes");
 const authRoutes = require("./authRoutes");
@@ -10,24 +11,39 @@ const adminAccreditationRoutes = require("./adminAccreditationRoutes");
 const publicAccreditationRoutes = require("./publicAccreditationRoutes");
 const adminBanptRegulationRoutes = require("./adminBanptRegulationRoutes");
 const publicBanptRegulationRoutes = require("./publicBanptRegulationRoutes");
+const fileRoutes = require("./fileRoutes");
+const adminAcademicCalendarRoutes = require("./adminAcademicCalendarRoutes");
+const publicAcademicCalendarRoutes = require("./publicAcademicCalendarRoutes");
+const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
+const publicAssistantRoutes = require("./publicAssistantRoutes");
+
 
 const router = express.Router();
 
 // Dipasang di app.js dengan prefix /api
 router.use("/health", healthRoutes);
 router.use("/auth", authRoutes);
-router.use("/admin/news", adminNewsRoutes); // dilindungi requireAdmin di dalam router-nya
-router.use("/admin/announcements", adminAnnouncementRoutes); // dilindungi requireAdmin di dalam router-nya
-router.use("/announcements", publicAnnouncementRoutes); // publik (unauthenticated)
-router.use("/news", publicNewsRoutes); // publik (unauthenticated), hanya berita published
-router.use("/admin/translations", adminTranslationRoutes); // dilindungi requireAdmin di dalam router-nya
+router.use("/admin/news", adminNewsRoutes);
+router.use("/admin/announcements", adminAnnouncementRoutes);
+router.use("/announcements", publicAnnouncementRoutes);
+router.use("/news", publicNewsRoutes);
+router.use("/admin/translations", adminTranslationRoutes);
 
-router.use("/admin/accreditation", adminAccreditationRoutes); // dilindungi requireAdmin di dalam router-nya
-router.use("/accreditation", publicAccreditationRoutes); // publik (unauthenticated), hanya data published
+router.use("/admin/accreditation", adminAccreditationRoutes);
+router.use("/accreditation", publicAccreditationRoutes);
 
-router.use("/admin/banpt-regulations", adminBanptRegulationRoutes); // dilindungi requireAdmin di dalam router-nya
-router.use("/banpt-regulations", publicBanptRegulationRoutes); // publik (unauthenticated), hanya data published
+router.use("/admin/banpt-regulations", adminBanptRegulationRoutes);
+router.use("/banpt-regulations", publicBanptRegulationRoutes);
 
-// Route fitur lain (academic calendar) akan ditambahkan di fase berikutnya
+router.use("/files", fileRoutes);
+
+router.use("/admin/academic-calendar", adminAcademicCalendarRoutes);
+router.use("/academic-calendar", publicAcademicCalendarRoutes);
+
+// Assistant Knowledge khusus admin
+router.use("/admin/assistant-knowledge", adminAssistantKnowledgeRoutes);
+
+// Public AI Assistant
+router.use("/assistant", publicAssistantRoutes);
 
 module.exports = router;
