@@ -2200,12 +2200,12 @@ button {
   border: 1px solid #ffffff55;
   border-radius: 50%;
   background:
-    radial-gradient(ellipse at 30% 14%, #ffffff65, transparent 42%),
-    linear-gradient(145deg, #74c8e1b8 0%, #1485b5d9 44%, #07547fdc 100%);
+    radial-gradient(ellipse at 30% 14%, #ffffff40, transparent 42%),
+    linear-gradient(145deg, #4b9db9c9 0%, #126b91e0 44%, #06496edd 100%);
   box-shadow:
-    inset 0 1px 1px #ffffff90,
-    inset 0 -8px 14px #063e5c40,
-    0 9px 26px #063d5b45,
+    inset 0 1px 1px #ffffff65,
+    inset 0 -8px 14px #042e484d,
+    0 9px 26px #063d5b38,
     0 2px 6px #102e4326;
   -webkit-backdrop-filter: blur(16px) saturate(1.65);
   backdrop-filter: blur(16px) saturate(1.65);
@@ -2276,14 +2276,14 @@ button {
   overflow: hidden;
   padding: 18px 20px;
   background:
-    radial-gradient(ellipse at 17% -18%, #ffffff65 0, transparent 43%),
-    radial-gradient(circle at 91% 7%, #9be8ff55 0 54px, transparent 55px),
-    linear-gradient(128deg, #bceeff60 0%, #38aad65c 35%, #0879a799 70%, #064d7dc9 100%);
+    radial-gradient(ellipse at 17% -18%, #ffffff38 0, transparent 43%),
+    radial-gradient(circle at 91% 7%, #7ac5e52e 0 54px, transparent 55px),
+    linear-gradient(128deg, #397b98eb 0%, #176b8bdd 35%, #075a7cd9 70%, #06466be8 100%);
   box-shadow:
-    inset 0 1px #ffffff90,
-    inset 0 -1px #ffffff30;
-  -webkit-backdrop-filter: blur(24px) saturate(1.7);
-  backdrop-filter: blur(24px) saturate(1.7);
+    inset 0 1px #ffffff55,
+    inset 0 -1px #ffffff1f;
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  backdrop-filter: blur(24px) saturate(1.3);
   color: #fff;
 }
 
@@ -2328,7 +2328,7 @@ button {
   align-items: center;
   gap: 6px;
   margin-top: 5px;
-  color: #d8edf4;
+  color: #d1e4ec;
   font-size: 11px;
 }
 
@@ -2367,8 +2367,8 @@ button {
   overflow-y: auto;
   padding: 18px 18px 16px;
   background:
-    radial-gradient(ellipse at 100% 0%, #e1f4f966 0, transparent 52%),
-    #f9fcfdf2;
+    radial-gradient(ellipse at 100% 0%, #d7e9ef59 0, transparent 52%),
+    #eef3f5f5;
 }
 
 .virtual-assistant-message {
@@ -2393,10 +2393,10 @@ button {
 .virtual-assistant-response {
   max-width: calc(100% - 34px);
   padding: 11px 13px;
-  border: 1px solid #ffffffd9;
+  border: 1px solid #d5e0e5;
   border-radius: 4px 15px 15px;
-  background: #ffffffc9;
-  box-shadow: 0 3px 12px #18394a0c, inset 0 1px #fff;
+  background: #f9fbfcdb;
+  box-shadow: 0 3px 12px #18394a0b, inset 0 1px #ffffffd9;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
@@ -2429,26 +2429,26 @@ button {
 .virtual-assistant-topic {
   min-height: 40px;
   padding: 8px 10px;
-  border: 1px solid #ffffffc9;
+  border: 1px solid #cbd9df;
   border-radius: 11px;
-  background: linear-gradient(145deg, #ffffffc9, #eaf5f8a6);
+  background: linear-gradient(145deg, #f8fafbd9, #e4ecefae);
   color: #24536a;
   cursor: pointer;
   font: inherit;
   font-size: 11px;
   font-weight: 550;
   text-align: left;
-  box-shadow: inset 0 1px #fff, 0 2px 7px #0d526d0a;
-  -webkit-backdrop-filter: blur(14px) saturate(1.3);
-  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: inset 0 1px #ffffffc4, 0 2px 7px #0d526d0a;
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  backdrop-filter: blur(14px) saturate(1.15);
   transition: border-color .16s ease, background .16s ease, transform .16s ease, box-shadow .16s ease;
 }
 
 .virtual-assistant-topic:hover,
 .virtual-assistant-topic.is-selected {
-  border-color: #6bb5d0b3;
-  background: linear-gradient(145deg, #ffffffeb, #d7f0f8c9);
-  box-shadow: inset 0 1px #fff, 0 4px 12px #0e63831c;
+  border-color: #75aabd;
+  background: linear-gradient(145deg, #f4f8f9ed, #d2e3e9db);
+  box-shadow: inset 0 1px #ffffffd9, 0 4px 12px #0e63831c;
   transform: translateY(-1px);
 }
 
@@ -2457,8 +2457,8 @@ button {
 }
 
 .virtual-assistant-response {
-  border-color: #ffffffd9;
-  background: #ffffffbf;
+  border-color: #d5e0e5;
+  background: #f8fafbdb;
   animation: virtual-assistant-enter .2s ease-out;
 }
 
@@ -2502,37 +2502,37 @@ button {
   justify-content: center;
   gap: 7px;
   padding: 0 12px;
-  border: 1px solid #ffffffc9;
+  border: 1px solid #cbd9df;
   border-radius: 10px;
-  background: linear-gradient(145deg, #ffffffd9, #eaf5f8a6);
+  background: linear-gradient(145deg, #f8fafbd9, #e4ecefae);
   color: #285164;
   font-size: 11px;
   font-weight: 650;
   text-decoration: none;
-  box-shadow: inset 0 1px #fff, 0 2px 7px #0d526d0a;
+  box-shadow: inset 0 1px #ffffffc4, 0 2px 7px #0d526d0a;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   transition: transform .16s ease, background .16s ease, border-color .16s ease;
 }
 
 .virtual-assistant-contact-link:hover {
-  border-color: #8ebfd0;
-  background: linear-gradient(145deg, #fff, #dff2f7);
+  border-color: #75aabd;
+  background: linear-gradient(145deg, #f4f8f9, #dce8ec);
   transform: translateY(-1px);
 }
 
 .virtual-assistant-contact-link.is-whatsapp {
-  border-color: #ffffff50;
-  background: linear-gradient(145deg, #70d7b2c7, #138a69d9);
+  border-color: #ffffff38;
+  background: linear-gradient(145deg, #398d75e0, #12634fe8);
   color: #fff;
-  box-shadow: inset 0 1px #ffffff9c, inset 0 -5px 10px #07563e35, 0 3px 9px #168a6426;
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
-  backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow: inset 0 1px #ffffff65, inset 0 -5px 10px #07563e40, 0 3px 9px #168a6426;
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
 }
 
 .virtual-assistant-contact-link.is-whatsapp:hover {
-  border-color: #ffffff80;
-  background: linear-gradient(145deg, #8ce2c4dc, #168a69eb);
+  border-color: #ffffff60;
+  background: linear-gradient(145deg, #4a9d83eb, #17735ceF);
 }
 
 .virtual-assistant-email-icon {
