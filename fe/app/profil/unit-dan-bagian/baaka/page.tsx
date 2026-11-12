@@ -5,7 +5,6 @@ import {
   BaakaLayanan,
   BaakaTentang,
 } from "@/components/unit-dan-bagian";
-import { Icon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "BAAKA — Universitas LIA",
@@ -23,14 +22,6 @@ export default function BaakaPage() {
         <BaakaLayanan />
       </div>
 
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
     </main>
   );
 }
-

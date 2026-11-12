@@ -9,8 +9,6 @@ export function ProfilHero() {
           <nav aria-label="Breadcrumb" className="profile-breadcrumb">
             <Link href="/">Beranda</Link>
             <span aria-hidden="true">/</span>
-            <Link href="/profil">Profil</Link>
-            <span aria-hidden="true">/</span>
             <span aria-current="page">Profil</span>
           </nav>
 
@@ -30,4 +28,3 @@ export function ProfilHero() {
     </ScrollReveal>
   );
 }
-

@@ -6,7 +6,6 @@ import {
   BauskSarpras,
   BauskTentang,
 } from "@/components/unit-dan-bagian";
-import { Icon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "BAUSK — Universitas LIA",
@@ -25,14 +24,6 @@ export default function BauskPage() {
         <BauskAudit />
       </div>
 
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
     </main>
   );
 }
-

@@ -4,7 +4,6 @@ import {
   AkreditasiInstitusi,
   AkreditasiProgramStudi,
 } from "@/components/akreditasi";
-import { Icon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Akreditasi — Universitas LIA",
@@ -21,14 +20,6 @@ export default function AkreditasiPage() {
         <AkreditasiProgramStudi />
       </div>
 
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
     </main>
   );
 }
-

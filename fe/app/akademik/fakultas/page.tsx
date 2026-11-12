@@ -1,6 +1,5 @@
 import {
   FacultyContent,
-  FacultyContactButton,
   FacultyHero,
 } from "@/components/akademik";
 
@@ -13,7 +12,6 @@ export default function FacultiesPage() {
         <FacultyHero />
         <FacultyContent />
       </div>
-      <FacultyContactButton />
     </main>
   );
 }

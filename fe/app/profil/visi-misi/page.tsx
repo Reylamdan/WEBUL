@@ -4,7 +4,6 @@ import {
   LandasanTujuan,
   VisiMisiHero,
 } from "@/components/visi-misi";
-import { Icon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Visi & Misi — Universitas LIA",
@@ -20,13 +19,6 @@ export default function VisiMisiPage() {
         <LandasanTujuan />
         <KomitmenKami />
       </div>
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
     </main>
   );
 }

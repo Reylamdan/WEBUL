@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
+import { VirtualAssistant } from "@/components/virtual-assistant";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
   title: "Universitas LIA — Empowering Minds, Inspiring Futures",
   description:
     "Temukan program studi, kehidupan kampus, dan informasi penerimaan mahasiswa baru Universitas LIA.",
+  icons: {
+    icon: "/logo-lia.png",
+  },
 };
 
 export default function RootLayout({
@@ -33,6 +37,7 @@ export default function RootLayout({
         <SiteHeader />
         {children}
         <SiteFooter />
+        <VirtualAssistant />
       </body>
     </html>
   );

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { UkmHero, UkmContent, UkmCta } from "@/components/kegiatan-mahasiswa";
-import { Icon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Kegiatan Mahasiswa (UKM) — Universitas LIA",
@@ -19,14 +18,6 @@ export default function KegiatanMahasiswaPage() {
         </div>
       </section>
 
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
     </main>
   );
 }
-

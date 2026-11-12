@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "@/components/icons";
 import {
   AboutSection,
   AdmissionBanner,
@@ -29,14 +28,6 @@ export default function Home() {
       <CampusLifeSection />
       <AdmissionBanner />
       <PartnersSection />
-
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
 
       <VideoModal isOpen={videoOpen} onClose={() => setVideoOpen(false)} />
     </main>

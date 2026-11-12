@@ -4,7 +4,6 @@ import {
   StrukturHero,
   UnitPimpinan,
 } from "@/components/struktur-organisasi";
-import { Icon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Struktur Organisasi — Universitas LIA",
@@ -20,14 +19,6 @@ export default function StrukturOrganisasiPage() {
         <UnitPimpinan />
       </div>
 
-      <a
-        aria-label="Hubungi Universitas LIA"
-        className="chat-button"
-        href="mailto:humas@universitaslia.ac.id"
-      >
-        <Icon name="message" size={21} />
-      </a>
     </main>
   );
 }
-

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FacultyContactButton } from "@/components/akademik/faculty-contact-button";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { curriculumPrograms } from "./kurikulum-data";
 import "./kurikulum.css";
@@ -158,7 +157,6 @@ export function KurikulumPage() {
         <OutcomeBasedEducation />
         <CurriculumTable />
       </div>
-      <FacultyContactButton />
     </main>
   );
 }
