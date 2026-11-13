@@ -27,6 +27,8 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    // Agar pembaca PDF berbasis fetch (lintas origin) bisa memakai Range & membaca nama file dokumen.
+    exposedHeaders: ["Content-Disposition", "Content-Length", "Content-Range", "Accept-Ranges", "ETag"],
   })
 );
 

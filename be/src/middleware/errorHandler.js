@@ -1,11 +1,10 @@
+
 const env = require("../config/env");
 
-// Global error handler. Express 5 otomatis meneruskan error dari handler async
-// ke middleware ini, jadi controller tidak perlu try/catch hanya untuk itu.
-// Harus punya 4 parameter agar dikenali Express sebagai error handler.
+// Global error handler.
+// Express 5 otomatis meneruskan error dari handler async.
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-  // Jika respons sudah mulai dikirim, serahkan ke handler bawaan Express
   if (res.headersSent) {
     return next(err);
   }
@@ -16,7 +15,6 @@ const errorHandler = (err, req, res, next) => {
   let details;
 
   if (err && err.isOperational) {
-    // Error yang sengaja dilempar lewat AppError
     statusCode = err.statusCode;
     code = err.code;
     message = err.message;
@@ -31,8 +29,8 @@ const errorHandler = (err, req, res, next) => {
     message = "Ukuran body request terlalu besar";
   }
 
-  // Log di sisi server saja. Body request sengaja tidak dicatat
-  // karena bisa berisi password atau token.
+  // Log error hanya di sisi server.
+  // Body request tidak dicatat karena dapat berisi data sensitif.
   if (statusCode >= 500) {
     console.error(
       `[ERROR] ${req.method} ${req.originalUrl} -> ${statusCode}`,
@@ -42,16 +40,11 @@ const errorHandler = (err, req, res, next) => {
 
   const body = { success: false, message, code };
 
-  // Detail error (misalnya daftar kesalahan validasi), jika ada
   if (details !== undefined) {
     body.errors = details;
   }
 
-  // Stack trace hanya untuk development
-  if (!env.isProduction && statusCode >= 500 && err && err.stack) {
-    body.stack = err.stack;
-  }
-
+  // Stack trace tidak pernah dikirim ke client.
   return res.status(statusCode).json(body);
 };
 
