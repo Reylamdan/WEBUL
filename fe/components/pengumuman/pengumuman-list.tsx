@@ -1,18 +1,12 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useId, useState } from "react";
 import { Icon } from "@/components/icons";
+import { announcementApi, errorMessage, formatDate, type AnnouncementItem } from "@/lib/api";
+import { useApi, useDebouncedValue } from "@/lib/use-api";
 
-export interface PengumumanItem {
-  id: string;
-  category: "AKADEMIK" | "ADMINISTRASI" | "KEMAHASISWAAN" | "PENERIMAAN";
-  categoryLabel: string;
-  title: string;
-  description: string;
-  date: string;
-  detail?: string;
-}
-
+// Backend belum memiliki field kategori pengumuman. Pilihan kategori dipakai sebagai kata kunci
+// pencarian (judul/ringkasan) bila kolom cari kosong.
 const CATEGORIES = [
   { id: "semua", label: "Semua pengumuman" },
   { id: "akademik", label: "Akademik" },
@@ -20,71 +14,50 @@ const CATEGORIES = [
   { id: "kemahasiswaan", label: "Kemahasiswaan" },
 ] as const;
 
-const PENGUMUMAN_ITEMS: PengumumanItem[] = [
-  {
-    id: "kalender-akademik",
-    category: "AKADEMIK",
-    categoryLabel: "Akademik",
-    title: "Informasi kalender akademik",
-    description: "Tanggal publikasi dan detail pengumuman akan ditambahkan.",
-    date: "Tanggal —",
-    detail:
-      "Kalender akademik resmi Universitas LIA mencakup jadwal registrasi ulang, periode perkuliahan, Ujian Tengah Semester (UTS), Ujian Akhir Semester (UAS), serta batas akhir pengisian KRS.",
-  },
-  {
-    id: "layanan-administrasi",
-    category: "ADMINISTRASI",
-    categoryLabel: "Administrasi",
-    title: "Informasi layanan administrasi",
-    description: "Persyaratan, alur layanan, dan dokumen terkait akan tersedia di sini.",
-    date: "Tanggal —",
-    detail:
-      "Layanan administrasi mencakup permohonan surat keterangan aktif kuliah, legalisasi ijazah & transkrip, pengajuan cuti akademik, dan administrasi keuangan mahasiswa.",
-  },
-  {
-    id: "untuk-mahasiswa",
-    category: "KEMAHASISWAAN",
-    categoryLabel: "Kemahasiswaan",
-    title: "Informasi untuk mahasiswa",
-    description: "Pemberitahuan resmi dan informasi kegiatan mahasiswa.",
-    date: "Tanggal —",
-    detail:
-      "Informasi mengenai kegiatan pembinaan minat & bakat mahasiswa, kepengurusan ormawa/UKM, beasiswa prestasi, serta pengumuman kompetisi tingkat wilayah dan nasional.",
-  },
-  {
-    id: "penerimaan-mhs-baru",
-    category: "PENERIMAAN",
-    categoryLabel: "Kemahasiswaan", // Or accessible via Semua
-    title: "Informasi penerimaan mahasiswa baru",
-    description: "Informasi resmi terkait proses dan jadwal PMB.",
-    date: "Tanggal —",
-    detail:
-      "Informasi jalur pendaftaran mahasiswa baru Universitas LIA untuk Program Sarjana (S1) dan Diploma (D3), termasuk jalur reguler, prestasi, dan beasiswa kemitraan.",
-  },
-];
+// Backend membatasi maksimal 50 data per permintaan.
+const PAGE_LIMIT = 50;
+
+function AnnouncementDetail({ slug, fallback }: { slug: string; fallback: string | null }) {
+  const { data, error, loading } = useApi(`pengumuman-detail:${slug}`, () => announcementApi.detail(slug));
+
+  if (loading) return <p className="pengumuman-modal-desc">Memuat detail pengumuman...</p>;
+  if (error) {
+    return (
+      <>
+        {fallback && <p className="pengumuman-modal-desc">{fallback}</p>}
+        <p className="pengumuman-modal-desc" role="alert">
+          {errorMessage(error)}
+        </p>
+      </>
+    );
+  }
+  return (
+    <>
+      {data?.excerpt && <p className="pengumuman-modal-desc">{data.excerpt}</p>}
+      {data?.contentHtml && (
+        <div
+          className="pengumuman-modal-detail-box"
+          // Isi pengumuman sudah disanitasi oleh backend (sanitize-html) sebelum disimpan.
+          dangerouslySetInnerHTML={{ __html: data.contentHtml }}
+        />
+      )}
+    </>
+  );
+}
 
 export function PengumumanList() {
   const [selectedCategory, setSelectedCategory] = useState<string>("semua");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeModalItem, setActiveModalItem] = useState<PengumumanItem | null>(null);
+  const [activeModalItem, setActiveModalItem] = useState<AnnouncementItem | null>(null);
   const searchInputId = useId();
+  const debouncedQuery = useDebouncedValue(searchQuery.trim());
+  const categoryTerm = CATEGORIES.find((cat) => cat.id === selectedCategory && cat.id !== "semua")?.label ?? "";
+  const search = debouncedQuery || categoryTerm;
 
-  const filteredItems = useMemo(() => {
-    return PENGUMUMAN_ITEMS.filter((item) => {
-      const matchCategory =
-        selectedCategory === "semua" ||
-        item.category.toLowerCase() === selectedCategory.toLowerCase() ||
-        (selectedCategory === "kemahasiswaan" && item.category === "PENERIMAAN");
-
-      const matchQuery =
-        searchQuery.trim() === "" ||
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase());
-
-      return matchCategory && matchQuery;
-    });
-  }, [selectedCategory, searchQuery]);
+  const { data, error, loading } = useApi(`pengumuman-list:${search}`, () =>
+    announcementApi.list({ page: 1, limit: PAGE_LIMIT, search: search || undefined }),
+  );
+  const items = data?.items ?? [];
 
   return (
     <div className="pengumuman-content-area">
@@ -138,13 +111,21 @@ export function PengumumanList() {
       </div>
 
       {/* Announcement List Items */}
-      {filteredItems.length === 0 ? (
+      {error && items.length === 0 ? (
+        <div className="pengumuman-empty-state" role="alert">
+          <p>{errorMessage(error)}</p>
+        </div>
+      ) : loading && items.length === 0 ? (
+        <div className="pengumuman-empty-state" aria-live="polite">
+          <p>Memuat pengumuman...</p>
+        </div>
+      ) : items.length === 0 ? (
         <div className="pengumuman-empty-state">
           <p>Tidak ada pengumuman yang sesuai dengan pencarian Anda.</p>
         </div>
       ) : (
         <div className="pengumuman-items-list">
-          {filteredItems.map((item) => (
+          {items.map((item) => (
             <article
               className="pengumuman-card"
               key={item.id}
@@ -159,12 +140,12 @@ export function PengumumanList() {
               }}
             >
               <div className="pengumuman-card-main">
-                <span className="pengumuman-card-category">{item.category}</span>
+                <span className="pengumuman-card-category">PENGUMUMAN</span>
                 <h3 className="pengumuman-card-title">{item.title}</h3>
-                <p className="pengumuman-card-desc">{item.description}</p>
+                {item.excerpt && <p className="pengumuman-card-desc">{item.excerpt}</p>}
               </div>
               <div className="pengumuman-card-meta">
-                <span>{item.date}</span>
+                <span>{formatDate(item.publishedAt)}</span>
               </div>
             </article>
           ))}
@@ -196,11 +177,11 @@ export function PengumumanList() {
           >
             <div className="pengumuman-modal-header">
               <div>
-                <span className="pengumuman-card-category">{activeModalItem.category}</span>
+                <span className="pengumuman-card-category">PENGUMUMAN</span>
                 <h4 className="pengumuman-modal-title" id="modal-pengumuman-title">
                   {activeModalItem.title}
                 </h4>
-                <span className="pengumuman-modal-date">{activeModalItem.date}</span>
+                <span className="pengumuman-modal-date">{formatDate(activeModalItem.publishedAt)}</span>
               </div>
               <button
                 aria-label="Tutup jendela modal"
@@ -213,12 +194,7 @@ export function PengumumanList() {
             </div>
 
             <div className="pengumuman-modal-body">
-              <p className="pengumuman-modal-desc">{activeModalItem.description}</p>
-              {activeModalItem.detail && (
-                <div className="pengumuman-modal-detail-box">
-                  <p>{activeModalItem.detail}</p>
-                </div>
-              )}
+              <AnnouncementDetail fallback={activeModalItem.excerpt} slug={activeModalItem.slug} />
               <div className="pengumuman-modal-contact-info">
                 <strong>Kontak Layanan:</strong>
                 <p>

@@ -2,162 +2,66 @@
 
 import { useState } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { accreditationApi, errorMessage, type ExpiryStatus } from "@/lib/api";
+import { useApi, useDebouncedValue } from "@/lib/use-api";
 
-type AkreditasiData = {
-  id: number;
-  programStudi: string;
-  programStudiEng: string;
-  strata: string;
-  jenjang: string;
-  nomorSK: string;
-  tanggalSK: string;
-  peringkat: string;
-  tanggalKadaluarsa: string;
-  status: string;
+const EXPIRY_LABEL: Record<ExpiryStatus, string> = {
+  active: "Terakreditasi",
+  expiring: "Segera Berakhir",
+  expired: "Kedaluwarsa",
+  unknown: "Tidak Diketahui",
 };
 
-const akreditasiData: AkreditasiData[] = [
-  {
-    id: 1,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "Universitas LIA Indonesia",
-    strata: "Institut",
-    jenjang: "UNIV.",
-    nomorSK: "Sesuai Lampiran Sertifikat No.0096/SK/BAN-PT/AK-ISK/Inst/I/2025",
-    tanggalSK: "2025",
-    peringkat: "Terakreditasi Institusi",
-    tanggalKadaluarsa: "2025-01-07",
-    status: "Terakreditasi"
-  },
-  {
-    id: 2,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "PENDIDIKAN BAHASA INGGRIS",
-    strata: "Sarjana",
-    jenjang: "S1",
-    nomorSK: "0055/LAM-PTBAJK/Ak/S/XII/2022",
-    tanggalSK: "2025",
-    peringkat: "Terakreditasi Baik/Baik",
-    tanggalKadaluarsa: "2025-12-20",
-    status: "Terakreditasi"
-  },
-  {
-    id: 3,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "FARMASI",
-    strata: "S 3",
-    jenjang: "S-TBL",
-    nomorSK: "0025-LAM-PTKES/AK-PTA/PT/XII/2023",
-    tanggalSK: "2027",
-    peringkat: "Baik",
-    tanggalKadaluarsa: "2027-12-12",
-    status: "Terakreditasi"
-  },
-  {
-    id: 4,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "PARIWISATA",
-    strata: "D-III",
-    jenjang: "D-TBL",
-    nomorSK: "0024-LAM-PTKES/AK-PTA/PT/XII/2023",
-    tanggalSK: "2027",
-    peringkat: "Baik",
-    tanggalKadaluarsa: "2027-12-12",
-    status: "Terakreditasi"
-  },
-  {
-    id: 5,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "SASTRA JEPANG (SASTRA LAUT ALIRAN ASIA)",
-    strata: "S1",
-    jenjang: "S-TBL",
-    nomorSK: "0025-LAM-PTKES/AK-PTA/PT/XII/2023",
-    tanggalSK: "2027",
-    peringkat: "Baik",
-    tanggalKadaluarsa: "2027-12-12",
-    status: "Terakreditasi"
-  },
-  {
-    id: 6,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "SASTRA INGGRIS (BAHASA, BAHASA & SASTRA ASING - SASIANG BAHASA ASING)",
-    strata: "D-III",
-    jenjang: "D-TBL",
-    nomorSK: "0026-LAM-PTKES/AK-PTA/PT/XII/2023",
-    tanggalSK: "2027",
-    peringkat: "Baik Sekali",
-    tanggalKadaluarsa: "2027-12-12",
-    status: "Terakreditasi"
-  },
-  {
-    id: 7,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "BISNIS DIGITAL",
-    strata: "S1",
-    jenjang: "PTN",
-    nomorSK: "GJAL-BS-LAM-PT/AK-S/PT/AL-V/XI/2025",
-    tanggalSK: "2025",
-    peringkat: "Baik Sekali",
-    tanggalKadaluarsa: "2025-05-09",
-    status: "Terakreditasi"
-  },
-  {
-    id: 8,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "INFORMATIKA",
-    strata: "S1",
-    jenjang: "Sts",
-    nomorSK: "GJAL-BS-LAM-KOMP/AK-PT/AL-V/XI/2025",
-    tanggalSK: "2025",
-    peringkat: "Baik",
-    tanggalKadaluarsa: "2025-05-09",
-    status: "Terakreditasi"
-  },
-  {
-    id: 9,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "SISTEM INFORMASI",
-    strata: "S1",
-    jenjang: "Sts",
-    nomorSK: "GJAL-BS-LAM-PT/AK-PT/AL-V/XI/2025",
-    tanggalSK: "2025",
-    peringkat: "Baik",
-    tanggalKadaluarsa: "2025-05-09",
-    status: "Terakreditasi"
-  },
-  {
-    id: 10,
-    programStudi: "Universitas LIA Indonesia",
-    programStudiEng: "DESAIN KOMUNIKASI VISUAL",
-    strata: "S1",
-    jenjang: "Sts",
-    nomorSK: "GJAL-DKV-LAM-PT/AK-PT/AL-V/XI/2025",
-    tanggalSK: "2026",
-    peringkat: "Baik",
-    tanggalKadaluarsa: "2026-02-02",
-    status: "Terakreditasi"
-  }
-];
+// Perguruan tinggi penyelenggara; backend hanya menyimpan data program studi Universitas LIA.
+const INSTITUTION_NAME = "Universitas LIA Indonesia";
+
+// Backend membatasi maksimal 50 data per halaman.
+const MAX_PAGE_SIZE = 50;
+
+function pageWindow(current: number, total: number): number[] {
+  const start = Math.max(1, Math.min(current - 2, total - 4));
+  const end = Math.min(total, start + 4);
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
 
 export function AkreditasiTable() {
   const [show, setShow] = useState(10);
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("Semua");
   const [jenjangFilter, setJenjangFilter] = useState("Semua");
   const [kadaluarsaFilter, setKadaluarsaFilter] = useState("Semua");
+  const debouncedSearch = useDebouncedValue(searchQuery.trim());
 
-  const filteredData = akreditasiData.filter(item => {
-    const matchesSearch = item.programStudi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.programStudiEng.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "Semua" || item.status === statusFilter;
-    const matchesJenjang = jenjangFilter === "Semua" || item.jenjang === jenjangFilter;
-    const matchesKadaluarsa = kadaluarsaFilter === "Semua" || item.tanggalKadaluarsa.includes(kadaluarsaFilter);
-    
-    return matchesSearch && matchesStatus && matchesJenjang && matchesKadaluarsa;
-  });
+  const limit = Math.min(show, MAX_PAGE_SIZE);
+  const level = jenjangFilter === "Semua" ? undefined : jenjangFilter;
+  const validUntilFrom = kadaluarsaFilter === "Semua" ? undefined : `${kadaluarsaFilter}-01-01`;
+  const validUntilTo = kadaluarsaFilter === "Semua" ? undefined : `${kadaluarsaFilter}-12-31`;
 
-  const displayedData = filteredData.slice(0, show);
-  const remainingCount = filteredData.length - show;
+  const { data, error, loading } = useApi(
+    ["akreditasi", page, limit, debouncedSearch, level, validUntilFrom].join("|"),
+    () =>
+      accreditationApi.studyPrograms({
+        page,
+        limit,
+        search: debouncedSearch || undefined,
+        level,
+        validUntilFrom,
+        validUntilTo,
+      }),
+  );
+
+  const pagination = data?.pagination;
+  const totalPages = pagination?.totalPages ?? 0;
+  // Filter "Terakreditasi": hanya akreditasi yang belum kedaluwarsa (backend belum mendukung
+  // filter gabungan active+expiring, jadi diterapkan pada halaman yang sedang dimuat).
+  const displayedData = (data?.items ?? []).filter(
+    (item) => statusFilter === "Semua" || (item.expiryStatus !== "expired" && item.expiryStatus !== "unknown"),
+  );
+  const firstEntry = pagination && pagination.total > 0 ? (pagination.page - 1) * pagination.limit + 1 : 0;
+  const lastEntry = pagination ? Math.min(pagination.page * pagination.limit, pagination.total) : 0;
+
+  const resetPage = () => setPage(1);
 
   return (
     <section className="akreditasi-section">
@@ -170,13 +74,15 @@ export function AkreditasiTable() {
                 <select
                   id="show-entries"
                   value={show}
-                  onChange={(e) => setShow(Number(e.target.value))}
+                  onChange={(e) => {
+                    setShow(Number(e.target.value));
+                    resetPage();
+                  }}
                   className="filter-select"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
-                  <option value={100}>100</option>
                 </select>
                 <span>entries</span>
               </div>
@@ -193,7 +99,10 @@ export function AkreditasiTable() {
 
                 <select
                   value={jenjangFilter}
-                  onChange={(e) => setJenjangFilter(e.target.value)}
+                  onChange={(e) => {
+                    setJenjangFilter(e.target.value);
+                    resetPage();
+                  }}
                   className="filter-select"
                 >
                   <option value="Semua">Semua</option>
@@ -204,7 +113,10 @@ export function AkreditasiTable() {
 
                 <select
                   value={kadaluarsaFilter}
-                  onChange={(e) => setKadaluarsaFilter(e.target.value)}
+                  onChange={(e) => {
+                    setKadaluarsaFilter(e.target.value);
+                    resetPage();
+                  }}
                   className="filter-select"
                 >
                   <option value="Semua">Semua</option>
@@ -217,7 +129,10 @@ export function AkreditasiTable() {
                   type="text"
                   placeholder="Search ..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    resetPage();
+                  }}
                   className="filter-search"
                 />
               </div>
@@ -240,40 +155,64 @@ export function AkreditasiTable() {
                 </tr>
               </thead>
               <tbody>
-                {displayedData.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.programStudi}</td>
-                    <td>{item.programStudiEng}</td>
-                    <td>{item.strata}</td>
-                    <td>{item.jenjang}</td>
-                    <td>{item.nomorSK}</td>
-                    <td>{item.tanggalSK}</td>
-                    <td>{item.peringkat}</td>
-                    <td>{item.tanggalKadaluarsa}</td>
-                    <td>
-                      <span className="status-badge status-terakreditasi">
-                        {item.status}
-                      </span>
+                {error && !data ? (
+                  <tr>
+                    <td colSpan={9} role="alert">
+                      {errorMessage(error)}
                     </td>
                   </tr>
-                ))}
+                ) : loading && !data ? (
+                  <tr>
+                    <td colSpan={9}>Memuat data akreditasi...</td>
+                  </tr>
+                ) : displayedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={9}>Tidak ada data akreditasi yang sesuai.</td>
+                  </tr>
+                ) : (
+                  displayedData.map((item) => (
+                    <tr key={item.id}>
+                      <td>{INSTITUTION_NAME}</td>
+                      <td>{item.programName}</td>
+                      <td>{item.educationLevel}</td>
+                      <td>{item.educationLevel}</td>
+                      <td>{item.skNumber}</td>
+                      <td>{item.decisionDate ? item.decisionDate.slice(0, 4) : "-"}</td>
+                      <td>{item.rank}</td>
+                      <td>{item.validUntil ?? "-"}</td>
+                      <td>
+                        <span className="status-badge status-terakreditasi">
+                          {EXPIRY_LABEL[item.expiryStatus]}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
           <div className="table-footer">
             <p className="table-info">
-              Showing 1 to {displayedData.length} of {filteredData.length} entries
+              Showing {firstEntry} to {lastEntry} of {pagination?.total ?? 0} entries
             </p>
-            {remainingCount > 0 && (
+            {totalPages > 1 && (
               <div className="pagination">
-                <button className="pagination-btn active">1</button>
-                <button className="pagination-btn">2</button>
-                <button className="pagination-btn">3</button>
-                <button className="pagination-btn">4</button>
-                <button className="pagination-btn">5</button>
-                <button className="pagination-btn">...</button>
-                <button className="pagination-btn">Next</button>
+                {pageWindow(page, totalPages).map((number) => (
+                  <button
+                    className={`pagination-btn${number === page ? " active" : ""}`}
+                    key={number}
+                    onClick={() => setPage(number)}
+                    type="button"
+                  >
+                    {number}
+                  </button>
+                ))}
+                {page < totalPages && (
+                  <button className="pagination-btn" onClick={() => setPage(page + 1)} type="button">
+                    Next
+                  </button>
+                )}
               </div>
             )}
           </div>
