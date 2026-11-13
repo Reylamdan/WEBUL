@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Icon } from "@/components/icons";
 
@@ -8,7 +9,7 @@ const informationItems = [
     icon: "calendar",
     href: "/pmb/periode-pendaftaran",
     target: "_blank",
-    rel: "noreferrer",
+    rel: "noopener noreferrer",
   },
   {
     title: "Biaya Kuliah",
@@ -52,6 +53,9 @@ const informationItems = [
     title: "Mahasiswa Asing",
     description: "Informasi awal bagi calon mahasiswa internasional.",
     icon: "globe",
+    href: "/pmb/mahasiswa-asing",
+    target: "_blank",
+    rel: "noopener noreferrer",
   },
 ];
 
@@ -61,10 +65,12 @@ function InformationCard({ item }) {
       <span className="pmb-important-icon">
         <Icon name={item.icon} size={20} />
       </span>
+
       <span className="pmb-important-copy">
         <strong>{item.title}</strong>
         <span>{item.description}</span>
       </span>
+
       {item.href ? (
         <span aria-hidden="true" className="pmb-important-arrow">
           <Icon name="arrow" size={16} />
@@ -74,10 +80,14 @@ function InformationCard({ item }) {
   );
 
   if (!item.href) {
-    return <article className="pmb-important-card">{content}</article>;
+    return (
+      <article className="pmb-important-card">
+        {content}
+      </article>
+    );
   }
 
-  const card = (
+  return (
     <Link
       className="pmb-important-card"
       href={item.href}
@@ -87,8 +97,6 @@ function InformationCard({ item }) {
       {content}
     </Link>
   );
-
-  return card;
 }
 
 export function ImportantInformation() {
