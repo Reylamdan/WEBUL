@@ -16,6 +16,7 @@ const adminAcademicCalendarRoutes = require("./adminAcademicCalendarRoutes");
 const publicAcademicCalendarRoutes = require("./publicAcademicCalendarRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
+const publicSearchRoutes = require("./publicSearchRoutes");
 
 
 const router = express.Router();
@@ -45,5 +46,8 @@ router.use("/admin/assistant-knowledge", adminAssistantKnowledgeRoutes);
 
 // Public AI Assistant
 router.use("/assistant", publicAssistantRoutes);
+
+// Global Search publik (berita, pengumuman, kalender akademik, akreditasi, regulasi BAN-PT)
+router.use("/search", publicSearchRoutes);
 
 module.exports = router;
