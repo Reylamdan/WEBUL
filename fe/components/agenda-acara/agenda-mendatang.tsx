@@ -3,57 +3,35 @@
 import { useId, useMemo, useState } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { Icon } from "@/components/icons";
-import { AgendaCard, AgendaCardProps } from "./agenda-card";
+import { calendarApi, dateParts, errorMessage } from "@/lib/api";
+import { useApi } from "@/lib/use-api";
+import { AgendaCard } from "./agenda-card";
+import { eventDateRange, fetchUpcomingEvents } from "./agenda-data";
 
-const AGENDA_ITEMS: AgendaCardProps[] = [
-  {
-    id: "seminar-1",
-    category: "Seminar",
-    dateDay: "--",
-    dateMonth: "BULAN",
-    title: "Seminar dan diskusi akademik",
-    description: "Tempat untuk ringkasan acara dan informasi pembicara.",
-    meta: "Waktu · Lokasi",
-  },
-  {
-    id: "kampus-1",
-    category: "Kampus",
-    dateDay: "--",
-    dateMonth: "BULAN",
-    title: "Kegiatan komunitas kampus",
-    description: "Informasi kegiatan bersama mahasiswa dan komunitas.",
-    meta: "Waktu · Lokasi",
-  },
-  {
-    id: "mahasiswa-1",
-    category: "Mahasiswa",
-    dateDay: "--",
-    dateMonth: "BULAN",
-    title: "Workshop dan pengembangan diri",
-    description: "Detail kegiatan, jadwal, dan cara mengikuti acara.",
-    meta: "Waktu · Lokasi",
-  },
-];
-
-const CATEGORIES = ["Semua acara", "Seminar", "Kampus", "Mahasiswa"] as const;
-type CategoryFilter = (typeof CATEGORIES)[number];
+const ALL_CATEGORIES = "Semua acara";
 
 export function AgendaMendatang() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("Semua acara");
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORIES);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputId = useId();
 
+  const events = useApi("agenda-upcoming", fetchUpcomingEvents);
+  const categoriesResult = useApi("agenda-categories", calendarApi.categories);
+  const categories = [ALL_CATEGORIES, ...(categoriesResult.data?.map((c) => c.name) ?? [])];
+
+  const items = events.data?.items;
   const filteredItems = useMemo(() => {
-    return AGENDA_ITEMS.filter((item) => {
-      const matchCategory =
-        selectedCategory === "Semua acara" || item.category === selectedCategory;
+    const query = searchQuery.trim().toLowerCase();
+    return (items ?? []).filter((item) => {
+      const matchCategory = selectedCategory === ALL_CATEGORIES || item.category.name === selectedCategory;
       const matchSearch =
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase());
+        query === "" ||
+        item.title.toLowerCase().includes(query) ||
+        (item.description ?? "").toLowerCase().includes(query) ||
+        item.category.name.toLowerCase().includes(query);
       return matchCategory && matchSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [items, selectedCategory, searchQuery]);
 
   return (
     <ScrollReveal delay={140}>
@@ -69,7 +47,7 @@ export function AgendaMendatang() {
 
         <div className="agenda-filter-bar">
           <div aria-label="Filter kategori acara" className="agenda-category-pills" role="tablist">
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 aria-selected={selectedCategory === cat}
                 className={`agenda-pill ${selectedCategory === cat ? "is-active" : ""}`}
@@ -99,15 +77,35 @@ export function AgendaMendatang() {
           </div>
         </div>
 
-        {filteredItems.length === 0 ? (
+        {events.error && !items ? (
+          <div className="agenda-empty-state" role="alert">
+            <p>{errorMessage(events.error)}</p>
+          </div>
+        ) : events.loading && !items ? (
+          <div className="agenda-empty-state" aria-live="polite">
+            <p>Memuat agenda acara...</p>
+          </div>
+        ) : filteredItems.length === 0 ? (
           <div className="agenda-empty-state">
             <p>Tidak ada agenda acara yang cocok dengan pencarian Anda.</p>
           </div>
         ) : (
           <div className="agenda-grid">
-            {filteredItems.map((item) => (
-              <AgendaCard key={item.id} {...item} />
-            ))}
+            {filteredItems.map((item) => {
+              const { day, month } = dateParts(item.startDate);
+              return (
+                <AgendaCard
+                  category={item.category.name}
+                  dateDay={day}
+                  dateMonth={month}
+                  description={item.description ?? ""}
+                  id={item.id}
+                  key={item.id}
+                  meta={eventDateRange(item)}
+                  title={item.title}
+                />
+              );
+            })}
           </div>
         )}
       </section>

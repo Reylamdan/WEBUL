@@ -14355,3 +14355,22 @@ section:not(.admission-banner):not(.hero):not(.pmb-cta) h2 {
     grid-template-columns: 1fr;
   }
 }
+
+/* Integrasi API: gambar sampul berita/agenda mengisi slot gambar yang sudah ada */
+.berita-sorotan-image,
+.berita-card-image,
+.berita-list-thumbnail {
+  position: relative;
+  overflow: hidden;
+}
+
+.berita-sorotan-image img,
+.berita-card-image img,
+.berita-list-thumbnail img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
