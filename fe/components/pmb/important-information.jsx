@@ -50,6 +50,9 @@ const informationItems = [
     title: "Mahasiswa Asing",
     description: "Informasi awal bagi calon mahasiswa internasional.",
     icon: "globe",
+    href: "/pmb/mahasiswa-asing",
+    target: "_blank",
+    rel: "noopener noreferrer",
   },
 ];
 

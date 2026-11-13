@@ -225,6 +225,14 @@ export const searchPages: SearchPage[] = [
     featured: true,
   },
   {
+    title: "Mahasiswa Asing",
+    category: "PMB",
+    description:
+      "Informasi persyaratan dan dokumen izin belajar untuk mahasiswa asing.",
+    keywords: ["mahasiswa asing", "mahasiswa internasional", "izin belajar", "pmb"],
+    href: "/pmb/mahasiswa-asing",
+  },
+  {
     title: "Periode Pendaftaran",
     category: "PMB",
     description: "Jadwal pendaftaran, tes, dan daftar ulang mahasiswa baru.",
