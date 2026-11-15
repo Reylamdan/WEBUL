@@ -213,6 +213,100 @@ export const globalNavigation: NavItem[] = [
   },
 ];
 
+type BreadcrumbItem = {
+  label: string;
+  href?: string;
+};
+
+const breadcrumbNavigation: MenuNode[] = globalNavigation.map((item) => ({
+  id: item.id,
+  label: item.label,
+  href: item.href,
+  children: item.items,
+}));
+
+function getNavigationTrail(pathname: string) {
+  let bestMatch:
+    | {
+        href: string;
+        trail: MenuNode[];
+      }
+    | undefined;
+
+  function visit(nodes: MenuNode[], ancestors: MenuNode[] = []) {
+    for (const node of nodes) {
+      const trail = [...ancestors, node];
+      const href = node.href?.split("#")[0];
+      if (
+        href &&
+        (pathname === href || (href !== "/" && pathname.startsWith(`${href}/`))) &&
+        (!bestMatch ||
+          href.length > bestMatch.href.length ||
+          (href.length === bestMatch.href.length &&
+            trail.length > bestMatch.trail.length))
+      ) {
+        bestMatch = { href, trail };
+      }
+      if (node.children) visit(node.children, trail);
+    }
+  }
+
+  visit(breadcrumbNavigation);
+  return bestMatch;
+}
+
+function formatBreadcrumbLabel(segment: string) {
+  const knownLabels: Record<string, string> = {
+    "cara-pembayaran": "Cara Pembayaran",
+    "jalur-rpl": "Jalur RPL",
+    "pengunduran-diri": "Pengunduran Diri",
+  };
+  return (
+    knownLabels[segment] ??
+    segment
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+  );
+}
+
+function getBreadcrumbItems(pathname: string): BreadcrumbItem[] {
+  if (pathname === "/") return [{ label: "Beranda" }];
+
+  if (pathname === "/pengunduran-diri") {
+    return [
+      { label: "PMB", href: "/pmb" },
+      { label: "Pengunduran Diri" },
+    ];
+  }
+
+  const match = getNavigationTrail(pathname);
+  const items: BreadcrumbItem[] = match
+    ? match.trail
+        .filter(
+          (item, index, trail) =>
+            !item.href ||
+            !trail
+              .slice(index + 1)
+              .some((laterItem) => laterItem.href === item.href),
+        )
+        .map((item) => ({ label: item.label, href: item.href }))
+    : [];
+  const matchedHref = match?.href ?? "";
+  const remainingPath = pathname.slice(matchedHref.length);
+
+  for (const segment of remainingPath.split("/").filter(Boolean)) {
+    items.push({ label: formatBreadcrumbLabel(segment) });
+  }
+
+  return items.length > 0
+    ? items
+    : pathname
+        .split("/")
+        .filter(Boolean)
+        .map((segment) => ({ label: formatBreadcrumbLabel(segment) }));
+}
+
 export function GlobalDropdownMenu({
   items,
   className = "menu-tree",
@@ -410,7 +504,7 @@ export function SiteHeader() {
       return pathname.startsWith("/lppm");
     }
     if (item.id === "pmb") {
-      return pathname.startsWith("/pmb");
+      return pathname.startsWith("/pmb") || pathname === "/pengunduran-diri";
     }
     if (item.id === "laporan") {
       return pathname.startsWith("/laporan-tahunan-rektor");
@@ -603,6 +697,28 @@ export function SiteHeader() {
         triggerRef={searchTriggerRef}
       />
     </header>
+  );
+}
+
+export function SiteBreadcrumb() {
+  const pathname = usePathname();
+  const items = getBreadcrumbItems(pathname);
+
+  return (
+    <nav aria-label="Breadcrumb" className="site-breadcrumb">
+      {items.map((item, index) => (
+        <span className="site-breadcrumb-item" key={`${item.label}-${index}`}>
+          {index > 0 && <span aria-hidden="true">/</span>}
+          {index === items.length - 1 ? (
+            <span aria-current="page">{item.label}</span>
+          ) : item.href ? (
+            <Link href={item.href}>{item.label}</Link>
+          ) : (
+            <span>{item.label}</span>
+          )}
+        </span>
+      ))}
+    </nav>
   );
 }
 

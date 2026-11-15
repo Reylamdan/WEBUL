@@ -1,6 +1,6 @@
 export interface AgendaCardProps {
   id: string;
-  category: "Seminar" | "Kampus" | "Mahasiswa";
+  category: string;
   dateDay?: string;
   dateMonth?: string;
   title: string;

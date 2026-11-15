@@ -1,60 +1,36 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import Link from "next/link";
+import { useId, useState } from "react";
+import { ContentLanguageToggle } from "@/components/content-language-toggle";
 import { Icon } from "@/components/icons";
+import { NewsCover } from "@/components/news-cover";
+import { errorMessage, formatDate, newsApi } from "@/lib/api";
+import { newsDetailHref } from "@/lib/content-routes";
+import { categoryLabel, useContentLang } from "@/lib/content-language";
+import { useApi, useDebouncedValue } from "@/lib/use-api";
 
-interface BeritaItem {
-  id: string;
-  category: "Kampus" | "Prestasi" | "Universitas";
-  title: string;
-  description: string;
-  meta: string;
-}
+const ALL = "Semua";
 
-const BERITA_ITEMS: BeritaItem[] = [
-  {
-    id: "kampus",
-    category: "Kampus",
-    title: "Aktivitas dan kehidupan kampus",
-    description: "Ringkasan berita akan ditampilkan setelah konten resmi tersedia.",
-    meta: "Tanggal / informasi selengkapnya",
-  },
-  {
-    id: "prestasi",
-    category: "Prestasi",
-    title: "Prestasi mahasiswa dan dosen",
-    description: "Cerita pencapaian, kolaborasi, dan karya sivitas akademika.",
-    meta: "Tanggal / informasi selengkapnya",
-  },
-  {
-    id: "universitas",
-    category: "Universitas",
-    title: "Informasi dan perkembangan",
-    description: "Kabar kelembagaan dan informasi resmi yang relevan bagi pembaca.",
-    meta: "Tanggal / informasi selengkapnya",
-  },
-];
-
-const CATEGORIES = ["Semua", "Kampus", "Prestasi", "Universitas"] as const;
-type CategoryFilter = (typeof CATEGORIES)[number];
+// Backend membatasi maksimal 50 data per permintaan.
+const PAGE_LIMIT = 50;
 
 export function BeritaJelajahi() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("Semua");
+  const [lang] = useContentLang();
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputId = useId();
+  const debouncedQuery = useDebouncedValue(searchQuery.trim());
+  const category = selectedCategory === ALL ? undefined : selectedCategory;
 
-  const filteredItems = useMemo(() => {
-    return BERITA_ITEMS.filter((item) => {
-      const matchCategory =
-        selectedCategory === "Semua" || item.category === selectedCategory;
-      const matchQuery =
-        searchQuery.trim() === "" ||
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchCategory && matchQuery;
-    });
-  }, [selectedCategory, searchQuery]);
+  // Daftar kategori berasal dari backend (GET /api/news/categories); filter dilakukan di server.
+  const categories = useApi("berita-categories", () => newsApi.categories());
+  const categoryOptions = [ALL, ...(categories.data ?? [])];
+
+  const { data, error, loading } = useApi(`berita-list:${lang}:${category ?? ""}:${debouncedQuery}`, () =>
+    newsApi.list({ page: 1, limit: PAGE_LIMIT, search: debouncedQuery || undefined, category, lang }),
+  );
+  const items = data?.items ?? [];
 
   return (
     <section aria-labelledby="berita-jelajahi-title" className="berita-jelajahi-section berita-wrap">
@@ -86,41 +62,61 @@ export function BeritaJelajahi() {
         </div>
 
         <div aria-label="Filter kategori berita" className="berita-category-pills" role="tablist">
-          {CATEGORIES.map((category) => {
-            const isSelected = selectedCategory === category;
+          {categoryOptions.map((option) => {
+            const isSelected = selectedCategory === option;
             return (
               <button
                 aria-selected={isSelected}
                 className={`berita-pill ${isSelected ? "is-active" : ""}`}
-                key={category}
-                onClick={() => setSelectedCategory(category)}
+                key={option}
+                onClick={() => setSelectedCategory(option)}
                 role="tab"
                 type="button"
               >
-                {category}
+                {categoryLabel(option, lang)}
               </button>
             );
           })}
         </div>
       </div>
 
-      {filteredItems.length === 0 ? (
+      <ContentLanguageToggle pillClass="berita-pill" />
+
+      {error && items.length === 0 ? (
+        <div className="berita-empty-state" role="alert">
+          <p>{errorMessage(error)}</p>
+        </div>
+      ) : loading && items.length === 0 ? (
+        <div className="berita-empty-state" aria-live="polite">
+          <p>Memuat berita...</p>
+        </div>
+      ) : items.length === 0 ? (
         <div className="berita-empty-state">
           <p>Tidak ada berita yang sesuai dengan pencarian Anda.</p>
         </div>
       ) : (
         <div className="berita-grid">
-          {filteredItems.map((item) => (
+          {items.map((item) => (
             <article className="berita-card" key={item.id}>
               <div aria-hidden="true" className="berita-card-image">
-                <span className="berita-placeholder-hint">Foto berita — isi nanti</span>
+                <NewsCover fallback={<span className="berita-placeholder-hint">Foto berita</span>} src={item.coverImageUrl} />
               </div>
               <div className="berita-card-content">
-                <span className="berita-card-eyebrow">{item.category.toUpperCase()}</span>
-                <h3 className="berita-card-title">{item.title}</h3>
-                <p className="berita-card-desc">{item.description}</p>
+                <span className="berita-card-eyebrow">{(item.category ? categoryLabel(item.category, lang) : "BERITA").toUpperCase()}</span>
+                <h3 className="berita-card-title">
+                  <Link href={newsDetailHref(item.slug)}>{item.title}</Link>
+                </h3>
+                {item.excerpt && <p className="berita-card-desc">{item.excerpt}</p>}
                 <div className="berita-card-meta">
-                  <span>{item.meta}</span>
+                  <span>
+                    {[
+                      formatDate(item.publishedAt, lang),
+                      item.author?.name,
+                      lang === "en" && item.translated === false ? "Indonesian only" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
                 </div>
               </div>
             </article>

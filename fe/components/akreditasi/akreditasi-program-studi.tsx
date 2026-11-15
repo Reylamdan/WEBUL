@@ -1,20 +1,14 @@
+"use client";
+
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { accreditationApi, errorMessage, formatDate } from "@/lib/api";
+import { useApi } from "@/lib/use-api";
 
 export function AkreditasiProgramStudi() {
-  const prodiList = [
-    {
-      title: "Program Studi 1",
-      description: "Status dan dokumen akreditasi akan ditambahkan.",
-    },
-    {
-      title: "Program Studi 2",
-      description: "Status dan dokumen akreditasi akan ditambahkan.",
-    },
-    {
-      title: "Program Studi 3",
-      description: "Status dan dokumen akreditasi akan ditambahkan.",
-    },
-  ];
+  const { data, error, loading } = useApi("akreditasi-prodi-cards", () =>
+    accreditationApi.studyPrograms({ page: 1, limit: 50 }),
+  );
+  const prodiList = data?.items ?? [];
 
   return (
     <ScrollReveal delay={200}>
@@ -29,17 +23,38 @@ export function AkreditasiProgramStudi() {
           </p>
         </div>
 
-        <div className="akreditasi-prodi-grid">
-          {prodiList.map((item) => (
-            <article className="akreditasi-card" key={item.title}>
-              <div className="akreditasi-card-accent" />
-              <div className="akreditasi-card-body">
-                <h3 className="akreditasi-card-title">{item.title}</h3>
-                <p className="akreditasi-card-desc">{item.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        {error && !data ? (
+          <p className="akreditasi-note" role="alert">
+            {errorMessage(error)}
+          </p>
+        ) : loading && !data ? (
+          <p className="akreditasi-note" aria-live="polite">
+            Memuat data akreditasi program studi...
+          </p>
+        ) : prodiList.length === 0 ? (
+          <p className="akreditasi-note">Data akreditasi program studi belum tersedia.</p>
+        ) : (
+          <div className="akreditasi-prodi-grid">
+            {prodiList.map((item) => (
+              <article className="akreditasi-card" key={item.id}>
+                <div className="akreditasi-card-accent" />
+                <div className="akreditasi-card-body">
+                  <h3 className="akreditasi-card-title">{item.programName}</h3>
+                  <p className="akreditasi-card-desc">
+                    {[
+                      item.educationLevel,
+                      item.rank,
+                      item.skNumber ? `SK ${item.skNumber}` : "",
+                      item.validUntil ? `Berlaku s.d. ${formatDate(item.validUntil)}` : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
 
         <p className="akreditasi-note">
           Informasi final sebaiknya dilengkapi dengan nomor keputusan, lembaga akreditasi, dan periode berlaku.
@@ -48,4 +63,3 @@ export function AkreditasiProgramStudi() {
     </ScrollReveal>
   );
 }
-

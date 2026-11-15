@@ -1,32 +1,21 @@
-interface BeritaLainnyaItem {
-  id: string;
-  category: string;
-  title: string;
-  meta: string;
-}
+"use client";
 
-const BERITA_LAINNYA: BeritaLainnyaItem[] = [
-  {
-    id: "kegiatan-1",
-    category: "KEGIATAN",
-    title: "Sorotan kegiatan mahasiswa",
-    meta: "Tanggal publikasi · Ringkasan berita akan ditambahkan",
-  },
-  {
-    id: "prestasi-1",
-    category: "PRESTASI",
-    title: "Cerita kolaborasi dan prestasi",
-    meta: "Tanggal publikasi · Ringkasan berita akan ditambahkan",
-  },
-  {
-    id: "informasi-1",
-    category: "INFORMASI",
-    title: "Kabar terbaru Universitas LIA",
-    meta: "Tanggal publikasi · Ringkasan berita akan ditambahkan",
-  },
-];
+import Link from "next/link";
+import { NewsCover } from "@/components/news-cover";
+import { formatDate, newsApi } from "@/lib/api";
+import { useContentLang } from "@/lib/content-language";
+import { newsDetailHref } from "@/lib/content-routes";
+import { useApi } from "@/lib/use-api";
+import { BERITA_FEATURED_PARAMS } from "./berita-sorotan";
 
 export function BeritaLainnya() {
+  const [lang] = useContentLang();
+  const { data } = useApi(`berita-featured:${lang}`, () => newsApi.list({ ...BERITA_FEATURED_PARAMS, lang }));
+  // Berita pertama sudah tampil sebagai sorotan.
+  const items = data?.items.slice(1) ?? [];
+
+  if (items.length === 0) return null;
+
   return (
     <section aria-labelledby="berita-lainnya-title" className="berita-lainnya-section berita-wrap">
       <div className="berita-section-header">
@@ -39,17 +28,19 @@ export function BeritaLainnya() {
       </div>
 
       <div className="berita-list">
-        {BERITA_LAINNYA.map((item) => (
+        {items.map((item) => (
           <article className="berita-list-item" key={item.id}>
             <div aria-hidden="true" className="berita-list-thumbnail">
-              <span className="berita-placeholder-hint-small">Foto</span>
+              <NewsCover fallback={<span className="berita-placeholder-hint-small">Foto</span>} src={item.coverImageUrl} />
             </div>
 
             <div className="berita-list-content">
-              <span className="berita-card-eyebrow">{item.category}</span>
-              <h3 className="berita-list-title">{item.title}</h3>
+              <span className="berita-card-eyebrow">BERITA</span>
+              <h3 className="berita-list-title">
+                <Link href={newsDetailHref(item.slug)}>{item.title}</Link>
+              </h3>
               <div className="berita-list-meta">
-                <span>{item.meta}</span>
+                <span>{[formatDate(item.publishedAt, lang), item.excerpt].filter(Boolean).join(" · ")}</span>
               </div>
             </div>
           </article>
@@ -58,4 +49,3 @@ export function BeritaLainnya() {
     </section>
   );
 }
-

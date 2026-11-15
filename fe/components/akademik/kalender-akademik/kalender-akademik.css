@@ -46,38 +46,188 @@
   line-height: 1.15;
 }
 
-.academic-calendar-list {
-  display: grid;
+.academic-agenda {
   width: min(1080px, calc(100% - 64px));
-  gap: 24px;
   margin: 0 auto;
   padding-top: 30px;
 }
 
-.academic-calendar-card {
-  overflow: hidden;
+.academic-agenda-head h2 {
+  margin: 0;
+  color: #203844;
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.academic-agenda-head p {
+  margin: 6px 0 0;
+  color: #5d6f75;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.academic-agenda-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.academic-agenda-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.academic-agenda-pill {
+  padding: 7px 14px;
+  border: 1px solid #d3dfe5;
+  border-radius: 999px;
+  background: #fff;
+  color: #203844;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+
+.academic-agenda-pill:hover {
+  border-color: #005b8c;
+  color: #005b8c;
+}
+
+.academic-agenda-pill.is-active {
+  border-color: #005b8c;
+  background: #005b8c;
+  color: #fff;
+}
+
+.academic-agenda-selects {
+  display: flex;
+  gap: 8px;
+}
+
+.academic-agenda-select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #d3dfe5;
+  border-radius: 6px;
+  background: #fff;
+  color: #203844;
+  font-size: 12px;
+}
+
+.academic-agenda-state {
+  margin: 0;
+  padding: 28px 20px;
+  border: 1px dashed #d3dfe5;
+  border-radius: 8px;
+  background: #fff;
+  color: #5d6f75;
+  font-size: 13px;
+  text-align: center;
+}
+
+.academic-agenda-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.academic-agenda-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 18px;
   border: 1px solid #e1e9ed;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 8px 24px #2038440a;
 }
 
-.academic-calendar-card h2 {
+.academic-agenda-date {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 60px;
+  border-radius: 8px;
+  background: #eef4f7;
+  color: #005b8c;
+}
+
+.academic-agenda-date strong {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.academic-agenda-date small {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.academic-agenda-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.academic-agenda-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.academic-agenda-category,
+.academic-agenda-ongoing {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.academic-agenda-category {
+  background: #e6f1f7;
+  color: #005b8c;
+}
+
+.academic-agenda-ongoing {
+  background: #e3f4ea;
+  color: #1f7a4d;
+}
+
+.academic-agenda-copy h3 {
   margin: 0;
-  padding: 17px 20px;
   color: #203844;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
 }
 
-.academic-calendar-image {
-  padding: 0 16px 16px;
+.academic-agenda-range {
+  display: block;
+  margin-top: 4px;
+  color: #78878b;
+  font-size: 12px;
 }
 
-.academic-calendar-image img {
-  display: block;
-  width: 100%;
-  height: auto;
+.academic-agenda-copy p {
+  margin: 8px 0 0;
+  color: #4c5f66;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 640px) {
@@ -98,18 +248,18 @@
     font-size: 25px;
   }
 
-  .academic-calendar-list {
+  .academic-agenda {
     width: calc(100% - 32px);
-    gap: 16px;
     padding-top: 20px;
   }
 
-  .academic-calendar-card h2 {
+  .academic-agenda-item {
+    gap: 12px;
     padding: 14px;
-    font-size: 14px;
   }
 
-  .academic-calendar-image {
-    padding: 0 8px 8px;
+  .academic-agenda-date {
+    width: 48px;
+    height: 54px;
   }
 }

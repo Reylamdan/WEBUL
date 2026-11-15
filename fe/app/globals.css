@@ -78,6 +78,38 @@ button {
   transition: background-color .45s ease, border-color .45s ease;
 }
 
+.site-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: min(1120px, calc(100% - 64px));
+  min-height: 36px;
+  margin-inline: auto;
+  padding-block: 9px 5px;
+  color: #718087;
+  font-size: 11px;
+}
+
+.site-breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-breadcrumb a:hover {
+  color: var(--blue);
+}
+
+.site-breadcrumb [aria-current="page"] {
+  color: #172a35;
+  font-weight: 600;
+}
+
+main nav[aria-label="Breadcrumb"] {
+  display: none;
+}
+
 .header-inner {
   position: relative;
   display: flex;
@@ -14354,4 +14386,301 @@ section:not(.admission-banner):not(.hero):not(.pmb-cta) h2 {
   .blueprint-meta-list {
     grid-template-columns: 1fr;
   }
+}
+
+/* Integrasi API: gambar sampul berita/agenda mengisi slot gambar yang sudah ada */
+.berita-sorotan-image,
+.berita-card-image,
+.berita-list-thumbnail {
+  position: relative;
+  overflow: hidden;
+}
+
+.berita-sorotan-image img,
+.berita-card-image img,
+.berita-list-thumbnail img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Virtual Assistant: percakapan (mengikuti gaya panel yang sudah ada) ---------- */
+.virtual-assistant-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.virtual-assistant-thread > .virtual-assistant-answer {
+  margin-top: 0;
+}
+
+.virtual-assistant-message-user {
+  justify-content: flex-end;
+}
+
+.virtual-assistant-user-bubble {
+  max-width: 85%;
+  margin: 0;
+  padding: 10px 13px;
+  border-radius: 15px 4px 15px 15px;
+  background: linear-gradient(135deg, #176b8b, #075a7c);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.virtual-assistant-answer-text {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.virtual-assistant-response.is-error {
+  border-color: #e8c9c9;
+  background: #fdf6f6;
+}
+
+.virtual-assistant-response.is-error p {
+  color: #8a3b3b;
+}
+
+.virtual-assistant-sources {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e3ebee;
+}
+
+.virtual-assistant-sources-label {
+  color: #71838b;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.virtual-assistant-sources ul {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.virtual-assistant-sources li {
+  color: #344d59;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.virtual-assistant-sources .virtual-assistant-response-link {
+  margin-top: 0;
+}
+
+.virtual-assistant-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 19px;
+}
+
+.virtual-assistant-typing span[aria-hidden] {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #75aabd;
+  animation: virtual-assistant-dot 1s ease-in-out infinite;
+}
+
+.virtual-assistant-typing span[aria-hidden]:nth-of-type(2) {
+  animation-delay: .15s;
+}
+
+.virtual-assistant-typing span[aria-hidden]:nth-of-type(3) {
+  animation-delay: .3s;
+}
+
+@keyframes virtual-assistant-dot {
+  0%, 80%, 100% { opacity: .3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+
+.virtual-assistant-topic:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+  transform: none;
+}
+
+.virtual-assistant-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid #d5e0e5;
+  background: #f9fcfdf2;
+}
+
+.virtual-assistant-input {
+  min-width: 0;
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd9df;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+}
+
+.virtual-assistant-input::placeholder {
+  color: #8a9aa1;
+}
+
+.virtual-assistant-input:disabled {
+  background: #f1f5f6;
+}
+
+.virtual-assistant-send {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 11px;
+  background: var(--blue);
+  color: #fff;
+  cursor: pointer;
+  transition: background .16s ease;
+}
+
+.virtual-assistant-send:hover:not(:disabled) {
+  background: var(--blue-dark);
+}
+
+.virtual-assistant-send:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.virtual-assistant-input:focus-visible {
+  outline: 3px solid #56b5d6;
+  outline-offset: 1px;
+}
+
+/* ---------- Tautan dokumen dari backend (Lihat / Unduh) ---------- */
+.document-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.document-link {
+  color: var(--blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.document-link:hover {
+  text-decoration: underline;
+}
+
+.document-link-error {
+  flex-basis: 100%;
+  color: #8a3b3b;
+  font-size: 11px;
+}
+
+.regulasi-attachments {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.regulasi-attachments li {
+  display: grid;
+  gap: 2px;
+}
+
+/* ---------- Tautan judul berita & cover pada jendela detail ---------- */
+.berita-card-title a,
+.berita-sorotan-title a,
+.berita-list-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.berita-card-title a:hover,
+.berita-sorotan-title a:hover,
+.berita-list-title a:hover {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+.news-modal-cover {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* ---------- Akreditasi institusi (data dari backend) ---------- */
+.akreditasi-institusi-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 180px;
+  padding: 22px 24px;
+  background: #edf2f6;
+  border: 1px solid #e2e8ed;
+  border-radius: 12px;
+  color: #4a5c63;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.akreditasi-institusi-rank {
+  color: var(--blue);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.akreditasi-institusi-card p {
+  margin: 0;
+}
+
+/* ---------- Pengalih bahasa konten (berita & pengumuman) ---------- */
+.content-lang-toggle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -10px 0 22px;
+}
+
+.content-lang-label {
+  color: #71838b;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.content-lang-note {
+  color: #8c9ba5;
+  font-size: 11px;
+  font-weight: 500;
 }
