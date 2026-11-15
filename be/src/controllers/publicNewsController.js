@@ -3,6 +3,7 @@ const AppError = require("../utils/AppError");
 const { throwDbError } = require("../utils/dbError");
 const { cleanSearchTerm } = require("../utils/searchTerm");
 const { getCoverPublicUrl } = require("../utils/coverStorage");
+const { NEWS_CATEGORIES } = require("../utils/contentCategories");
 
 // Kode error PostgREST: halaman diminta melewati jumlah data yang ada
 const RANGE_NOT_SATISFIABLE = "PGRST103";
@@ -13,7 +14,7 @@ const LATEST_LIMIT = 3;
 // Kolom yang diambil. TIDAK memakai select("*"). Join ke admins hanya name, sehingga
 // id, email, dan password_hash admin tidak pernah ikut keluar. Daftar tidak memuat
 // content_html agar hemat bandwidth.
-const PUBLIC_LIST_COLUMNS = "id, title, slug, excerpt, cover_image_path, published_at, author:admins(name)";
+const PUBLIC_LIST_COLUMNS = "id, title, slug, excerpt, category, cover_image_path, published_at, author:admins(name)";
 const PUBLIC_DETAIL_COLUMNS = `${PUBLIC_LIST_COLUMNS}, content_html, updated_at`;
 
 // Row database (snake_case) -> response publik (camelCase).
@@ -24,6 +25,7 @@ const serializePublicNews = (row) => {
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
+    category: row.category ?? null,
     coverImageUrl: getCoverPublicUrl(row.cover_image_path),
     publishedAt: row.published_at,
     author: row.author ? { name: row.author.name } : null,
@@ -63,13 +65,14 @@ const listLatestNews = async (req, res) => {
 // GET /api/news
 // ---------------------------------------------------------------------
 const listPublicNews = async (req, res) => {
-  const { page, limit, search } = req.validated.query;
+  const { page, limit, search, category } = req.validated.query;
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   const term = search ? cleanSearchTerm(search) : "";
 
   const applyFilters = (query) => {
     let filtered = onlyPublished(query);
+    if (category) filtered = filtered.eq("category", category);
     if (term) filtered = filtered.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);
     return filtered;
   };
@@ -124,7 +127,14 @@ const getPublicNews = async (req, res) => {
   return res.json({ success: true, data: { news: serializePublicNews(data) } });
 };
 
+// ---------------------------------------------------------------------
+// GET /api/news/categories
+// ---------------------------------------------------------------------
+const listNewsCategories = (req, res) =>
+  res.json({ success: true, data: { categories: NEWS_CATEGORIES } });
+
 module.exports = {
+  listNewsCategories,
   listLatestNews,
   listPublicNews,
   getPublicNews,

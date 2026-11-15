@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  listAnnouncementCategories,
   listPublicAnnouncements,
   getPublicAnnouncement,
 } = require("../controllers/publicAnnouncementController");
@@ -13,6 +14,8 @@ const {
 const router = express.Router();
 
 // Endpoint publik terbuka untuk semua pengunjung tanpa login
+// "/categories" harus sebelum "/:slug"
+router.get("/categories", listAnnouncementCategories);
 router.get("/", withTranslation("announcement"), validate(publicListAnnouncementsQuerySchema, "query"), listPublicAnnouncements);
 router.get("/:slug", withTranslation("announcement"), validate(announcementSlugParamsSchema, "params"), getPublicAnnouncement);
 

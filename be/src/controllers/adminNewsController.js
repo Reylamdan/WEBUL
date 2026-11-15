@@ -14,7 +14,7 @@ const RANGE_NOT_SATISFIABLE = "PGRST103";
 // Kolom yang diambil. TIDAK memakai select("*"), dan join ke admins hanya id + name,
 // sehingga password_hash, email, dan data sensitif admin tidak pernah ikut keluar.
 const LIST_COLUMNS =
-  "id, title, slug, excerpt, cover_image_path, status, published_at, created_at, updated_at, author:admins(id, name)";
+  "id, title, slug, excerpt, category, cover_image_path, status, published_at, created_at, updated_at, author:admins(id, name)";
 const DETAIL_COLUMNS = `${LIST_COLUMNS}, content_html`;
 
 const MAX_SLUG_ATTEMPTS = 5;
@@ -27,6 +27,7 @@ const serializeNews = (row) => {
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
+    category: row.category ?? null,
     coverImagePath: row.cover_image_path,
     coverImageUrl: getCoverPublicUrl(row.cover_image_path),
     status: row.status,
@@ -82,7 +83,7 @@ const newsNotFound = () => new AppError("Berita tidak ditemukan", 404, "NEWS_NOT
 // GET /api/admin/news
 // ---------------------------------------------------------------------
 const listNews = async (req, res) => {
-  const { page, limit, status, search } = req.validated.query;
+  const { page, limit, status, search, category } = req.validated.query;
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   const term = search ? cleanSearchTerm(search) : "";
@@ -90,6 +91,7 @@ const listNews = async (req, res) => {
   const applyFilters = (query) => {
     let filtered = query;
     if (status) filtered = filtered.eq("status", status);
+    if (category) filtered = filtered.eq("category", category);
     if (term) filtered = filtered.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);
     return filtered;
   };
@@ -140,7 +142,7 @@ const getNews = async (req, res) => {
 // POST /api/admin/news
 // ---------------------------------------------------------------------
 const createNews = async (req, res) => {
-  const { title, contentHtml, excerpt, status = "draft" } = req.body;
+  const { title, contentHtml, excerpt, category, status = "draft" } = req.body;
 
   // excerpt tidak dikirim / kosong -> dibuat otomatis dari isi berita
   const finalExcerpt = excerpt || makeExcerpt(contentHtml);
@@ -160,6 +162,7 @@ const createNews = async (req, res) => {
         title,
         slug,
         excerpt: finalExcerpt,
+        category: category ?? null,
         content_html: contentHtml,
         status,
         published_at: publishedAt,
@@ -202,6 +205,8 @@ const updateNews = async (req, res) => {
 
   if (body.title !== undefined) patch.title = body.title;
   if (body.contentHtml !== undefined) patch.content_html = body.contentHtml;
+  // category: tidak dikirim -> dipertahankan; null/"" -> kategori dihapus
+  if (body.category !== undefined) patch.category = body.category;
 
   // Slug TIDAK berubah otomatis saat judul diedit. Hanya berubah jika slug dikirim eksplisit.
   if (body.slug !== undefined && body.slug !== current.slug) patch.slug = body.slug;

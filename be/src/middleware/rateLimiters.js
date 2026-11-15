@@ -1,8 +1,7 @@
+
 const { rateLimit } = require("express-rate-limit");
 
-// Pembatas upload cover. Dipasang HANYA pada PUT /:id/cover, di atas pembatas
-// umum /api pada app.js. Request yang ditolak sebelum tahap ini (misalnya berita
-// tidak ditemukan) tidak ikut dihitung.
+// Pembatas upload cover.
 const coverUploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
@@ -15,7 +14,7 @@ const coverUploadLimiter = rateLimit({
   },
 });
 
-// Pembatas upload dokumen akreditasi. Dipasang HANYA pada PUT /:id/document.
+// Pembatas upload dokumen akreditasi.
 const documentUploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
@@ -28,7 +27,7 @@ const documentUploadLimiter = rateLimit({
   },
 });
 
-// Pembatas upload file peraturan BAN-PT (dokumen utama & lampiran). Terpisah dari akreditasi.
+// Pembatas upload file peraturan BAN-PT.
 const regulationUploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 30,
@@ -41,10 +40,7 @@ const regulationUploadLimiter = rateLimit({
   },
 });
 
-// Pembatas preview/download dokumen (route publik /document, /attachments, dan /api/files/:token).
-// Setiap hit yang lolos otorisasi bisa menarik file dari Google Drive, jadi dibatasi terpisah dari
-// pembatas umum /api. Pembaca PDF memakai banyak request Range, sehingga batasnya cukup longgar.
-// Penghitung disimpan di memori (ter-reset saat server restart, tidak dibagi antar instance).
+// Pembatas preview dan download dokumen.
 const fileStreamLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 150,
@@ -57,9 +53,7 @@ const fileStreamLimiter = rateLimit({
   },
 });
 
-// Pembatas khusus login, berlaku di atas pembatas umum /api pada app.js.
-// Hanya percobaan GAGAL yang dihitung (status >= 400); login berhasil tidak dihitung.
-// Catatan: penghitung disimpan di memori, jadi ter-reset saat server restart.
+// Pembatas khusus login.
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
@@ -73,10 +67,26 @@ const loginLimiter = rateLimit({
   },
 });
 
+// Pembatas endpoint OAuth Google Drive.
+// Limit dihitung bersama untuk connect + callback + disconnect dari satu IP (satu percobaan koneksi = 2 request).
+// 10 terlalu ketat: admin yang mengulang koneksi saat menyiapkan OAuth cepat terkena 429.
+const googleOAuthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Terlalu banyak percobaan koneksi Google Drive, coba lagi dalam 15 menit",
+    code: "TOO_MANY_GOOGLE_OAUTH_ATTEMPTS",
+  },
+});
+
 module.exports = {
   loginLimiter,
   coverUploadLimiter,
   documentUploadLimiter,
   regulationUploadLimiter,
   fileStreamLimiter,
+  googleOAuthLimiter,
 };

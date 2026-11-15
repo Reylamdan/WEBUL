@@ -14,6 +14,7 @@ const AppError = require("./AppError");
 const CATEGORIES = {
   accreditationStudyProgram: { folderName: "akreditasi-program-studi" },
   banptRegulation: { folderName: "regulasi-banpt" },
+  lpmArchive: { folderName: "lpm-manajemen-arsip" },
 };
 
 const CLEANUP_TABLE = "drive_cleanup_queue";

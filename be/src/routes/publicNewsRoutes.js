@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  listNewsCategories,
   listLatestNews,
   listPublicNews,
   getPublicNews,
@@ -11,7 +12,8 @@ const { publicListNewsQuerySchema, newsSlugParamsSchema } = require("../validato
 const router = express.Router();
 
 // Endpoint publik terbuka untuk semua pengunjung tanpa login. Hanya GET, dan hanya berita published.
-// URUTAN PENTING: "/latest" harus didaftarkan sebelum "/:slug", kalau tidak "latest" dianggap slug.
+// URUTAN PENTING: "/latest" dan "/categories" harus didaftarkan sebelum "/:slug", kalau tidak "latest" dianggap slug.
+router.get("/categories", listNewsCategories);
 router.get("/latest", withTranslation("news"), listLatestNews);
 router.get("/", withTranslation("news"), validate(publicListNewsQuerySchema, "query"), listPublicNews);
 router.get("/:slug", withTranslation("news"), validate(newsSlugParamsSchema, "params"), getPublicNews);
