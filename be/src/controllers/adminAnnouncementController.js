@@ -9,7 +9,7 @@ const UNIQUE_VIOLATION = "23505";
 const RANGE_NOT_SATISFIABLE = "PGRST103";
 
 const LIST_COLUMNS =
-  "id, title, slug, excerpt, status, published_at, created_at, updated_at, author:admins(id, name)";
+  "id, title, slug, excerpt, category, status, published_at, created_at, updated_at, author:admins(id, name)";
 const DETAIL_COLUMNS = `${LIST_COLUMNS}, content_html`;
 
 const MAX_SLUG_ATTEMPTS = 5;
@@ -22,6 +22,7 @@ const serializeAnnouncement = (row) => {
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
+    category: row.category ?? null,
     status: row.status,
     publishedAt: row.published_at,
     author: row.author ? { id: row.author.id, name: row.author.name } : null,
@@ -81,7 +82,7 @@ const announcementNotFound = () =>
 // GET /api/admin/announcements
 // ---------------------------------------------------------------------
 const listAnnouncements = async (req, res) => {
-  const { page, limit, status, search } = req.validated.query;
+  const { page, limit, status, search, category } = req.validated.query;
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   const term = search ? cleanSearchTerm(search) : "";
@@ -89,6 +90,7 @@ const listAnnouncements = async (req, res) => {
   const applyFilters = (query) => {
     let filtered = query;
     if (status) filtered = filtered.eq("status", status);
+    if (category) filtered = filtered.eq("category", category);
     if (term) filtered = filtered.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);
     return filtered;
   };
@@ -143,7 +145,7 @@ const getAnnouncement = async (req, res) => {
 // POST /api/admin/announcements
 // ---------------------------------------------------------------------
 const createAnnouncement = async (req, res) => {
-  const { title, contentHtml, excerpt, status = "draft" } = req.body;
+  const { title, contentHtml, excerpt, category, status = "draft" } = req.body;
 
   const finalExcerpt = excerpt || makeExcerpt(contentHtml);
   if (!finalExcerpt) {
@@ -162,6 +164,7 @@ const createAnnouncement = async (req, res) => {
         title,
         slug,
         excerpt: finalExcerpt,
+        category: category ?? null,
         content_html: contentHtml,
         status,
         published_at: publishedAt,
@@ -201,6 +204,8 @@ const updateAnnouncement = async (req, res) => {
 
   if (body.title !== undefined) patch.title = body.title;
   if (body.contentHtml !== undefined) patch.content_html = body.contentHtml;
+  // category: tidak dikirim -> dipertahankan; null/"" -> kategori dihapus
+  if (body.category !== undefined) patch.category = body.category;
 
   // Slug tidak berubah otomatis saat judul diedit
   if (body.slug !== undefined && body.slug !== current.slug) patch.slug = body.slug;

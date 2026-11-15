@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "nodemon --watch app.js --watch src --watch .env app.js",
     "start": "node app.js",
     "seed:admin": "node scripts/seedAdmin.js",
     "test:academic-calendar": "node scripts/testAcademicCalendar.js",
@@ -12,7 +12,9 @@
     "test:accreditation-search": "node scripts/testAccreditationSearch.js",
     "test:banpt-regulation": "node scripts/testBanptRegulation.js",
     "test:drive": "node scripts/testGoogleDrive.js",
+    "test:oauth": "node scripts/testGoogleOAuth.js",
     "drive:check": "node scripts/checkGoogleDrive.js",
+    "oauth:check": "node scripts/checkGoogleDrive.js",
     "drive:cleanup": "node scripts/cleanupDriveOrphans.js"
   },
   "keywords": [],
@@ -27,6 +29,7 @@
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.1",
+    "fflate": "^0.8.3",
     "google-auth-library": "^10.9.1",
     "groq-sdk": "^1.6.0",
     "helmet": "^8.3.0",

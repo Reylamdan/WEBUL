@@ -1,4 +1,5 @@
 const { z } = require("zod");
+const { NEWS_CATEGORIES } = require("../utils/contentCategories");
 const { sanitizeArticleHtml, toPlainText } = require("../utils/sanitizeHtml");
 const { htmlToText } = require("../utils/excerpt");
 const { SLUG_MAX_LENGTH, SLUG_PATTERN } = require("../utils/slug");
@@ -63,6 +64,20 @@ const excerptField = z
   })
   .pipe(z.string().max(EXCERPT_MAX, `Excerpt maksimal ${EXCERPT_MAX} karakter`).optional());
 
+// Kategori: harus salah satu dari daftar resmi. Body: null/"" = tanpa kategori. Query: kosong = semua.
+const categoryField = z.enum(NEWS_CATEGORIES, {
+  error: `Kategori harus salah satu dari: ${NEWS_CATEGORIES.join(", ")}`,
+});
+const bodyCategoryField = z
+  .any()
+  .transform((value) => (value === "" ? null : value))
+  .superRefine((value, ctx) => {
+    if (value !== undefined && value !== null && !NEWS_CATEGORIES.includes(value)) {
+      ctx.addIssue({ code: "custom", message: `Kategori harus salah satu dari: ${NEWS_CATEGORIES.join(", ")}` });
+    }
+  })
+  .optional();
+
 const statusField = z.enum(STATUSES, { error: "Status harus draft atau published" });
 
 // Slug eksplisit (hanya untuk PATCH). Aturan sama dengan constraint database.
@@ -107,6 +122,7 @@ const listNewsQuerySchema = z.object({
     emptyToUndefined,
     z.string({ error: "Kata kunci harus berupa teks" }).trim().max(100, "Kata kunci maksimal 100 karakter").optional()
   ),
+  category: z.preprocess(emptyToUndefined, categoryField.optional()),
 });
 
 // ---------- Body ----------
@@ -116,6 +132,7 @@ const createNewsSchema = strictBody({
   title: titleField,
   contentHtml: contentHtmlField,
   excerpt: excerptField,
+  category: bodyCategoryField,
   status: statusField.optional(),
 });
 
@@ -123,6 +140,7 @@ const updateNewsSchema = strictBody({
   title: titleField.optional(),
   contentHtml: contentHtmlField.optional(),
   excerpt: excerptField,
+  category: bodyCategoryField,
   status: statusField.optional(),
   slug: slugField.optional(),
 }).refine(

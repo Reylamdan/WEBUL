@@ -197,8 +197,11 @@ const pdf = (extra = "") => Buffer.from(`%PDF-1.4\n1 0 obj<<>>endobj\n${extra}%%
   await test("tanpa konfigurasi Google: server tetap start, mode none", () => {
     const r = runEnv(); assert.equal(r.code, 0, r.err); assert.deepEqual([r.json.mode, r.json.enabled, r.json.oauth], ["none", false, false]);
   });
-  await test("konfigurasi Service Account lama (tanpa GOOGLE_AUTH_MODE) tetap valid -> mode service_account", () => {
-    const r = runEnv(SA); assert.equal(r.code, 0, r.err); assert.deepEqual([r.json.mode, r.json.enabled, r.json.oauth], ["service_account", true, false]);
+  await test("variabel Service Account lama DIABAIKAN: server tetap start, mode none, OAuth nonaktif (tidak lagi didukung)", () => {
+    const { GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY } = SA;
+    const r = runEnv({ GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY }); assert.equal(r.code, 0, r.err);
+    assert.deepEqual([r.json.mode, r.json.enabled, r.json.oauth], ["none", false, false]);
+    assert.match(r.err, /diabaikan/); assert.ok(!r.err.includes("MIIEabc"), "nilai private key tidak boleh muncul di log");
   });
   await test("OAuth lengkap (mode otomatis & eksplisit) valid; kunci 32 byte terbaca; TTL default 600", () => {
     for (const extra of [OAUTH, { ...OAUTH, GOOGLE_AUTH_MODE: "oauth" }]) {
@@ -206,11 +209,26 @@ const pdf = (extra = "") => Buffer.from(`%PDF-1.4\n1 0 obj<<>>endobj\n${extra}%%
       assert.deepEqual([r.json.mode, r.json.enabled, r.json.oauth, r.json.keyLen, r.json.ttl], ["oauth", true, true, 32, 600]);
     }
   });
-  await test("kedua jenis kredensial terisi: tanpa GOOGLE_AUTH_MODE ditolak; dengan mode eksplisit keduanya valid (mode lain diabaikan)", () => {
+  await test("OAuth + sisa variabel Service Account: OAuth tetap aktif, SA diabaikan; GOOGLE_AUTH_MODE=service_account ditolak", () => {
     const both = { ...SA, ...OAUTH };
-    const bad = runEnv(both); assert.equal(bad.code, 1); assert.match(bad.err, /GOOGLE_AUTH_MODE/);
+    const ok = runEnv(both); assert.equal(ok.code, 0, ok.err); assert.deepEqual([ok.json.mode, ok.json.enabled, ok.json.oauth], ["oauth", true, true]);
     assert.equal(runEnv({ ...both, GOOGLE_AUTH_MODE: "oauth" }).json.mode, "oauth");
-    assert.equal(runEnv({ ...both, GOOGLE_AUTH_MODE: "service_account" }).json.mode, "service_account");
+    const bad = runEnv({ ...both, GOOGLE_AUTH_MODE: "service_account" }); assert.equal(bad.code, 1); assert.match(bad.err, /tidak lagi didukung/);
+  });
+  await test("diagnostik startup: OAuth nonaktif menyebut NAMA variabel yang belum terbaca; OAuth aktif melapor AKTIF; keduanya hanya ke stderr", () => {
+    const off = runEnv({ NODE_ENV: "development" }); assert.equal(off.code, 0, off.err);
+    assert.match(off.err, /NONAKTIF/); assert.match(off.err, /STORAGE_NOT_CONFIGURED/);
+    for (const name of ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REDIRECT_URI", "GOOGLE_DRIVE_ROOT_FOLDER_ID", "GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY"]) assert.ok(off.err.includes(name), name);
+    const partial = runEnv({ NODE_ENV: "development", ...OAUTH }); assert.equal(partial.code, 0, partial.err);
+    assert.match(partial.err, /AKTIF/); assert.ok(!partial.err.includes(OAUTH.GOOGLE_OAUTH_CLIENT_SECRET) && !partial.err.includes(ENC_KEY_B64), "nilai rahasia tidak boleh muncul");
+    assert.doesNotThrow(() => JSON.parse(partial.out), "stdout harus tetap JSON murni");
+  });
+  await test("kunci enkripsi tidak valid ditolak SAAT START (bukan baru gagal saat pemakaian pertama)", () => {
+    for (const bad of ["abc123", "terlalu-pendek", crypto.randomBytes(16).toString("hex"), crypto.randomBytes(31).toString("base64")]) {
+      const r = runEnv({ ...OAUTH, GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY: bad }); assert.equal(r.code, 1, bad); assert.match(r.err, /GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY tidak valid/);
+    }
+    const legacy = { ...OAUTH }; legacy.GOOGLE_OAUTH_ENCRYPTION_KEY = legacy.GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY; delete legacy.GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY;
+    const r = runEnv(legacy); assert.equal(r.code, 1); assert.match(r.err, /GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY/); assert.ok(!r.err.includes(ENC_KEY_B64));
   });
   await test("variabel OAuth wajib diisi satu per satu: pesan menyebut NAMA variabel", () => {
     for (const name of ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REDIRECT_URI", "GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY", "GOOGLE_DRIVE_ROOT_FOLDER_ID"]) {
@@ -820,12 +838,12 @@ const pdf = (extra = "") => Buffer.from(`%PDF-1.4\n1 0 obj<<>>endobj\n${extra}%%
     assert.equal(new URL(r.json.data.authUrl).searchParams.get("redirect_uri"), REDIRECT_URI);
   });
 
-  section("H3. Mode Service Account / tanpa OAuth: endpoint OAuth tidak aktif dan tidak merusak apa pun");
-  for (const k of Object.keys(process.env)) if (k.startsWith("GOOGLE_OAUTH_")) process.env[k] = "";
-  Object.assign(process.env, { GOOGLE_AUTH_MODE: "service_account", GOOGLE_DRIVE_ROOT_FOLDER_ID: ROOT_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL: "svc@proj.iam.gserviceaccount.com", GOOGLE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\\nMIIEabc\\n-----END PRIVATE KEY-----\\n" });
+  section("H3. Tanpa OAuth (sisa variabel Service Account diabaikan): endpoint OAuth tidak aktif dan tidak merusak apa pun");
+  for (const k of Object.keys(process.env)) if (k.startsWith("GOOGLE_")) process.env[k] = ""; // termasuk GOOGLE_AUTH_MODE & ROOT_FOLDER_ID sisa bagian H2
+  Object.assign(process.env, { GOOGLE_SERVICE_ACCOUNT_EMAIL: "svc@proj.iam.gserviceaccount.com", GOOGLE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\\nMIIEabc\\n-----END PRIVATE KEY-----\\n" });
   resetDb(); await startServer();
-  await test("status melaporkan service_account; connect/disconnect -> 409 OAUTH_NOT_ENABLED; callback -> 404 halaman (tanpa efek)", async () => {
-    const logBase = appGoogle.st.log.length; const s = await call("GET", `${GD}/status`); assert.deepEqual(s.json.data, { authMode: "service_account", configured: true, connection: { status: "service_account" } });
+  await test("status not_configured; connect/disconnect -> 409 OAUTH_NOT_ENABLED; callback -> 404 halaman (tanpa efek)", async () => {
+    const logBase = appGoogle.st.log.length; const s = await call("GET", `${GD}/status`); assert.deepEqual(s.json.data, { authMode: "none", configured: false, connection: { status: "not_configured" } });
     for (const m of ["connect", "disconnect"]) { const r = await call("POST", `${GD}/${m}`); assert.equal(r.status, 409); assert.equal(r.json.code, "OAUTH_NOT_ENABLED"); }
     assert.equal((await call("GET", `${GD}/callback?code=x&state=${"a".repeat(43)}`, { token: null })).status, 404);
     assert.equal((db.google_oauth_states || []).length, 0); assert.equal(appGoogle.st.log.length, logBase);

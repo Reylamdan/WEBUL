@@ -74,7 +74,7 @@ const jsonRes = (obj, status = 200, headers = {}) => new Response(JSON.stringify
 const driveErr = (status, reason = "") => jsonRes({ error: { code: status, message: "pesan google", errors: [{ reason }] } }, status);
 
 (async () => {
-  await test("upload: sesi resumable lalu PUT; supportsAllDrives; metadata (parents, appProperties); bearer token", async () => {
+  await test("upload: sesi resumable lalu PUT; metadata (parents, appProperties); bearer token OAuth", async () => {
     const { svc, calls } = makeClient((c) => c.method === "POST"
       ? new Response(null, { status: 200, headers: { location: "https://upload.example/session/1" } })
       : jsonRes({ id: "F1", name: "n", size: "5", md5Checksum: "abc" }));
@@ -83,7 +83,7 @@ const driveErr = (status, reason = "") => jsonRes({ error: { code: status, messa
     assert.equal(file.id, "F1"); assert.equal(calls.length, 2);
     const [init, put] = calls;
     assert.match(init.url, /^https:\/\/www\.googleapis\.com\/upload\/drive\/v3\/files\?/);
-    assert.match(init.url, /uploadType=resumable/); assert.match(init.url, /supportsAllDrives=true/);
+    assert.match(init.url, /uploadType=resumable/);
     assert.equal(init.headers.Authorization, "Bearer tok_secret_123");
     assert.equal(init.headers["X-Upload-Content-Type"], "application/pdf"); assert.equal(init.headers["X-Upload-Content-Length"], "5");
     const meta = JSON.parse(init.body);
@@ -99,7 +99,7 @@ const driveErr = (status, reason = "") => jsonRes({ error: { code: status, messa
   await test("download: alt=media, Accept-Encoding identity, Range diteruskan", async () => {
     const { svc, calls } = makeClient(() => new Response("abc", { status: 206 }));
     await svc.downloadFile("FILE/1", { range: "bytes=0-1" });
-    assert.match(calls[0].url, /\/files\/FILE%2F1\?alt=media&supportsAllDrives=true/);
+    assert.match(calls[0].url, /\/files\/FILE%2F1\?alt=media$/);
     assert.equal(calls[0].headers["Accept-Encoding"], "identity"); assert.equal(calls[0].headers.Range, "bytes=0-1");
   });
   await test("hapus mode trash = PATCH trashed:true; mode delete = DELETE; 404 dianggap sukses", async () => {
@@ -178,28 +178,33 @@ const driveErr = (status, reason = "") => jsonRes({ error: { code: status, messa
     });
     return r;
   };
-  const PEM = "-----BEGIN PRIVATE KEY-----\\nABC\\n-----END PRIVATE KEY-----\\n";
+  const OAUTH_ENV = {
+    GOOGLE_OAUTH_CLIENT_ID: "client-id-123456.apps.googleusercontent.com", GOOGLE_OAUTH_CLIENT_SECRET: "GOCSPX-fake-secret-value",
+    GOOGLE_OAUTH_REDIRECT_URI: "http://localhost:5000/api/admin/google-drive/callback", GOOGLE_DRIVE_ROOT_FOLDER_ID: "1AbCdEfGhIjKlMnOp",
+    GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY: require("node:crypto").randomBytes(32).toString("base64"),
+  };
   await test("tanpa konfigurasi Google: server tetap boleh start (Drive nonaktif)", () => {
     const r = runEnv({}); assert.equal(r.status, 0, r.stderr); assert.equal(JSON.parse(r.stdout).enabled, false);
   });
   await test("konfigurasi sebagian -> server menolak start, pesan hanya menyebut NAMA variabel", () => {
     const r = runEnv({ GOOGLE_DRIVE_ROOT_FOLDER_ID: "abcdefghijklmnop_secretvalue" });
-    assert.equal(r.status, 1); assert.match(r.stderr, /GOOGLE_SERVICE_ACCOUNT_EMAIL/); assert.ok(!r.stderr.includes("secretvalue"));
-    const r2 = runEnv({ GOOGLE_SERVICE_ACCOUNT_EMAIL: "sa@p.iam.gserviceaccount.com", GOOGLE_PRIVATE_KEY: PEM });
+    assert.equal(r.status, 1); assert.match(r.stderr, /GOOGLE_OAUTH_CLIENT_ID/); assert.ok(!r.stderr.includes("secretvalue"));
+    const { GOOGLE_DRIVE_ROOT_FOLDER_ID, ...noRoot } = OAUTH_ENV;
+    const r2 = runEnv(noRoot);
     assert.equal(r2.status, 1); assert.match(r2.stderr, /GOOGLE_DRIVE_ROOT_FOLDER_ID/);
   });
-  await test("konfigurasi lengkap valid: \\n pada private key dinormalkan; mode hapus default trash", () => {
-    const r = runEnv({ GOOGLE_SERVICE_ACCOUNT_EMAIL: "sa@p.iam.gserviceaccount.com", GOOGLE_PRIVATE_KEY: PEM, GOOGLE_DRIVE_ROOT_FOLDER_ID: "1AbCdEfGhIjKlMnOp" });
+  await test("konfigurasi OAuth lengkap valid: Drive aktif (authMode oauth); mode hapus default trash", () => {
+    const r = runEnv(OAUTH_ENV);
     assert.equal(r.status, 0, r.stderr);
-    const c = JSON.parse(r.stdout); assert.equal(c.enabled, true); assert.equal(c.deleteMode, "trash");
-    assert.ok(c.privateKey.includes("\n") && !c.privateKey.includes("\\n"));
+    const c = JSON.parse(r.stdout); assert.equal(c.enabled, true); assert.equal(c.authMode, "oauth"); assert.equal(c.deleteMode, "trash");
+    assert.equal(c.rootFolderId, OAUTH_ENV.GOOGLE_DRIVE_ROOT_FOLDER_ID);
   });
-  await test("nilai tidak valid ditolak: ID folder berupa URL, key bukan PEM, mode hapus salah, dua cara kredensial sekaligus, BACKEND_PUBLIC_URL salah", () => {
-    const ok = { GOOGLE_SERVICE_ACCOUNT_EMAIL: "sa@p.iam.gserviceaccount.com", GOOGLE_PRIVATE_KEY: PEM, GOOGLE_DRIVE_ROOT_FOLDER_ID: "1AbCdEfGhIjKlMnOp" };
+  await test("nilai tidak valid ditolak: ID folder berupa URL, kunci enkripsi salah, mode hapus salah, Service Account tidak didukung, BACKEND_PUBLIC_URL salah", () => {
+    const ok = OAUTH_ENV;
     assert.match(runEnv({ ...ok, GOOGLE_DRIVE_ROOT_FOLDER_ID: "https://drive.google.com/drive/folders/abc" }).stderr, /GOOGLE_DRIVE_ROOT_FOLDER_ID tidak valid/);
-    assert.match(runEnv({ ...ok, GOOGLE_PRIVATE_KEY: "bukan-pem" }).stderr, /GOOGLE_PRIVATE_KEY tidak valid/);
+    assert.match(runEnv({ ...ok, GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY: "bukan-kunci" }).stderr, /GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY tidak valid/);
     assert.match(runEnv({ ...ok, GOOGLE_DRIVE_DELETE_MODE: "hancurkan" }).stderr, /GOOGLE_DRIVE_DELETE_MODE/);
-    assert.match(runEnv({ ...ok, GOOGLE_SERVICE_ACCOUNT_KEY_FILE: "./x.json" }).stderr, /jangan keduanya/);
+    assert.match(runEnv({ ...ok, GOOGLE_AUTH_MODE: "service_account" }).stderr, /tidak lagi didukung/);
     assert.match(runEnv({ BACKEND_PUBLIC_URL: "ftp://x" }).stderr, /BACKEND_PUBLIC_URL/);
   });
 
@@ -759,7 +764,8 @@ const driveErr = (status, reason = "") => jsonRes({ error: { code: status, messa
   await test("tidak ada kredensial Google atau .env di berkas yang dikirim; .env.example hanya placeholder", () => {
     const example = fs.readFileSync(path.join(__dirname, "../.env.example"), "utf8");
     assert.ok(!/BEGIN (RSA |EC )?PRIVATE KEY-----\s*[A-Za-z0-9+/]{20}/.test(example));
-    assert.match(example, /^GOOGLE_SERVICE_ACCOUNT_EMAIL=$/m); assert.match(example, /^GOOGLE_PRIVATE_KEY=$/m); assert.match(example, /^GOOGLE_DRIVE_ROOT_FOLDER_ID=$/m);
+    for (const v of ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_TOKEN_ENCRYPTION_KEY", "GOOGLE_DRIVE_ROOT_FOLDER_ID"]) assert.match(example, new RegExp(`^${v}=$`, "m"), `${v} harus ada dan kosong`);
+    assert.ok(!/^\s*GOOGLE_SERVICE_ACCOUNT_EMAIL=|^\s*GOOGLE_PRIVATE_KEY=/m.test(example), "variabel Service Account tidak boleh ada di .env.example");
   });
   await test("log server tidak pernah memuat private key / access token", () => {
     assert.ok(!logs.some((l) => /PRIVATE KEY|tok_secret|Bearer /.test(l)));

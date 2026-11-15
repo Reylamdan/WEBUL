@@ -58,7 +58,7 @@ const getStatus = async (req, res) => {
     data: {
       authMode: mode,
       configured: env.googleDrive.enabled,
-      connection: { status: mode === "service_account" && env.googleDrive.enabled ? "service_account" : "not_configured" },
+      connection: { status: "not_configured" },
     },
   });
 };

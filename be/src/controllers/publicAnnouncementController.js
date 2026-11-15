@@ -1,14 +1,15 @@
 const supabase = require("../config/supabase");
 const AppError = require("../utils/AppError");
 const { throwDbError } = require("../utils/dbError");
+const { ANNOUNCEMENT_CATEGORIES } = require("../utils/contentCategories");
 
 const RANGE_NOT_SATISFIABLE = "PGRST103";
 
 // Daftar publik tidak memuat content_html agar hemat bandwidth
 const PUBLIC_LIST_COLUMNS =
-  "id, title, slug, excerpt, published_at, created_at, author:admins(id, name)";
+  "id, title, slug, excerpt, category, published_at, created_at, author:admins(id, name)";
 const PUBLIC_DETAIL_COLUMNS =
-  "id, title, slug, excerpt, content_html, published_at, created_at, updated_at, author:admins(id, name)";
+  "id, title, slug, excerpt, category, content_html, published_at, created_at, updated_at, author:admins(id, name)";
 
 const serializePublicAnnouncement = (row) => {
   const announcement = {
@@ -16,6 +17,7 @@ const serializePublicAnnouncement = (row) => {
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
+    category: row.category ?? null,
     publishedAt: row.published_at,
     author: row.author ? { id: row.author.id, name: row.author.name } : null,
     createdAt: row.created_at,
@@ -38,7 +40,7 @@ const announcementNotFound = () =>
 // GET /api/announcements
 // ---------------------------------------------------------------------
 const listPublicAnnouncements = async (req, res) => {
-  const { page, limit, search } = req.validated.query;
+  const { page, limit, search, category } = req.validated.query;
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   const term = search ? cleanSearchTerm(search) : "";
@@ -48,6 +50,8 @@ const listPublicAnnouncements = async (req, res) => {
     let filtered = query
       .eq("status", "published")
       .lte("published_at", now);
+
+    if (category) filtered = filtered.eq("category", category);
 
     if (term) {
       filtered = filtered.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);
@@ -109,7 +113,14 @@ const getPublicAnnouncement = async (req, res) => {
   });
 };
 
+// ---------------------------------------------------------------------
+// GET /api/announcements/categories
+// ---------------------------------------------------------------------
+const listAnnouncementCategories = (req, res) =>
+  res.json({ success: true, data: { categories: ANNOUNCEMENT_CATEGORIES } });
+
 module.exports = {
+  listAnnouncementCategories,
   listPublicAnnouncements,
   getPublicAnnouncement,
   serializePublicAnnouncement,
