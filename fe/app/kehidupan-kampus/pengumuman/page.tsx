@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { PengumumanHero, PengumumanList } from "@/components/pengumuman";
+import { Suspense } from "react";
+import { PengumumanDetailModal, PengumumanHero, PengumumanList } from "@/components/pengumuman";
 
 export const metadata: Metadata = {
   title: "Pengumuman — Universitas LIA",
@@ -16,7 +17,9 @@ export default function PengumumanPage() {
           <PengumumanList />
         </div>
       </section>
-
+      <Suspense fallback={null}>
+        <PengumumanDetailModal />
+      </Suspense>
     </main>
   );
 }

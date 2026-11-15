@@ -1,24 +1,20 @@
 "use client";
 
 import { useId, useState } from "react";
+import { ContentLanguageToggle } from "@/components/content-language-toggle";
 import { Icon } from "@/components/icons";
 import { announcementApi, errorMessage, formatDate, type AnnouncementItem } from "@/lib/api";
+import { categoryLabel, useContentLang } from "@/lib/content-language";
 import { useApi, useDebouncedValue } from "@/lib/use-api";
 
-// Backend belum memiliki field kategori pengumuman. Pilihan kategori dipakai sebagai kata kunci
-// pencarian (judul/ringkasan) bila kolom cari kosong.
-const CATEGORIES = [
-  { id: "semua", label: "Semua pengumuman" },
-  { id: "akademik", label: "Akademik" },
-  { id: "administrasi", label: "Administrasi" },
-  { id: "kemahasiswaan", label: "Kemahasiswaan" },
-] as const;
+const ALL = "Semua";
 
 // Backend membatasi maksimal 50 data per permintaan.
 const PAGE_LIMIT = 50;
 
 function AnnouncementDetail({ slug, fallback }: { slug: string; fallback: string | null }) {
-  const { data, error, loading } = useApi(`pengumuman-detail:${slug}`, () => announcementApi.detail(slug));
+  const [lang] = useContentLang();
+  const { data, error, loading } = useApi(`pengumuman-detail:${lang}:${slug}`, () => announcementApi.detail(slug, lang));
 
   if (loading) return <p className="pengumuman-modal-desc">Memuat detail pengumuman...</p>;
   if (error) {
@@ -46,16 +42,20 @@ function AnnouncementDetail({ slug, fallback }: { slug: string; fallback: string
 }
 
 export function PengumumanList() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("semua");
+  const [lang] = useContentLang();
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeModalItem, setActiveModalItem] = useState<AnnouncementItem | null>(null);
   const searchInputId = useId();
   const debouncedQuery = useDebouncedValue(searchQuery.trim());
-  const categoryTerm = CATEGORIES.find((cat) => cat.id === selectedCategory && cat.id !== "semua")?.label ?? "";
-  const search = debouncedQuery || categoryTerm;
+  const category = selectedCategory === ALL ? undefined : selectedCategory;
 
-  const { data, error, loading } = useApi(`pengumuman-list:${search}`, () =>
-    announcementApi.list({ page: 1, limit: PAGE_LIMIT, search: search || undefined }),
+  // Daftar kategori berasal dari backend (GET /api/announcements/categories); filter dilakukan di server.
+  const categories = useApi("pengumuman-categories", () => announcementApi.categories());
+  const categoryOptions = [ALL, ...(categories.data ?? [])];
+
+  const { data, error, loading } = useApi(`pengumuman-list:${lang}:${category ?? ""}:${debouncedQuery}`, () =>
+    announcementApi.list({ page: 1, limit: PAGE_LIMIT, search: debouncedQuery || undefined, category, lang }),
   );
   const items = data?.items ?? [];
 
@@ -78,18 +78,18 @@ export function PengumumanList() {
           className="pengumuman-category-pills"
           role="tablist"
         >
-          {CATEGORIES.map((cat) => {
-            const isSelected = selectedCategory === cat.id;
+          {categoryOptions.map((option) => {
+            const isSelected = selectedCategory === option;
             return (
               <button
                 aria-selected={isSelected}
                 className={`pengumuman-pill ${isSelected ? "is-active" : ""}`}
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
+                key={option}
+                onClick={() => setSelectedCategory(option)}
                 role="tab"
                 type="button"
               >
-                {cat.label}
+                {option === ALL ? "Semua pengumuman" : categoryLabel(option, lang)}
               </button>
             );
           })}
@@ -109,6 +109,8 @@ export function PengumumanList() {
           />
         </div>
       </div>
+
+      <ContentLanguageToggle pillClass="pengumuman-pill" />
 
       {/* Announcement List Items */}
       {error && items.length === 0 ? (
@@ -140,12 +142,12 @@ export function PengumumanList() {
               }}
             >
               <div className="pengumuman-card-main">
-                <span className="pengumuman-card-category">PENGUMUMAN</span>
+                <span className="pengumuman-card-category">{(item.category ? categoryLabel(item.category, lang) : "PENGUMUMAN").toUpperCase()}</span>
                 <h3 className="pengumuman-card-title">{item.title}</h3>
                 {item.excerpt && <p className="pengumuman-card-desc">{item.excerpt}</p>}
               </div>
               <div className="pengumuman-card-meta">
-                <span>{formatDate(item.publishedAt)}</span>
+                <span>{[formatDate(item.publishedAt, lang), lang === "en" && item.translated === false ? "Indonesian only" : ""].filter(Boolean).join(" · ")}</span>
               </div>
             </article>
           ))}
@@ -177,11 +179,11 @@ export function PengumumanList() {
           >
             <div className="pengumuman-modal-header">
               <div>
-                <span className="pengumuman-card-category">PENGUMUMAN</span>
+                <span className="pengumuman-card-category">{(activeModalItem.category ? categoryLabel(activeModalItem.category, lang) : "PENGUMUMAN").toUpperCase()}</span>
                 <h4 className="pengumuman-modal-title" id="modal-pengumuman-title">
                   {activeModalItem.title}
                 </h4>
-                <span className="pengumuman-modal-date">{formatDate(activeModalItem.publishedAt)}</span>
+                <span className="pengumuman-modal-date">{formatDate(activeModalItem.publishedAt, lang)}</span>
               </div>
               <button
                 aria-label="Tutup jendela modal"

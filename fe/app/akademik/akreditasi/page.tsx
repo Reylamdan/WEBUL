@@ -1,6 +1,7 @@
 import {
   AkreditasiHero,
   AkreditasiTable,
+  RegulasiBanpt,
 } from "@/components/akreditasi";
 
 export default function AkreditasiPage() {
@@ -10,6 +11,7 @@ export default function AkreditasiPage() {
       <div className="akreditasi-content">
         <AkreditasiHero />
         <AkreditasiTable />
+        <RegulasiBanpt />
       </div>
     </main>
   );

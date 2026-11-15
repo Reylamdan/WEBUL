@@ -1,27 +1,34 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
+import { ContentLanguageToggle } from "@/components/content-language-toggle";
 import { Icon } from "@/components/icons";
+import { NewsCover } from "@/components/news-cover";
 import { errorMessage, formatDate, newsApi } from "@/lib/api";
+import { newsDetailHref } from "@/lib/content-routes";
+import { categoryLabel, useContentLang } from "@/lib/content-language";
 import { useApi, useDebouncedValue } from "@/lib/use-api";
 
-// Backend belum memiliki field kategori berita. Pilihan kategori dipakai sebagai kata kunci
-// pencarian (judul/ringkasan) bila kolom cari kosong.
-const CATEGORIES = ["Semua", "Kampus", "Prestasi", "Universitas"] as const;
-type CategoryFilter = (typeof CATEGORIES)[number];
+const ALL = "Semua";
 
 // Backend membatasi maksimal 50 data per permintaan.
 const PAGE_LIMIT = 50;
 
 export function BeritaJelajahi() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("Semua");
+  const [lang] = useContentLang();
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputId = useId();
   const debouncedQuery = useDebouncedValue(searchQuery.trim());
-  const search = debouncedQuery || (selectedCategory === "Semua" ? "" : selectedCategory);
+  const category = selectedCategory === ALL ? undefined : selectedCategory;
 
-  const { data, error, loading } = useApi(`berita-list:${search}`, () =>
-    newsApi.list({ page: 1, limit: PAGE_LIMIT, search: search || undefined }),
+  // Daftar kategori berasal dari backend (GET /api/news/categories); filter dilakukan di server.
+  const categories = useApi("berita-categories", () => newsApi.categories());
+  const categoryOptions = [ALL, ...(categories.data ?? [])];
+
+  const { data, error, loading } = useApi(`berita-list:${lang}:${category ?? ""}:${debouncedQuery}`, () =>
+    newsApi.list({ page: 1, limit: PAGE_LIMIT, search: debouncedQuery || undefined, category, lang }),
   );
   const items = data?.items ?? [];
 
@@ -55,23 +62,25 @@ export function BeritaJelajahi() {
         </div>
 
         <div aria-label="Filter kategori berita" className="berita-category-pills" role="tablist">
-          {CATEGORIES.map((category) => {
-            const isSelected = selectedCategory === category;
+          {categoryOptions.map((option) => {
+            const isSelected = selectedCategory === option;
             return (
               <button
                 aria-selected={isSelected}
                 className={`berita-pill ${isSelected ? "is-active" : ""}`}
-                key={category}
-                onClick={() => setSelectedCategory(category)}
+                key={option}
+                onClick={() => setSelectedCategory(option)}
                 role="tab"
                 type="button"
               >
-                {category}
+                {categoryLabel(option, lang)}
               </button>
             );
           })}
         </div>
       </div>
+
+      <ContentLanguageToggle pillClass="berita-pill" />
 
       {error && items.length === 0 ? (
         <div className="berita-empty-state" role="alert">
@@ -90,19 +99,24 @@ export function BeritaJelajahi() {
           {items.map((item) => (
             <article className="berita-card" key={item.id}>
               <div aria-hidden="true" className="berita-card-image">
-                {item.coverImageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img alt="" loading="lazy" src={item.coverImageUrl} />
-                ) : (
-                  <span className="berita-placeholder-hint">Foto berita</span>
-                )}
+                <NewsCover fallback={<span className="berita-placeholder-hint">Foto berita</span>} src={item.coverImageUrl} />
               </div>
               <div className="berita-card-content">
-                <span className="berita-card-eyebrow">BERITA</span>
-                <h3 className="berita-card-title">{item.title}</h3>
+                <span className="berita-card-eyebrow">{(item.category ? categoryLabel(item.category, lang) : "BERITA").toUpperCase()}</span>
+                <h3 className="berita-card-title">
+                  <Link href={newsDetailHref(item.slug)}>{item.title}</Link>
+                </h3>
                 {item.excerpt && <p className="berita-card-desc">{item.excerpt}</p>}
                 <div className="berita-card-meta">
-                  <span>{[formatDate(item.publishedAt), item.author?.name].filter(Boolean).join(" · ")}</span>
+                  <span>
+                    {[
+                      formatDate(item.publishedAt, lang),
+                      item.author?.name,
+                      lang === "en" && item.translated === false ? "Indonesian only" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
                 </div>
               </div>
             </article>

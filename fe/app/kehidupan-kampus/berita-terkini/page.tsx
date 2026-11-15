@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
+  BeritaDetailModal,
   BeritaHero,
   BeritaJelajahi,
   BeritaLainnya,
@@ -21,7 +23,9 @@ export default function BeritaTerkiniPage() {
         <BeritaJelajahi />
         <BeritaLainnya />
       </div>
-
+      <Suspense fallback={null}>
+        <BeritaDetailModal />
+      </Suspense>
     </main>
   );
 }

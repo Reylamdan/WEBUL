@@ -2,15 +2,54 @@
 
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { errorMessage, formatDate, newsApi } from "@/lib/api";
+import { errorMessage, formatDate, newsApi, type ContentLang, type NewsItem } from "@/lib/api";
+import { useCoverLoadable } from "@/components/news-cover";
+import { categoryLabel, useContentLang } from "@/lib/content-language";
+import { newsDetailHref } from "@/lib/content-routes";
 import { useApi } from "@/lib/use-api";
 import { SectionHeading } from "./section-heading";
 
 const NEWS_PAGE = "/kehidupan-kampus/berita-terkini";
 const FALLBACK_IMAGES = ["story-art", "story-students", "story-language"];
 
+function StoryCard({ story, index, lang }: { story: NewsItem; index: number; lang: ContentLang }) {
+  // Cover dipakai sebagai background; bila gagal dimuat, kembali ke gambar dekoratif bawaan.
+  const coverOk = useCoverLoadable(story.coverImageUrl);
+  const href = newsDetailHref(story.slug);
+  const tag = (story.category ? categoryLabel(story.category, lang) : "BERITA").toUpperCase();
+
+  return (
+    <article className="story-card">
+      <a
+        aria-label={`Baca ${story.title}`}
+        className={`story-image ${coverOk ? "" : FALLBACK_IMAGES[index % FALLBACK_IMAGES.length]}`}
+        href={href}
+        style={
+          coverOk
+            ? { backgroundImage: `url("${story.coverImageUrl}")`, backgroundSize: "cover", backgroundPosition: "center" }
+            : undefined
+        }
+      >
+        <span className="story-image-tag">{tag}</span>
+        <span className="story-image-decoration" />
+      </a>
+      <div className="story-meta">
+        <span>{tag}</span>
+        <time dateTime={story.publishedAt ?? undefined}>{formatDate(story.publishedAt, lang)}</time>
+      </div>
+      <h3>
+        <a href={href}>{story.title}</a>
+      </h3>
+      <a className="story-read-more" href={href}>
+        Baca selengkapnya <Icon name="arrow" size={15} />
+      </a>
+    </article>
+  );
+}
+
 export function NewsSection() {
-  const { data, error, loading } = useApi("landing-news", () => newsApi.list({ page: 1, limit: 3 }));
+  const [lang] = useContentLang();
+  const { data, error, loading } = useApi(`landing-news:${lang}`, () => newsApi.list({ page: 1, limit: 3, lang }));
   const stories = data?.items ?? [];
 
   return (
@@ -33,31 +72,7 @@ export function NewsSection() {
         <div className="story-grid">
           {stories.map((story, index) => (
             <ScrollReveal delay={(index % 4) * 70} key={story.id}>
-            <article className="story-card">
-              <a
-                aria-label={`Baca ${story.title}`}
-                className={`story-image ${story.coverImageUrl ? "" : FALLBACK_IMAGES[index % FALLBACK_IMAGES.length]}`}
-                href={NEWS_PAGE}
-                style={
-                  story.coverImageUrl
-                    ? { backgroundImage: `url("${story.coverImageUrl}")`, backgroundSize: "cover", backgroundPosition: "center" }
-                    : undefined
-                }
-              >
-                <span className="story-image-tag">BERITA</span>
-                <span className="story-image-decoration" />
-              </a>
-              <div className="story-meta">
-                <span>BERITA</span>
-                <time dateTime={story.publishedAt ?? undefined}>{formatDate(story.publishedAt)}</time>
-              </div>
-              <h3>
-                <a href={NEWS_PAGE}>{story.title}</a>
-              </h3>
-              <a className="story-read-more" href={NEWS_PAGE}>
-                Baca selengkapnya <Icon name="arrow" size={15} />
-              </a>
-            </article>
+              <StoryCard index={index} lang={lang} story={story} />
             </ScrollReveal>
           ))}
         </div>
