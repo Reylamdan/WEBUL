@@ -3,6 +3,8 @@
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { announcementApi, calendarApi, dateParts, errorMessage, todayIso } from "@/lib/api";
+import { announcementDetailHref } from "@/lib/content-routes";
+import { useContentLang } from "@/lib/content-language";
 import { useApi } from "@/lib/use-api";
 import { SectionHeading } from "./section-heading";
 
@@ -27,7 +29,8 @@ function UpdateItem({ category, date, href, title }: { category: string; date: s
 }
 
 export function UpdatesSection() {
-  const announcements = useApi("landing-announcements", () => announcementApi.list({ page: 1, limit: 2 }));
+  const [lang] = useContentLang();
+  const announcements = useApi(`landing-announcements:${lang}`, () => announcementApi.list({ page: 1, limit: 2, lang }));
   const events = useApi("landing-agenda", () => calendarApi.list({ page: 1, limit: 2, from: todayIso() }));
 
   return (
@@ -43,7 +46,7 @@ export function UpdatesSection() {
           <p>Belum ada pengumuman.</p>
         ) : (
           announcements.data?.items.map((item) => (
-            <UpdateItem category="PENGUMUMAN" date={item.publishedAt} href={ANNOUNCEMENT_PAGE} key={item.id} title={item.title} />
+            <UpdateItem category="PENGUMUMAN" date={item.publishedAt} href={announcementDetailHref(item.slug)} key={item.id} title={item.title} />
           ))
         )}
       </div>

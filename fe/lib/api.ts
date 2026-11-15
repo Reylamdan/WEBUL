@@ -50,7 +50,8 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
     response = await fetch(url, { cache: "no-store", ...init });
-  } catch {
+  } catch (error) {
+    if (isAbortError(error)) throw error;
     throw new ApiError("Tidak dapat terhubung ke server. Periksa koneksi Anda lalu coba lagi.", 0, "NETWORK_ERROR");
   }
 
@@ -71,8 +72,14 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return body.data as T;
 }
 
-export function apiGet<T>(path: string, params?: Params): Promise<T> {
+export function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
+export function apiGet<T>(path: string, params?: Params, signal?: AbortSignal): Promise<T> {
   const url = buildUrl(path, params);
+  // Request yang bisa dibatalkan tidak digabung dengan request lain agar pembatalan tidak memengaruhi pemanggil lain.
+  if (signal) return request<T>(url, { signal });
   const existing = inflight.get(url);
   if (existing) return existing as Promise<T>;
 
@@ -83,23 +90,32 @@ export function apiGet<T>(path: string, params?: Params): Promise<T> {
   return promise;
 }
 
-export function apiPost<T>(path: string, body: unknown): Promise<T> {
+export function apiPost<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
   return request<T>(buildUrl(path), {
+    signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 }
 
+// ---------- Bahasa konten ----------
+
+// Bahasa konten dinamis (berita & pengumuman). Backend hanya menerjemahkan konten yang sudah disetujui admin;
+// selain itu respons tetap bahasa Indonesia dan ditandai `translated: false`.
+export type ContentLang = "id" | "en";
+
+const langParam = (lang?: ContentLang) => (lang === "en" ? "en" : undefined);
+
 // ---------- Format ----------
 
 const TIME_ZONE = "Asia/Jakarta";
 
-export function formatDate(value: string | null | undefined): string {
+export function formatDate(value: string | null | undefined, lang: ContentLang = "id"): string {
   if (!value) return "";
   const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T00:00:00+07:00`) : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: TIME_ZONE }).format(date);
+  return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: TIME_ZONE }).format(date);
 }
 
 export function dateParts(value: string | null | undefined): { day: string; month: string } {
@@ -142,6 +158,9 @@ export interface NewsItem {
   coverImageUrl: string | null;
   publishedAt: string | null;
   author: { name: string } | null;
+  category: string | null;
+  // Hanya ada pada respons ?lang=en: true bila teks berasal dari terjemahan yang disetujui admin.
+  translated?: boolean;
   contentHtml?: string;
 }
 
@@ -152,6 +171,8 @@ export interface AnnouncementItem {
   excerpt: string | null;
   publishedAt: string | null;
   author: { id: string; name: string } | null;
+  category: string | null;
+  translated?: boolean;
   contentHtml?: string;
 }
 
@@ -187,15 +208,105 @@ export interface StudyProgramAccreditation {
   document: { name: string; url: string | null; downloadUrl?: string | null } | null;
 }
 
+// Tautan file dari backend (dokumen akreditasi, regulasi BAN-PT, lampiran). Bisa berupa path relatif "/api/...".
+export interface FileLink {
+  url: string | null;
+  downloadUrl?: string | null;
+}
+
+export interface BanptAttachment extends FileLink {
+  id: string;
+  name: string;
+  mimeType: string;
+  size: number | null;
+  uploadedAt: string | null;
+}
+
+export interface BanptRegulation {
+  id: string;
+  regulationNumber: string;
+  regulationYear: number;
+  determinationDate: string | null;
+  title: string;
+  document: (FileLink & { mimeType: string; size?: number | null }) | null;
+  attachments: BanptAttachment[];
+  publishedAt: string | null;
+}
+
+export type SearchResultType =
+  | "news"
+  | "announcement"
+  | "academic_calendar"
+  | "accreditation_institution"
+  | "accreditation_study_program"
+  | "banpt_regulation";
+
+export interface SearchResult {
+  type: SearchResultType;
+  id: string;
+  title: string;
+  slug: string | null;
+  excerpt: string;
+  url: string;
+  date: string | null;
+}
+
+export interface SearchResponse {
+  query: string;
+  total: number;
+  limit: number;
+  results: SearchResult[];
+  // Ada bila sebagian sumber pencarian gagal; hasil dari sumber lain tetap dikirim.
+  partial?: boolean;
+}
+
+export type AssistantCitationType = SearchResultType | "knowledge";
+
+export interface AssistantCitation {
+  id: string;
+  type: AssistantCitationType;
+  label: string;
+  title: string;
+  url?: string;
+  publishedAt: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+}
+
+export interface AssistantFallback {
+  type: "whatsapp";
+  message: string;
+  url: string | null;
+}
+
+export interface AssistantReply {
+  answerable: boolean;
+  answer: string | null;
+  citations: AssistantCitation[];
+  fallback: AssistantFallback | null;
+}
+
+export interface AssistantHistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export const newsApi = {
-  list: (params: { page?: number; limit?: number; search?: string }) => apiGet<Paged<NewsItem>>("/news", params),
+  list: (params: { page?: number; limit?: number; search?: string; category?: string; lang?: ContentLang }) =>
+    apiGet<Paged<NewsItem>>("/news", { ...params, lang: langParam(params.lang) }),
+  detail: (slug: string, lang?: ContentLang) =>
+    apiGet<{ news: NewsItem }>(`/news/${encodeURIComponent(slug)}`, { lang: langParam(lang) }).then((d) => d.news),
+  categories: () => apiGet<{ categories: string[] }>("/news/categories").then((d) => d.categories),
 };
 
 export const announcementApi = {
-  list: (params: { page?: number; limit?: number; search?: string }) =>
-    apiGet<Paged<AnnouncementItem>>("/announcements", params),
-  detail: (slug: string) =>
-    apiGet<{ announcement: AnnouncementItem }>(`/announcements/${encodeURIComponent(slug)}`).then((d) => d.announcement),
+  list: (params: { page?: number; limit?: number; search?: string; category?: string; lang?: ContentLang }) =>
+    apiGet<Paged<AnnouncementItem>>("/announcements", { ...params, lang: langParam(params.lang) }),
+  detail: (slug: string, lang?: ContentLang) =>
+    apiGet<{ announcement: AnnouncementItem }>(`/announcements/${encodeURIComponent(slug)}`, { lang: langParam(lang) }).then(
+      (d) => d.announcement,
+    ),
+  categories: () => apiGet<{ categories: string[] }>("/announcements/categories").then((d) => d.categories),
 };
 
 export const calendarApi = {
@@ -204,7 +315,22 @@ export const calendarApi = {
     apiGet<Paged<CalendarEvent>>("/academic-calendar", params),
 };
 
+export interface InstitutionAccreditation {
+  id: string;
+  institutionName: string;
+  rank: string;
+  skNumber: string;
+  decisionDate: string | null;
+  validFrom: string | null;
+  validUntil: string | null;
+  issuingBody: string | null;
+  document: { name: string; url: string | null; downloadUrl?: string | null } | null;
+  publishedAt: string | null;
+}
+
 export const accreditationApi = {
+  institutions: (params: { page?: number; limit?: number; search?: string }) =>
+    apiGet<Paged<InstitutionAccreditation>>("/accreditation/institutions", params),
   studyPrograms: (params: {
     page?: number;
     limit?: number;
@@ -213,4 +339,19 @@ export const accreditationApi = {
     validUntilFrom?: string;
     validUntilTo?: string;
   }) => apiGet<Paged<StudyProgramAccreditation>>("/accreditation/study-programs", params),
+};
+
+export const banptRegulationApi = {
+  list: (params: { page?: number; limit?: number; search?: string; year?: number }) =>
+    apiGet<Paged<BanptRegulation>>("/banpt-regulations", params),
+  filterOptions: () => apiGet<{ years: number[] }>("/banpt-regulations/filter-options"),
+};
+
+export const searchApi = {
+  search: (q: string, limit: number, signal?: AbortSignal) => apiGet<SearchResponse>("/search", { q, limit }, signal),
+};
+
+export const assistantApi = {
+  chat: (question: string, history: AssistantHistoryMessage[], signal?: AbortSignal) =>
+    apiPost<AssistantReply>("/assistant/chat", { question, history }, signal),
 };

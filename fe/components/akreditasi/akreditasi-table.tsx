@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { DocumentLink } from "@/components/document-link";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { accreditationApi, errorMessage, type ExpiryStatus } from "@/lib/api";
+import { accreditationApi, errorMessage, todayIso, type ExpiryStatus } from "@/lib/api";
 import { useApi, useDebouncedValue } from "@/lib/use-api";
 
 const EXPIRY_LABEL: Record<ExpiryStatus, string> = {
@@ -31,33 +32,43 @@ export function AkreditasiTable() {
   const [statusFilter, setStatusFilter] = useState("Semua");
   const [jenjangFilter, setJenjangFilter] = useState("Semua");
   const [kadaluarsaFilter, setKadaluarsaFilter] = useState("Semua");
+  // Tanggal hari ini (YYYY-MM-DD, zona Jakarta) hanya dibaca saat pengguna memilih "Terakreditasi" (event handler),
+  // bukan saat render: new Date() saat render dianggap Next.js sebagai nilai tidak stabil pada prerender.
+  const [accreditedSince, setAccreditedSince] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(searchQuery.trim());
 
   const limit = Math.min(show, MAX_PAGE_SIZE);
   const level = jenjangFilter === "Semua" ? undefined : jenjangFilter;
-  const validUntilFrom = kadaluarsaFilter === "Semua" ? undefined : `${kadaluarsaFilter}-01-01`;
+  const yearFrom = kadaluarsaFilter === "Semua" ? undefined : `${kadaluarsaFilter}-01-01`;
   const validUntilTo = kadaluarsaFilter === "Semua" ? undefined : `${kadaluarsaFilter}-12-31`;
 
+  // "Terakreditasi" = akreditasi yang masih berlaku (kedaluwarsa hari ini atau setelahnya, mencakup status
+  // "aktif" dan "segera berakhir"; yang kedaluwarsa dan yang tanpa tanggal tidak termasuk). Disaring di server
+  // lewat validUntilFrom=hari ini, digabung dengan filter tahun kedaluwarsa, sehingga total dan pagination akurat.
+  const today = accreditedSince;
+  const onlyAccredited = statusFilter === "Terakreditasi" && today !== null;
+  const validUntilFrom = today !== null && onlyAccredited && (!yearFrom || yearFrom < today) ? today : yearFrom;
+  // Rentang yang saling bertentangan (mis. tahun kedaluwarsa sudah lewat + Terakreditasi) pasti kosong.
+  const impossibleRange = Boolean(validUntilFrom && validUntilTo && validUntilTo < validUntilFrom);
+
   const { data, error, loading } = useApi(
-    ["akreditasi", page, limit, debouncedSearch, level, validUntilFrom].join("|"),
+    ["akreditasi", page, limit, debouncedSearch, level, validUntilFrom, validUntilTo, impossibleRange].join("|"),
     () =>
-      accreditationApi.studyPrograms({
-        page,
-        limit,
-        search: debouncedSearch || undefined,
-        level,
-        validUntilFrom,
-        validUntilTo,
-      }),
+      impossibleRange
+        ? Promise.resolve({ items: [], pagination: { page: 1, limit, total: 0, totalPages: 0 } })
+        : accreditationApi.studyPrograms({
+            page,
+            limit,
+            search: debouncedSearch || undefined,
+            level,
+            validUntilFrom,
+            validUntilTo,
+          }),
   );
 
   const pagination = data?.pagination;
   const totalPages = pagination?.totalPages ?? 0;
-  // Filter "Terakreditasi": hanya akreditasi yang belum kedaluwarsa (backend belum mendukung
-  // filter gabungan active+expiring, jadi diterapkan pada halaman yang sedang dimuat).
-  const displayedData = (data?.items ?? []).filter(
-    (item) => statusFilter === "Semua" || (item.expiryStatus !== "expired" && item.expiryStatus !== "unknown"),
-  );
+  const displayedData = data?.items ?? [];
   const firstEntry = pagination && pagination.total > 0 ? (pagination.page - 1) * pagination.limit + 1 : 0;
   const lastEntry = pagination ? Math.min(pagination.page * pagination.limit, pagination.total) : 0;
 
@@ -90,7 +101,12 @@ export function AkreditasiTable() {
               <div className="filter-group">
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setStatusFilter(value);
+                    setAccreditedSince(value === "Terakreditasi" ? todayIso() : null);
+                    resetPage();
+                  }}
                   className="filter-select"
                 >
                   <option value="Semua">Semua</option>
@@ -152,22 +168,23 @@ export function AkreditasiTable() {
                   <th>Peringkat</th>
                   <th>Tanggal Kadaluarsa</th>
                   <th>Status Kadaluarsa</th>
+                  <th>Dokumen SK</th>
                 </tr>
               </thead>
               <tbody>
                 {error && !data ? (
                   <tr>
-                    <td colSpan={9} role="alert">
+                    <td colSpan={10} role="alert">
                       {errorMessage(error)}
                     </td>
                   </tr>
                 ) : loading && !data ? (
                   <tr>
-                    <td colSpan={9}>Memuat data akreditasi...</td>
+                    <td colSpan={10}>Memuat data akreditasi...</td>
                   </tr>
                 ) : displayedData.length === 0 ? (
                   <tr>
-                    <td colSpan={9}>Tidak ada data akreditasi yang sesuai.</td>
+                    <td colSpan={10}>Tidak ada data akreditasi yang sesuai.</td>
                   </tr>
                 ) : (
                   displayedData.map((item) => (
@@ -184,6 +201,9 @@ export function AkreditasiTable() {
                         <span className="status-badge status-terakreditasi">
                           {EXPIRY_LABEL[item.expiryStatus]}
                         </span>
+                      </td>
+                      <td>
+                        <DocumentLink file={item.document} />
                       </td>
                     </tr>
                   ))

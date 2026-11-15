@@ -1,11 +1,16 @@
 "use client";
 
+import Link from "next/link";
+import { NewsCover } from "@/components/news-cover";
 import { formatDate, newsApi } from "@/lib/api";
+import { useContentLang } from "@/lib/content-language";
+import { newsDetailHref } from "@/lib/content-routes";
 import { useApi } from "@/lib/use-api";
 import { BERITA_FEATURED_PARAMS } from "./berita-sorotan";
 
 export function BeritaLainnya() {
-  const { data } = useApi("berita-featured", () => newsApi.list(BERITA_FEATURED_PARAMS));
+  const [lang] = useContentLang();
+  const { data } = useApi(`berita-featured:${lang}`, () => newsApi.list({ ...BERITA_FEATURED_PARAMS, lang }));
   // Berita pertama sudah tampil sebagai sorotan.
   const items = data?.items.slice(1) ?? [];
 
@@ -26,19 +31,16 @@ export function BeritaLainnya() {
         {items.map((item) => (
           <article className="berita-list-item" key={item.id}>
             <div aria-hidden="true" className="berita-list-thumbnail">
-              {item.coverImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img alt="" loading="lazy" src={item.coverImageUrl} />
-              ) : (
-                <span className="berita-placeholder-hint-small">Foto</span>
-              )}
+              <NewsCover fallback={<span className="berita-placeholder-hint-small">Foto</span>} src={item.coverImageUrl} />
             </div>
 
             <div className="berita-list-content">
               <span className="berita-card-eyebrow">BERITA</span>
-              <h3 className="berita-list-title">{item.title}</h3>
+              <h3 className="berita-list-title">
+                <Link href={newsDetailHref(item.slug)}>{item.title}</Link>
+              </h3>
               <div className="berita-list-meta">
-                <span>{[formatDate(item.publishedAt), item.excerpt].filter(Boolean).join(" · ")}</span>
+                <span>{[formatDate(item.publishedAt, lang), item.excerpt].filter(Boolean).join(" · ")}</span>
               </div>
             </div>
           </article>

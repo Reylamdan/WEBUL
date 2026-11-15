@@ -1,50 +1,19 @@
+
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  archiveCategories,
-  archiveDocuments,
+  errorMessage,
+  formatDate,
+  resolveApiUrl,
+} from "@/lib/api";
+import {
+  lpmArchiveApi,
+  type ArchiveCategory,
   type ArchiveDocument,
-} from "./archive-data";
+} from "@/lib/lpm-archive-api";
 
 const pageSize = 5;
-
-const dateFormatter = new Intl.DateTimeFormat("id-ID", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-
-function ArchiveRow({
-  archive,
-  index,
-}: {
-  archive: ArchiveDocument;
-  index: number;
-}) {
-  return (
-    <li className="lpm-archive-row">
-      <span aria-hidden="true" className="lpm-archive-row-number">
-        {String(index).padStart(2, "0")}
-      </span>
-      <div className="lpm-archive-document">
-        <h3>{archive.title}</h3>
-        <p>{archive.description}</p>
-        <span className="lpm-archive-file-name">
-          Nama berkas contoh: <code>{archive.fileName}</code>
-        </span>
-      </div>
-      <div className="lpm-archive-metadata">
-        <span className="lpm-archive-category">{archive.category}</span>
-        <span className="lpm-archive-year">{archive.year}</span>
-        <time className="lpm-archive-date" dateTime={archive.date}>
-          {dateFormatter.format(new Date(`${archive.date}T00:00:00`))}
-        </time>
-        <span className="lpm-archive-type">{archive.fileType}</span>
-      </div>
-    </li>
-  );
-}
 
 export function ArchiveDirectory() {
   const [query, setQuery] = useState("");
@@ -52,37 +21,77 @@ export function ArchiveDirectory() {
   const [year, setYear] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const years = useMemo(
-    () => [...new Set(archiveDocuments.map((archive) => archive.year))].sort(
-      (left, right) => right - left,
-    ),
-    [],
-  );
+  const [archives, setArchives] = useState<ArchiveDocument[]>([]);
+  const [categories, setCategories] = useState<ArchiveCategory[]>([]);
+  const [years, setYears] = useState<number[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const filteredArchives = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase("id");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    return archiveDocuments.filter((archive) => {
-      const matchesQuery =
-        !normalizedQuery ||
-        `${archive.title} ${archive.fileName}`
-          .toLocaleLowerCase("id")
-          .includes(normalizedQuery);
-      const matchesCategory = !category || archive.category === category;
-      const matchesYear = !year || archive.year === Number(year);
+  useEffect(() => {
+    let active = true;
 
-      return matchesQuery && matchesCategory && matchesYear;
-    });
-  }, [category, query, year]);
+    lpmArchiveApi
+      .filterOptions()
+      .then((result) => {
+        if (!active) return;
+        setCategories(result.categories);
+        setYears(result.years);
+      })
+      .catch((err: unknown) => {
+        if (active) setError(errorMessage(err));
+      });
 
-  const pageCount = Math.ceil(filteredArchives.length / pageSize);
-  const page = Math.min(currentPage, Math.max(pageCount, 1));
-  const firstItem = filteredArchives.length ? (page - 1) * pageSize + 1 : 0;
-  const lastItem = Math.min(page * pageSize, filteredArchives.length);
-  const visibleArchives = filteredArchives.slice(
-    (page - 1) * pageSize,
-    page * pageSize,
-  );
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    setLoading(true);
+    setError("");
+
+    const timeout = setTimeout(() => {
+      lpmArchiveApi
+        .list({
+          page: currentPage,
+          limit: pageSize,
+          search: query.trim() || undefined,
+          category: category || undefined,
+          year: year ? Number(year) : undefined,
+        })
+        .then((result) => {
+          if (controller.signal.aborted) return;
+
+          setArchives(result.items);
+          setTotal(result.pagination.total);
+          setTotalPages(result.pagination.totalPages);
+        })
+        .catch((err: unknown) => {
+          if (controller.signal.aborted) return;
+
+          setError(errorMessage(err));
+          setArchives([]);
+          setTotal(0);
+          setTotalPages(0);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLoading(false);
+        });
+    }, 250);
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [query, category, year, currentPage]);
+
+  const firstItem = total > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+  const lastItem = Math.min(currentPage * pageSize, total);
   const hasActiveFilters = Boolean(query || category || year);
 
   function resetFilters() {
@@ -90,6 +99,10 @@ export function ArchiveDirectory() {
     setCategory("");
     setYear("");
     setCurrentPage(1);
+  }
+
+  function getFileType(archive: ArchiveDocument) {
+    return archive.fileType ?? "Dokumen";
   }
 
   return (
@@ -102,11 +115,10 @@ export function ArchiveDirectory() {
           <div>
             <span className="lpm-archive-eyebrow">JELAJAHI ARSIP</span>
             <h2 id="archive-directory-title">Daftar dokumen</h2>
-            <p>Cari dan telusuri contoh dokumen berdasarkan kategori atau tahun.</p>
+            <p>
+              Cari dan telusuri dokumen berdasarkan kategori atau tahun.
+            </p>
           </div>
-          <p className="lpm-archive-sample-notice">
-            Data simulasi untuk pratinjau — bukan dokumen resmi Universitas LIA.
-          </p>
         </div>
 
         <div aria-label="Filter arsip" className="lpm-archive-filters">
@@ -128,6 +140,7 @@ export function ArchiveDirectory() {
               />
             </span>
           </label>
+
           <label className="lpm-archive-select">
             <span className="lpm-archive-filter-label">Kategori</span>
             <select
@@ -138,13 +151,14 @@ export function ArchiveDirectory() {
               value={category}
             >
               <option value="">Semua kategori</option>
-              {archiveCategories.map((archiveCategory) => (
+              {categories.map((archiveCategory) => (
                 <option key={archiveCategory} value={archiveCategory}>
                   {archiveCategory}
                 </option>
               ))}
             </select>
           </label>
+
           <label className="lpm-archive-select">
             <span className="lpm-archive-filter-label">Tahun</span>
             <select
@@ -162,6 +176,7 @@ export function ArchiveDirectory() {
               ))}
             </select>
           </label>
+
           <button
             className="lpm-archive-reset"
             disabled={!hasActiveFilters}
@@ -173,11 +188,22 @@ export function ArchiveDirectory() {
         </div>
 
         <div className="lpm-archive-results" aria-live="polite">
-          Menampilkan <strong>{firstItem}–{lastItem}</strong> dari{" "}
-          <strong>{filteredArchives.length}</strong> dokumen contoh
+          Menampilkan{" "}
+          <strong>
+            {firstItem}–{lastItem}
+          </strong>{" "}
+          dari <strong>{total}</strong> dokumen
         </div>
 
-        {visibleArchives.length > 0 ? (
+        {loading ? (
+          <p className="lpm-archive-empty" role="status">
+            Memuat dokumen arsip...
+          </p>
+        ) : error ? (
+          <p className="lpm-archive-empty" role="alert">
+            {error}
+          </p>
+        ) : archives.length > 0 ? (
           <>
             <div aria-hidden="true" className="lpm-archive-list-header">
               <span>No.</span>
@@ -187,17 +213,116 @@ export function ArchiveDirectory() {
               <span>Tanggal</span>
               <span>Format</span>
             </div>
+
             <ol
-              aria-label="Daftar dokumen arsip simulasi"
+              aria-label="Daftar dokumen arsip"
               className="lpm-archive-list"
             >
-              {visibleArchives.map((archive, index) => (
-                <ArchiveRow
-                  archive={archive}
-                  index={(page - 1) * pageSize + index + 1}
-                  key={archive.id}
-                />
-              ))}
+              {archives.map((archive, index) => {
+                const previewUrl = resolveApiUrl(archive.file?.url);
+                const downloadUrl = resolveApiUrl(
+                  archive.file?.downloadUrl,
+                );
+
+                return (
+                  <li className="lpm-archive-row" key={archive.id}>
+                    <span
+                      aria-hidden="true"
+                      className="lpm-archive-row-number"
+                    >
+                      {String(firstItem + index).padStart(2, "0")}
+                    </span>
+
+                    <div className="lpm-archive-document">
+                      <h3>{archive.title}</h3>
+                      <p>{archive.description}</p>
+
+                      {archive.fileName ? (
+                        <span className="lpm-archive-file-name">
+                          Nama berkas: <code>{archive.fileName}</code>
+                        </span>
+                      ) : null}
+
+                      {(previewUrl || downloadUrl) && (
+                        <div className="lpm-archive-file-actions">
+                          {previewUrl && (
+                            <a
+                              className="lpm-archive-action lpm-archive-action-preview"
+                              href={previewUrl}
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              aria-label={`Pratinjau dokumen ${archive.title}`}
+                            >
+                              <svg
+                                aria-hidden="true"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                              >
+                                <path
+                                  d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.7"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <circle
+                                  cx="12"
+                                  cy="12"
+                                  r="3"
+                                  stroke="currentColor"
+                                  strokeWidth="1.7"
+                                />
+                              </svg>
+                              <span>Pratinjau</span>
+                            </a>
+                          )}
+
+                          {downloadUrl && (
+                            <a
+                              className="lpm-archive-action lpm-archive-action-download"
+                              href={downloadUrl}
+                              aria-label={`Unduh dokumen ${archive.title}`}
+                            >
+                              <svg
+                                aria-hidden="true"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                              >
+                                <path
+                                  d="M12 3.5v11m0 0 4-4m-4 4-4-4M4.5 16v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              <span>Unduh dokumen</span>
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="lpm-archive-metadata">
+                      <span className="lpm-archive-category">
+                        {archive.category}
+                      </span>
+                      <span className="lpm-archive-year">
+                        {archive.year}
+                      </span>
+                      <time
+                        className="lpm-archive-date"
+                        dateTime={archive.date}
+                      >
+                        {formatDate(archive.date)}
+                      </time>
+                      <span className="lpm-archive-type">
+                        {getFileType(archive)}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
           </>
         ) : (
@@ -206,26 +331,29 @@ export function ArchiveDirectory() {
           </p>
         )}
 
-        {pageCount > 1 ? (
+        {!loading && !error && totalPages > 1 ? (
           <nav
             aria-label="Halaman daftar arsip"
             className="lpm-archive-pagination"
           >
             <button
               aria-label="Halaman sebelumnya"
-              disabled={page === 1}
-              onClick={() => setCurrentPage(page - 1)}
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((page) => page - 1)}
               type="button"
             >
               Sebelumnya
             </button>
+
             <span>
-              Halaman <strong>{page}</strong> dari <strong>{pageCount}</strong>
+              Halaman <strong>{currentPage}</strong> dari{" "}
+              <strong>{totalPages}</strong>
             </span>
+
             <button
               aria-label="Halaman berikutnya"
-              disabled={page === pageCount}
-              onClick={() => setCurrentPage(page + 1)}
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((page) => page + 1)}
               type="button"
             >
               Berikutnya
@@ -233,6 +361,93 @@ export function ArchiveDirectory() {
           </nav>
         ) : null}
       </div>
+
+      <style jsx>{`
+        .lpm-archive-file-actions {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 10px;
+          margin-top: 18px;
+        }
+
+        .lpm-archive-action {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 9px;
+          min-height: 42px;
+          padding: 0 17px;
+          border: 1px solid transparent;
+          border-radius: 7px;
+          font-size: 13px;
+          font-weight: 600;
+          line-height: 1;
+          text-decoration: none;
+          transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease,
+            transform 180ms ease,
+            box-shadow 180ms ease;
+        }
+
+        .lpm-archive-action svg {
+          width: 17px;
+          height: 17px;
+          flex: 0 0 17px;
+        }
+
+        .lpm-archive-action-preview {
+          color: #315c45;
+          background: #ffffff;
+          border-color: #d9e2dc;
+        }
+
+        .lpm-archive-action-preview:hover {
+          color: #1f352a;
+          background: #f2f6f3;
+          border-color: #9db5a5;
+          transform: translateY(-1px);
+        }
+
+        .lpm-archive-action-download {
+          color: #ffffff;
+          background: #315c45;
+          border-color: #315c45;
+        }
+
+        .lpm-archive-action-download:hover {
+          color: #ffffff;
+          background: #1f352a;
+          border-color: #1f352a;
+          box-shadow: 0 4px 12px rgba(31, 53, 42, 0.16);
+          transform: translateY(-1px);
+        }
+
+        .lpm-archive-action:focus-visible {
+          outline: 3px solid rgba(49, 92, 69, 0.25);
+          outline-offset: 3px;
+        }
+
+        @media (max-width: 480px) {
+          .lpm-archive-file-actions {
+            gap: 8px;
+          }
+
+          .lpm-archive-action {
+            min-height: 40px;
+            padding: 0 13px;
+            font-size: 12px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .lpm-archive-action {
+            transition: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -12,8 +11,8 @@ import {
   type RefObject,
 } from "react";
 import { Icon } from "@/components/icons";
-import { findSearchPages } from "./search-data";
 import { SearchResults } from "./search-results";
+import { useGlobalSearch } from "./use-global-search";
 
 type GlobalSearchProps = {
   isOpen: boolean;
@@ -59,7 +58,7 @@ export function GlobalSearch({
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const results = useMemo(() => findSearchPages(query).slice(0, 8), [query]);
+  const { entries: results, loading, error, partial, searching } = useGlobalSearch(query);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -86,7 +85,7 @@ export function GlobalSearch({
   }, [activeIndex]);
 
   function navigateToActiveResult() {
-    const selectedResult = results[activeIndex];
+    const selectedResult = results[Math.min(activeIndex, results.length - 1)];
     if (!selectedResult) return;
     onClose();
     router.push(selectedResult.href);
@@ -195,8 +194,8 @@ export function GlobalSearch({
         </label>
 
         <div className="global-search-results-header">
-          <span>{query.trim() ? "Hasil pencarian" : "Halaman populer"}</span>
-          {query.trim() ? <span>{results.length} hasil</span> : null}
+          <span>{searching ? "Hasil pencarian" : "Halaman populer"}</span>
+          {searching ? <span>{loading && results.length === 0 ? "Mencari..." : `${results.length} hasil`}</span> : null}
         </div>
         <div className="global-search-results-wrap">
           <SearchResults
@@ -205,8 +204,12 @@ export function GlobalSearch({
             onResultRef={(index, element) => {
               resultRefs.current[index] = element;
             }}
+            error={error}
+            loading={loading}
             onNavigate={onClose}
+            partial={partial}
             results={results}
+            searching={searching}
           />
         </div>
         <div className="global-search-hint">
