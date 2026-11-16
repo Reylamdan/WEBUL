@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Pagination } from "@/components/pagination";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { calendarApi, dateParts, errorMessage, formatDate, todayIso, type CalendarEvent } from "@/lib/api";
@@ -37,8 +37,31 @@ function dateRange(event: CalendarEvent): string {
   return end && end !== start ? `${start} – ${end}` : start;
 }
 
+// Tanggal hari ini hanya dibaca di browser (useEffect) agar tidak ikut dievaluasi saat prerender.
 export function KalenderAgenda() {
-  const today = todayIso();
+  const [today, setToday] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToday(todayIso());
+  }, []);
+
+  if (!today) {
+    return (
+      <section aria-labelledby="kalender-agenda-title" className="academic-agenda">
+        <div className="academic-agenda-head">
+          <h2 id="kalender-agenda-title">Agenda Akademik</h2>
+        </div>
+        <p aria-live="polite" className="academic-agenda-state">
+          Memuat agenda akademik...
+        </p>
+      </section>
+    );
+  }
+
+  return <KalenderAgendaContent today={today} />;
+}
+
+function KalenderAgendaContent({ today }: { today: string }) {
   const currentYear = Number(today.slice(0, 4));
   const years = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
 
