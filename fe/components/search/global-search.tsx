@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+
 import {
   useEffect,
   useRef,
@@ -10,6 +11,7 @@ import {
   type MouseEvent,
   type RefObject,
 } from "react";
+
 import { Icon } from "@/components/icons";
 import { SearchResults } from "./search-results";
 import { useGlobalSearch } from "./use-global-search";
@@ -52,19 +54,29 @@ export function GlobalSearch({
   triggerRef,
 }: GlobalSearchProps) {
   const router = useRouter();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLElement>(null);
+
   const resultRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const { entries: results, loading, error, partial, searching } = useGlobalSearch(query);
+  const {
+    entries: results,
+    loading,
+    error,
+    partial,
+    searching,
+  } = useGlobalSearch(query);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const searchTrigger = triggerRef.current;
     const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
     inputRef.current?.focus();
 
@@ -73,6 +85,7 @@ export function GlobalSearch({
     }
 
     document.addEventListener("keydown", handleEscape);
+
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleEscape);
@@ -81,12 +94,21 @@ export function GlobalSearch({
   }, [isOpen, onClose, triggerRef]);
 
   useEffect(() => {
-    resultRefs.current[activeIndex]?.scrollIntoView({ block: "nearest" });
+    resultRefs.current[activeIndex]?.scrollIntoView({
+      block: "nearest",
+    });
   }, [activeIndex]);
 
+  useEffect(() => {
+    setActiveIndex(0);
+    resultRefs.current = [];
+  }, [query]);
+
   function navigateToActiveResult() {
-    const selectedResult = results[Math.min(activeIndex, results.length - 1)];
+    const selectedResult = results[activeIndex];
+
     if (!selectedResult) return;
+
     onClose();
     router.push(selectedResult.href);
   }
@@ -94,10 +116,14 @@ export function GlobalSearch({
   function handleKeyDown(event: ReactKeyboardEvent<HTMLElement>) {
     if (event.key === "ArrowDown" && results.length > 0) {
       event.preventDefault();
+
       setActiveIndex((index) => (index + 1) % results.length);
     } else if (event.key === "ArrowUp" && results.length > 0) {
       event.preventDefault();
-      setActiveIndex((index) => (index - 1 + results.length) % results.length);
+
+      setActiveIndex(
+        (index) => (index - 1 + results.length) % results.length,
+      );
     } else if (
       event.key === "Enter" &&
       event.target === inputRef.current &&
@@ -106,17 +132,26 @@ export function GlobalSearch({
       event.preventDefault();
       navigateToActiveResult();
     } else if (event.key === "Tab") {
-      const focusableElements = dialogRef.current?.querySelectorAll<HTMLElement>(
-        'a[href], button:not(:disabled), input:not(:disabled)',
-      );
+      const focusableElements =
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not(:disabled), input:not(:disabled)',
+        );
+
       if (!focusableElements?.length) return;
 
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
-      if (event.shiftKey && document.activeElement === firstElement) {
+
+      if (
+        event.shiftKey &&
+        document.activeElement === firstElement
+      ) {
         event.preventDefault();
         lastElement.focus();
-      } else if (!event.shiftKey && document.activeElement === lastElement) {
+      } else if (
+        !event.shiftKey &&
+        document.activeElement === lastElement
+      ) {
         event.preventDefault();
         firstElement.focus();
       }
@@ -143,9 +178,15 @@ export function GlobalSearch({
       >
         <div className="global-search-heading">
           <div>
-            <span className="global-search-eyebrow">UNIVERSITAS LIA</span>
-            <h2 id="global-search-title">Cari di seluruh situs</h2>
+            <span className="global-search-eyebrow">
+              UNIVERSITAS LIA
+            </span>
+
+            <h2 id="global-search-title">
+              Cari di seluruh situs
+            </h2>
           </div>
+
           <button
             aria-label="Tutup pencarian"
             className="global-search-close"
@@ -158,6 +199,7 @@ export function GlobalSearch({
 
         <label className="global-search-input-wrap">
           <Icon name="search" size={21} />
+
           <input
             aria-activedescendant={
               results[activeIndex]
@@ -178,6 +220,7 @@ export function GlobalSearch({
             role="combobox"
             value={query}
           />
+
           <button
             aria-label="Hapus kata pencarian"
             className="global-search-clear"
@@ -194,31 +237,40 @@ export function GlobalSearch({
         </label>
 
         <div className="global-search-results-header">
-          <span>{searching ? "Hasil pencarian" : "Halaman populer"}</span>
-          {searching ? <span>{loading && results.length === 0 ? "Mencari..." : `${results.length} hasil`}</span> : null}
+          <span>
+            {query.trim() ? "Hasil pencarian" : "Halaman populer"}
+          </span>
+
+          {query.trim() ? (
+            <span>{results.length} hasil</span>
+          ) : null}
         </div>
+
         <div className="global-search-results-wrap">
           <SearchResults
             activeIndex={activeIndex}
+            error={error}
+            loading={loading}
             onActiveIndexChange={setActiveIndex}
+            onNavigate={onClose}
             onResultRef={(index, element) => {
               resultRefs.current[index] = element;
             }}
-            error={error}
-            loading={loading}
-            onNavigate={onClose}
             partial={partial}
             results={results}
             searching={searching}
           />
         </div>
+
         <div className="global-search-hint">
           <span>
             <kbd>↑</kbd> <kbd>↓</kbd> untuk memilih
           </span>
+
           <span>
             <kbd>Enter</kbd> buka halaman
           </span>
+
           <span>
             <kbd>Esc</kbd> tutup
           </span>

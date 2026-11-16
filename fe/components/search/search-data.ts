@@ -414,8 +414,9 @@ export function normalizeSearchText(value: string) {
     .trim();
 }
 
-export function findSearchPages(query: string) {
+export function findSearchPages(query: string): SearchPage[] {
   const normalizedQuery = normalizeSearchText(query);
+
   if (!normalizedQuery) {
     return searchPages.filter((page) => page.featured);
   }
@@ -428,22 +429,31 @@ export function findSearchPages(query: string) {
       const category = normalizeSearchText(page.category);
       const description = normalizeSearchText(page.description);
       const keywords = normalizeSearchText(page.keywords.join(" "));
+
       const searchableText = `${title} ${category} ${description} ${keywords}`;
 
-      if (!tokens.every((token) => searchableText.includes(token))) return null;
+      if (!tokens.every((token) => searchableText.includes(token))) {
+        return null;
+      }
 
       let score = 0;
+
       if (title === normalizedQuery) score += 100;
       else if (title.startsWith(normalizedQuery)) score += 70;
       else if (title.includes(normalizedQuery)) score += 55;
+
       if (category.includes(normalizedQuery)) score += 35;
       if (keywords.includes(normalizedQuery)) score += 25;
       if (description.includes(normalizedQuery)) score += 15;
+
       score += tokens.filter((token) => title.includes(token)).length * 5;
 
       return { page, score };
     })
-    .filter((match): match is { page: SearchPage; score: number } => match !== null)
+    .filter(
+      (match): match is { page: SearchPage; score: number } =>
+        match !== null,
+    )
     .sort((left, right) => right.score - left.score)
     .map(({ page }) => page);
 }
