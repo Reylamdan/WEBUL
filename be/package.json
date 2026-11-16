@@ -13,6 +13,8 @@
     "test:banpt-regulation": "node scripts/testBanptRegulation.js",
     "test:drive": "node scripts/testGoogleDrive.js",
     "test:oauth": "node scripts/testGoogleOAuth.js",
+    "test:tracer-study-aggregator": "node scripts/testTracerStudyAggregator.js",
+    "test:tracer-study": "node scripts/testTracerStudy.js",
     "drive:check": "node scripts/checkGoogleDrive.js",
     "oauth:check": "node scripts/checkGoogleDrive.js",
     "drive:cleanup": "node scripts/cleanupDriveOrphans.js"

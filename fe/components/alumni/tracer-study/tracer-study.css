@@ -1,0 +1,172 @@
+/* ==========================================================
+   Tracer Study — warna mengikuti tema situs (globals.css).
+   Ganti nilai di blok ini kalau ingin mengubah warna grafik.
+   ========================================================== */
+.ts-root {
+  --ts-brand: var(--blue, #005b8c);
+  --ts-brand-dark: var(--blue-dark, #004d78);
+  --ts-ink: var(--ink, #172a35);
+  --ts-muted: #5d6f78;
+  --ts-line: var(--line, #dce4e2);
+  --ts-pale: var(--pale, #f2f5f3);
+  --ts-card: #ffffff;
+  --ts-grid: #d5dedc;
+
+  /* warna seri grafik */
+  --ts-c1: #005b8c;
+  --ts-c2: #1f9d8b;
+  --ts-c3: #e0a526;
+  --ts-c4: #d9604c;
+  --ts-c5: #6b5fb5;
+  --ts-c6: #7b8c97;
+
+  color: var(--ts-ink);
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 72px;
+}
+
+/* ---------- toolbar & filter ---------- */
+.ts-toolbar { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
+.ts-toolbar h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+.ts-toolbar p { margin: 4px 0 0; color: var(--ts-muted); font-size: 0.9rem; }
+.ts-filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.ts-filters label { display: grid; gap: 4px; font-size: 0.7rem; font-weight: 600; color: var(--ts-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.ts-filters select {
+  min-width: 180px; padding: 9px 12px; border: 1px solid var(--ts-line); border-radius: 8px;
+  background: var(--ts-card); color: var(--ts-ink); font: inherit; font-size: 0.88rem;
+  text-transform: none; letter-spacing: 0; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ts-filters select:hover { border-color: var(--ts-brand); }
+.ts-filters select:focus-visible, .ts-btn:focus-visible { outline: none; border-color: var(--ts-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ts-brand) 18%, transparent); }
+
+/* ---------- kartu ---------- */
+.ts-card {
+  position: relative; background: var(--ts-card); border: 1px solid var(--ts-line); border-radius: 14px; padding: 22px;
+  box-shadow: 0 1px 2px rgb(23 42 53 / 0.04); transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ts-card:hover { border-color: color-mix(in srgb, var(--ts-brand) 30%, var(--ts-line)); box-shadow: 0 8px 28px rgb(0 91 140 / 0.08); }
+.ts-body { transition: opacity 0.2s; }
+.ts-body.is-loading { opacity: 0.55; pointer-events: none; }
+
+/* ---------- KPI ---------- */
+.ts-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+.ts-kpi { display: grid; gap: 6px; overflow: hidden; }
+.ts-kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--kpi-color, var(--ts-c1)); opacity: 0.9; }
+.ts-kpi:nth-child(1) { --kpi-color: var(--ts-c1); }
+.ts-kpi:nth-child(2) { --kpi-color: var(--ts-c2); }
+.ts-kpi:nth-child(3) { --kpi-color: var(--ts-c3); }
+.ts-kpi:nth-child(4) { --kpi-color: var(--ts-c5); }
+.ts-kpi-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ts-muted); }
+.ts-kpi strong { font-size: 1.9rem; line-height: 1.1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.ts-kpi small { color: var(--ts-muted); font-size: 0.76rem; }
+
+/* ---------- grid metrik ---------- */
+.ts-grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.ts-metric header { margin-bottom: 18px; }
+.ts-metric h3 { margin: 10px 0 2px; font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
+.ts-metric header p { margin: 0; color: var(--ts-muted); font-size: 0.8rem; }
+.ts-metric footer { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--ts-grid); font-size: 0.85rem; color: var(--ts-muted); }
+.ts-metric footer b { color: var(--ts-ink); }
+.ts-metric-bar:has(.ts-hbars) { grid-column: 1 / -1; }
+.ts-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; background: var(--ts-pale); border: 1px solid var(--ts-line); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ts-brand-dark); }
+
+/* ---------- ring ---------- */
+.ts-donut { display: grid; gap: 22px; justify-items: center; }
+.ts-donut-figure { position: relative; width: 210px; aspect-ratio: 1; }
+.ts-donut-figure svg { width: 100%; height: 100%; overflow: visible; }
+.ts-donut-track { fill: none; stroke: var(--ts-pale); }
+.ts-donut-arc { cursor: pointer; transition: opacity 0.2s, stroke-width 0.2s, filter 0.2s; animation: ts-fade 0.7s ease both; }
+.ts-donut-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; pointer-events: none; }
+.ts-donut-center strong { font-size: 1.7rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.ts-donut-center span { font-size: 0.74rem; color: var(--ts-muted); }
+.ts-legend { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; gap: 2px; }
+.ts-legend li { display: grid; grid-template-columns: 10px 1fr auto; column-gap: 10px; row-gap: 6px; align-items: start; padding: 8px 10px; border-radius: 8px; font-size: 0.82rem; transition: background 0.15s, opacity 0.15s; }
+.ts-legend li.is-active, .ts-legend li:hover { background: var(--ts-pale); }
+.ts-legend i { width: 10px; height: 10px; border-radius: 3px; margin-top: 4px; }
+.ts-legend-value { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.ts-legend-value em, .ts-hbar-head em { font-style: normal; font-weight: 400; color: var(--ts-muted); margin-left: 4px; }
+.ts-legend-bar { grid-column: 2 / -1; height: 3px; border-radius: 3px; background: var(--ts-pale); overflow: hidden; }
+.ts-legend-bar b { display: block; height: 100%; border-radius: 3px; }
+
+/* ---------- bar vertikal ---------- */
+.ts-bar-wrap { position: relative; }
+.ts-bar-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+.ts-grid { stroke: var(--ts-grid); stroke-dasharray: 3 5; opacity: 0.8; }
+.ts-axis { fill: var(--ts-muted); font-size: 11px; }
+.ts-segment { fill: transparent; transition: fill 0.15s; }
+.ts-segment.is-on { fill: color-mix(in srgb, var(--ts-brand) 6%, transparent); }
+.ts-bar { transition: opacity 0.15s; animation: ts-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.ts-crosshair { stroke: var(--ts-ink); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.45; }
+.ts-dot-halo { opacity: 0.2; }
+.ts-dot { fill: #fff; stroke-width: 2.5; }
+
+/* ---------- tooltip ---------- */
+.ts-tooltip {
+  position: absolute; z-index: 2; transform: translate(-50%, calc(-100% - 16px)); pointer-events: none;
+  min-width: 156px; padding: 10px 12px; border-radius: 10px; font-size: 0.78rem; white-space: nowrap;
+  background: rgb(255 255 255 / 0.92); backdrop-filter: blur(8px); border: 1px solid var(--ts-line);
+  box-shadow: 0 12px 32px rgb(23 42 53 / 0.16); animation: ts-fade 0.12s ease;
+}
+.ts-tooltip-title { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--ts-line); }
+.ts-tooltip-title i { width: 8px; height: 8px; border-radius: 2px; }
+.ts-tooltip-row { display: flex; justify-content: space-between; gap: 18px; color: var(--ts-muted); line-height: 1.7; }
+.ts-tooltip-row b { color: var(--ts-ink); font-variant-numeric: tabular-nums; }
+
+/* ---------- bar horizontal ---------- */
+.ts-hbars { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.ts-hbars li { transition: opacity 0.15s; }
+.ts-hbar-head { display: flex; justify-content: space-between; gap: 12px; font-size: 0.85rem; margin-bottom: 7px; }
+.ts-hbar-head b { font-variant-numeric: tabular-nums; }
+.ts-hbar-track { height: 12px; background: var(--ts-pale); border-radius: 999px; overflow: hidden; }
+.ts-hbar-fill {
+  height: 100%; border-radius: 999px; transform-origin: left;
+  background: linear-gradient(90deg, color-mix(in srgb, currentColor 35%, transparent), currentColor);
+  box-shadow: 0 0 12px color-mix(in srgb, currentColor 40%, transparent);
+  animation: ts-sweep 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- state ---------- */
+.ts-skeleton { height: 320px; background: linear-gradient(90deg, var(--ts-pale) 25%, #e8eeec 37%, var(--ts-pale) 63%); background-size: 400% 100%; animation: ts-shimmer 1.4s infinite; }
+.ts-empty { color: var(--ts-muted); text-align: center; padding: 32px 16px; font-size: 0.9rem; }
+.ts-error { text-align: center; display: grid; gap: 8px; justify-items: center; }
+.ts-error p { margin: 0; color: var(--ts-muted); }
+.ts-btn { padding: 0 20px; min-height: 40px; border-radius: 3px; border: 0; background: var(--ts-brand); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.ts-btn:hover { background: #00466e; }
+
+@keyframes ts-fade { from { opacity: 0; } }
+@keyframes ts-grow { from { transform: scaleY(0); } }
+@keyframes ts-sweep { from { transform: scaleX(0); } }
+@keyframes ts-shimmer { to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ts-donut-arc, .ts-bar, .ts-hbar-fill, .ts-skeleton, .ts-tooltip { animation: none; }
+}
+@media (max-width: 900px) { .ts-kpis { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) {
+  .ts-grid-cards { grid-template-columns: 1fr; }
+  .ts-filters, .ts-filters label, .ts-filters select { width: 100%; }
+  .ts-tooltip { min-width: 140px; }
+}
+
+/* ---------- Bklit chart ---------- */
+.ts-pie { width: 220px; max-width: 100%; display: grid; gap: 8px; justify-items: center; }
+.ts-pie-total { margin: 0; font-size: 0.78rem; color: var(--ts-muted); }
+.ts-pie-total strong { color: var(--ts-ink); font-size: 1rem; font-variant-numeric: tabular-nums; }
+.ts-bklit { width: 100%; }
+.ts-bklit-h { padding-right: 8px; }
+
+/* ---------- perbaikan tampilan ---------- */
+.ts-pie { position: relative; width: 260px; max-width: 100%; aspect-ratio: 1; display: grid; place-items: center; }
+.ts-pie-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; pointer-events: none; }
+.ts-pie-center strong { font-size: 1.9rem; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.ts-pie-center span { font-size: 0.74rem; color: var(--ts-muted); }
+.ts-pie-total { display: none; }
+
+.ts-legend li.is-zero { opacity: 0.45; }
+
+.ts-table { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: 0.82rem; }
+.ts-table th { text-align: left; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ts-muted); padding: 8px 10px; border-bottom: 1px solid var(--ts-line); }
+.ts-table th:not(:first-child), .ts-table td:not(:first-child) { text-align: right; width: 72px; font-variant-numeric: tabular-nums; }
+.ts-table td { padding: 8px 10px; border-bottom: 1px dashed var(--ts-line); }
+.ts-table tbody tr:hover { background: var(--ts-pale); }
+.ts-table tr.is-zero { opacity: 0.45; }

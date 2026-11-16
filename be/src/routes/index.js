@@ -1,4 +1,3 @@
-
 const express = require("express");
 const healthRoutes = require("./healthRoutes");
 const authRoutes = require("./authRoutes");
@@ -19,6 +18,7 @@ const publicAcademicCalendarRoutes = require("./publicAcademicCalendarRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
+const publicTracerStudyRoutes = require("./publicTracerStudyRoutes");
 const googleOAuthRoutes = require("./googleOAuthRoutes");
 
 const router = express.Router();
@@ -59,5 +59,8 @@ router.use("/assistant", publicAssistantRoutes);
 
 // Global Search publik
 router.use("/search", publicSearchRoutes);
+
+// Tracer Study publik
+router.use("/tracer-study", publicTracerStudyRoutes);
 
 module.exports = router;
