@@ -534,6 +534,10 @@ export function SiteHeader() {
     return activeMenu === item.id;
   }
 
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <header className={`site-header${isFloating ? " is-floating" : ""}`}>
       <div className="header-inner">
@@ -697,6 +701,9 @@ export function SiteHeader() {
 
 export function SiteBreadcrumb() {
   const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
   const items = getBreadcrumbItems(pathname);
 
   return (
@@ -718,6 +725,10 @@ export function SiteBreadcrumb() {
 }
 
 export function SiteFooter({ className = "" }: { className?: string }) {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
   return (
     <footer className={`site-footer ${className}`} id="footer">
       <div className="footer-main content-wrap">

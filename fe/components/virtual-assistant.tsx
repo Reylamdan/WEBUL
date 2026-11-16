@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Icon } from "@/components/icons";
 import {
@@ -37,6 +38,7 @@ type ChatMessage =
     };
 
 export function VirtualAssistant() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -126,6 +128,10 @@ export function VirtualAssistant() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     void ask(input);
+  }
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
   }
 
   return (
