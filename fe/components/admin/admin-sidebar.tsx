@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
+import { clearAdminSession } from "@/lib/admin-auth";
 import { AdminIcon } from "./admin-icons";
 import { ADMIN_NAV_GROUPS } from "./admin-nav-data";
 
@@ -172,6 +173,7 @@ export function AdminSidebar({
               aria-label="Logout"
               className="admin-logout-btn"
               href="/admin/login"
+              onClick={clearAdminSession}
               title="Keluar dari Panel Admin"
             >
               <AdminIcon name="logout" size={16} />

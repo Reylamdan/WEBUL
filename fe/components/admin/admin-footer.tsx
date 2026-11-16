@@ -1,15 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { AdminIcon } from "./admin-icons";
 
 export function AdminFooter() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setCurrentYear(new Date().getFullYear());
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   return (
     <footer className="admin-footer">
       <div className="admin-footer-content">
         <div className="admin-footer-left">
           <p className="admin-footer-copyright">
-            &copy; {currentYear} <strong>Universitas LIA</strong> — Panel Administrasi Terpadu.
+            &copy; {currentYear ?? ""} <strong>Universitas LIA</strong> — Panel Administrasi Terpadu.
           </p>
           <p className="admin-footer-sub">
             Didukung oleh Supabase PostgreSQL, Express 5 REST API, dan Cloudinary Storage.
