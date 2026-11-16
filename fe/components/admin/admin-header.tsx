@@ -18,11 +18,7 @@ export function AdminHeader({
 
   for (const group of ADMIN_NAV_GROUPS) {
     for (const item of group.items) {
-      if (item.href === "/admin" && pathname === "/admin") {
-        currentItem = item;
-        currentGroup = group.groupTitle;
-        break;
-      } else if (item.href !== "/admin" && (pathname === item.href || pathname.startsWith(`${item.href}/`))) {
+      if (item.href === pathname || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`))) {
         currentItem = item;
         currentGroup = group.groupTitle;
         break;
@@ -32,7 +28,6 @@ export function AdminHeader({
   }
 
   const pageTitle = currentItem ? currentItem.label : "Panel Administrasi";
-  const dbTable = currentItem ? currentItem.dbTable : null;
 
   return (
     <header className="admin-header">
@@ -51,32 +46,18 @@ export function AdminHeader({
             <span>Admin</span>
             <span className="admin-breadcrumb-sep">/</span>
             <span>{currentGroup}</span>
-            {currentItem && currentItem.href !== "/admin" && (
+            {currentItem && (
               <>
                 <span className="admin-breadcrumb-sep">/</span>
                 <span className="admin-breadcrumb-active">{currentItem.label}</span>
               </>
             )}
           </nav>
-          <div className="admin-header-main-title-wrap">
-            <h1 className="admin-header-title">{pageTitle}</h1>
-            {dbTable && (
-              <span className="admin-db-badge" title={`Tabel Database Supabase: ${dbTable}`}>
-                <AdminIcon name="database" size={12} />
-                <span>{dbTable}</span>
-              </span>
-            )}
-          </div>
+          <h1 className="admin-header-title">{pageTitle}</h1>
         </div>
       </div>
 
       <div className="admin-header-right">
-        {/* Status indicator */}
-        <div className="admin-status-indicator" title="Koneksi Supabase PostgreSQL">
-          <span className="admin-status-dot" />
-          <span className="admin-status-label">Database Connected</span>
-        </div>
-
         {/* Quick link to public website */}
         <Link
           className="admin-header-action-btn"
@@ -91,4 +72,3 @@ export function AdminHeader({
     </header>
   );
 }
-

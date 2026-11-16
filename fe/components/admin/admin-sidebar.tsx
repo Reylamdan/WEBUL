@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
-import { clearAdminSession } from "@/lib/admin-auth";
 import { AdminIcon } from "./admin-icons";
 import { ADMIN_NAV_GROUPS } from "./admin-nav-data";
 
@@ -25,18 +24,15 @@ export function AdminSidebar({
       const items = group.items.filter(
         (item) =>
           item.label.toLowerCase().includes(q) ||
-          item.dbTable.toLowerCase().includes(q) ||
-          item.description.toLowerCase().includes(q)
+          item.section.toLowerCase().includes(q) ||
+          group.groupTitle.toLowerCase().includes(q)
       );
       return { ...group, items };
     }).filter((group) => group.items.length > 0);
   }, [searchQuery]);
 
   const isItemActive = (href: string) => {
-    if (href === "/admin") {
-      return pathname === "/admin";
-    }
-    return pathname === href || pathname.startsWith(`${href}/`);
+    return pathname === href || (href !== "/admin" && pathname.startsWith(`${href}/`));
   };
 
   return (
@@ -57,16 +53,14 @@ export function AdminSidebar({
         {/* Brand Header */}
         <div className="admin-sidebar-brand">
           <Link className="admin-brand-link" href="/admin" onClick={onClose}>
-            <div className="admin-brand-logo-wrap">
-              <Image
-                alt="Logo Universitas LIA"
-                className="admin-brand-logo"
-                height={32}
-                src="/Logo-Universitas-LIA-scaled.png"
-                width={120}
-              />
-            </div>
-            <span className="admin-brand-badge">ADMIN</span>
+            <Image
+              alt="Universitas LIA"
+              className="admin-brand-logo"
+              height={34}
+              src="/Logo-Universitas-LIA-scaled.png"
+              width={140}
+            />
+            <span className="admin-brand-badge">Admin</span>
           </Link>
 
           <button
@@ -87,7 +81,7 @@ export function AdminSidebar({
               aria-label="Cari menu halaman"
               className="admin-sidebar-search-input"
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari menu / tabel db..."
+              placeholder="Cari halaman..."
               type="text"
               value={searchQuery}
             />
@@ -119,17 +113,12 @@ export function AdminSidebar({
                         className={`admin-nav-link ${active ? "is-active" : ""}`}
                         href={item.href}
                         onClick={onClose}
-                        title={`Tabel Database: ${item.dbTable}`}
+                        title={item.label}
                       >
                         <span className="admin-nav-icon">
-                          <AdminIcon name={item.icon} size={18} />
+                          <AdminIcon name={item.icon} size={17} />
                         </span>
-                        <div className="admin-nav-text">
-                          <span className="admin-nav-label">{item.label}</span>
-                          <span className="admin-nav-table-hint">
-                            {item.dbTable.split(",")[0]}
-                          </span>
-                        </div>
+                        <span className="admin-nav-label">{item.label}</span>
                         {active && (
                           <span
                             aria-hidden="true"
@@ -146,7 +135,7 @@ export function AdminSidebar({
 
           {filteredGroups.length === 0 && (
             <div className="admin-sidebar-empty">
-              <p>Menu tidak ditemukan</p>
+              <p>Halaman tidak ditemukan</p>
             </div>
           )}
         </nav>
@@ -167,13 +156,12 @@ export function AdminSidebar({
             <div className="admin-user-avatar">AD</div>
             <div className="admin-user-info">
               <span className="admin-user-name">Admin LIA</span>
-              <span className="admin-user-role">Super Administrator</span>
+              <span className="admin-user-role">Administrator</span>
             </div>
             <Link
               aria-label="Logout"
               className="admin-logout-btn"
               href="/admin/login"
-              onClick={clearAdminSession}
               title="Keluar dari Panel Admin"
             >
               <AdminIcon name="logout" size={16} />
@@ -184,4 +172,3 @@ export function AdminSidebar({
     </>
   );
 }
-
