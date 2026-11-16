@@ -677,11 +677,6 @@ export function SiteHeader() {
             );
           })}
 
-          <SearchToggle
-            className="global-search-nav-trigger"
-            isOpen={searchOpen}
-            onOpen={openSearch}
-          />
           <Link
             className="button button-primary nav-apply"
             href="/pmb"
