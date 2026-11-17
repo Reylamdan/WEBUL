@@ -19,6 +19,10 @@ const adminAgendaEventRoutes = require("./adminAgendaEventRoutes");
 const publicAgendaEventRoutes = require("./publicAgendaEventRoutes");
 const adminOrganizationUnitRoutes = require("./adminOrganizationUnitRoutes");
 const publicOrganizationUnitRoutes = require("./publicOrganizationUnitRoutes");
+const adminProfileRoutes = require("./adminProfileRoutes");
+const publicProfileRoutes = require("./publicProfileRoutes");
+const adminFacilityRoutes = require("./adminFacilityRoutes");
+const publicFacilityRoutes = require("./publicFacilityRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
@@ -65,6 +69,14 @@ router.use("/agenda-events", publicAgendaEventRoutes);
 // Struktur Organisasi (profil)
 router.use("/admin/organization-units", adminOrganizationUnitRoutes);
 router.use("/organization-units", publicOrganizationUnitRoutes);
+
+// Halaman Profil (FE /profil)
+router.use("/admin/profile", adminProfileRoutes);
+router.use("/profile", publicProfileRoutes);
+
+// Fasilitas Kampus (FE /profil/fasilitas-kampus)
+router.use("/admin/facilities", adminFacilityRoutes);
+router.use("/facilities", publicFacilityRoutes);
 
 // Google Drive OAuth 2.0
 router.use("/admin/google-drive", googleOAuthRoutes);

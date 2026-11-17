@@ -398,3 +398,69 @@ export const assistantApi = {
   chat: (question: string, history: AssistantHistoryMessage[], signal?: AbortSignal) =>
     apiPost<AssistantReply>("/assistant/chat", { question, history }, signal),
 };
+
+export interface ProfileContent {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImageUrl: string | null;
+  aboutEyebrow: string;
+  aboutTitle: string;
+  aboutLead: string;
+  aboutBody: string;
+  aboutImageUrl: string | null;
+  exploreEyebrow: string;
+  exploreTitle: string;
+  exploreDescription: string;
+  bottomNote: string;
+  updatedAt?: string;
+}
+
+export interface ProfileCardItem {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicProfileData {
+  content: ProfileContent;
+  cards: ProfileCardItem[];
+}
+
+export const profileApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicProfileData>("/profile", undefined, signal),
+};
+
+export interface FacilitySettings {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImageUrl: string | null;
+  galleryEyebrow: string;
+  galleryTitle: string;
+  galleryDescription: string;
+  updatedAt?: string;
+}
+
+export interface CampusFacilityItem {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicFacilitiesData {
+  settings: FacilitySettings;
+  items: CampusFacilityItem[];
+}
+
+export const facilityApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicFacilitiesData>("/facilities", undefined, signal),
+};

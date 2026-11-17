@@ -30,6 +30,13 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     groupTitle: "Profil",
     items: [
       {
+        id: "profil-halaman",
+        label: "Halaman Profil",
+        href: "/admin/profil",
+        icon: "fileText",
+        section: "Profil",
+      },
+      {
         id: "struktur-organisasi",
         label: "Struktur Organisasi",
         href: "/admin/profil/struktur-organisasi",
