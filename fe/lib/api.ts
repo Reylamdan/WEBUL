@@ -464,3 +464,75 @@ export interface PublicFacilitiesData {
 export const facilityApi = {
   get: (signal?: AbortSignal) => apiGet<PublicFacilitiesData>("/facilities", undefined, signal),
 };
+
+export interface CurriculumSettings {
+  heroEyebrow: string;
+  heroTitle: string;
+  heroDescription: string;
+  obeTitle: string;
+  obeLead: string;
+  obeDescription: string;
+  tableEyebrow: string;
+  tableTitle: string;
+  tableIntro: string;
+  tableNote: string;
+  updatedAt?: string;
+}
+
+export interface CurriculumProgramItem {
+  id: string;
+  name: string;
+  href: string;
+  focus: string;
+  components: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicCurriculumData {
+  settings: CurriculumSettings;
+  programs: CurriculumProgramItem[];
+}
+
+export const curriculumApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicCurriculumData>("/curriculum", undefined, signal),
+};
+
+export interface RegistrationActivity {
+  name: string;
+  time: string;
+}
+
+export interface RegistrationPeriodSettings {
+  id?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  sectionDescription?: string;
+  updatedAt?: string;
+}
+
+export interface RegistrationWaveItem {
+  id: string;
+  name: string;
+  label?: string | null;
+  activities: RegistrationActivity[];
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicRegistrationPeriodData {
+  settings: RegistrationPeriodSettings;
+  waves: RegistrationWaveItem[];
+}
+
+export const registrationPeriodApi = {
+  get: (signal?: AbortSignal) =>
+    apiGet<PublicRegistrationPeriodData>("/registration-periods", undefined, signal),
+};

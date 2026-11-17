@@ -23,6 +23,10 @@ const adminProfileRoutes = require("./adminProfileRoutes");
 const publicProfileRoutes = require("./publicProfileRoutes");
 const adminFacilityRoutes = require("./adminFacilityRoutes");
 const publicFacilityRoutes = require("./publicFacilityRoutes");
+const adminCurriculumRoutes = require("./adminCurriculumRoutes");
+const publicCurriculumRoutes = require("./publicCurriculumRoutes");
+const adminRegistrationPeriodRoutes = require("./adminRegistrationPeriodRoutes");
+const publicRegistrationPeriodRoutes = require("./publicRegistrationPeriodRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
@@ -77,6 +81,14 @@ router.use("/profile", publicProfileRoutes);
 // Fasilitas Kampus (FE /profil/fasilitas-kampus)
 router.use("/admin/facilities", adminFacilityRoutes);
 router.use("/facilities", publicFacilityRoutes);
+
+// Kurikulum (FE /akademik/kurikulum)
+router.use("/admin/curriculum", adminCurriculumRoutes);
+router.use("/curriculum", publicCurriculumRoutes);
+
+// Periode Pendaftaran PMB (FE /pmb/periode-pendaftaran)
+router.use("/admin/registration-periods", adminRegistrationPeriodRoutes);
+router.use("/registration-periods", publicRegistrationPeriodRoutes);
 
 // Google Drive OAuth 2.0
 router.use("/admin/google-drive", googleOAuthRoutes);

@@ -1,9 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { curriculumPrograms } from "./kurikulum-data";
+import { curriculumPrograms as defaultPrograms, type CurriculumProgram } from "./kurikulum-data";
+import { curriculumApi, type CurriculumProgramItem, type CurriculumSettings } from "@/lib/api";
+import { useApi } from "@/lib/use-api";
 import "./kurikulum.css";
 
-function CurriculumHero() {
+function CurriculumHero({ settings }: { settings?: CurriculumSettings }) {
+  const eyebrow = settings?.heroEyebrow || "AKADEMIK UNIVERSITAS LIA";
+  const title = settings?.heroTitle || "Kurikulum";
+  const description =
+    settings?.heroDescription ||
+    "Informasi tentang pendekatan, struktur, dan arah pembelajaran di Universitas LIA. Rincian kurikulum mengikuti program studi dan dokumen akademik resmi.";
+
   return (
     <ScrollReveal>
       <section aria-labelledby="curriculum-title" className="curriculum-hero">
@@ -14,13 +24,9 @@ function CurriculumHero() {
           <span aria-hidden="true">›</span>
           <span aria-current="page">Kurikulum</span>
         </nav>
-        <span className="curriculum-eyebrow">AKADEMIK UNIVERSITAS LIA</span>
-        <h1 id="curriculum-title">Kurikulum</h1>
-        <p>
-          Informasi tentang pendekatan, struktur, dan arah pembelajaran di
-          Universitas LIA. Rincian kurikulum mengikuti program studi dan dokumen
-          akademik resmi.
-        </p>
+        <span className="curriculum-eyebrow">{eyebrow}</span>
+        <h1 id="curriculum-title">{title}</h1>
+        <p>{description}</p>
       </section>
     </ScrollReveal>
   );
@@ -50,7 +56,15 @@ function AcademicSectionNavigation() {
   );
 }
 
-function OutcomeBasedEducation() {
+function OutcomeBasedEducation({ settings }: { settings?: CurriculumSettings }) {
+  const title = settings?.obeTitle || "Outcome-Based Education (OBE)";
+  const lead =
+    settings?.obeLead ||
+    "Capaian pembelajaran sebagai arah perancangan mata kuliah.";
+  const description =
+    settings?.obeDescription ||
+    "Kurikulum mengembangkan pengetahuan, keterampilan, dan sikap yang dibutuhkan lulusan.";
+
   return (
     <ScrollReveal delay={100}>
       <section aria-labelledby="obe-title" className="curriculum-obe">
@@ -73,14 +87,9 @@ function OutcomeBasedEducation() {
             </svg>
           </span>
           <div>
-            <h2 id="obe-title">Outcome-Based Education (OBE)</h2>
-            <p className="curriculum-obe-lead">
-              Capaian pembelajaran sebagai arah perancangan mata kuliah.
-            </p>
-            <p>
-              Kurikulum mengembangkan pengetahuan, keterampilan, dan sikap yang
-              dibutuhkan lulusan.
-            </p>
+            <h2 id="obe-title">{title}</h2>
+            <p className="curriculum-obe-lead">{lead}</p>
+            <p>{description}</p>
           </div>
         </div>
         <aside aria-label="Ilustrasi pendekatan pembelajaran OBE" className="curriculum-obe-visual">
@@ -100,7 +109,22 @@ function OutcomeBasedEducation() {
   );
 }
 
-function CurriculumTable() {
+function CurriculumTable({
+  settings,
+  programs,
+}: {
+  settings?: CurriculumSettings;
+  programs: Array<CurriculumProgram | CurriculumProgramItem>;
+}) {
+  const eyebrow = settings?.tableEyebrow || "STRUKTUR KURIKULUM";
+  const title = settings?.tableTitle || "Komponen pembelajaran program studi";
+  const intro =
+    settings?.tableIntro ||
+    "Gambaran umum fokus pembelajaran setiap program studi. Untuk rincian mata kuliah, rujuk dokumen kurikulum resmi program studi.";
+  const note =
+    settings?.tableNote ||
+    "Catatan: rincian mata kuliah dapat berbeda menurut program studi dan periode kurikulum.";
+
   return (
     <ScrollReveal delay={150}>
       <section
@@ -108,12 +132,9 @@ function CurriculumTable() {
         className="curriculum-programs"
         id="komponen-kurikulum"
       >
-        <span className="curriculum-eyebrow">STRUKTUR KURIKULUM</span>
-        <h2 id="curriculum-programs-title">Komponen pembelajaran program studi</h2>
-        <p className="curriculum-programs-intro">
-          Gambaran umum fokus pembelajaran setiap program studi. Untuk rincian
-          mata kuliah, rujuk dokumen kurikulum resmi program studi.
-        </p>
+        <span className="curriculum-eyebrow">{eyebrow}</span>
+        <h2 id="curriculum-programs-title">{title}</h2>
+        <p className="curriculum-programs-intro">{intro}</p>
         <div className="curriculum-table-scroll" role="region" aria-label="Tabel kurikulum program studi" tabIndex={0}>
           <table className="curriculum-table">
             <caption className="curriculum-sr-only">
@@ -127,35 +148,40 @@ function CurriculumTable() {
               </tr>
             </thead>
             <tbody>
-              {curriculumPrograms.map((program) => (
-                <tr key={program.href}>
-                  <th scope="row">
-                    <Link href={program.href}>{program.name}</Link>
-                  </th>
-                  <td>{program.focus}</td>
-                  <td>{program.components}</td>
-                </tr>
-              ))}
+              {programs.map((program, idx) => {
+                const key = "id" in program && program.id ? program.id : `${program.href}-${idx}`;
+                return (
+                  <tr key={key}>
+                    <th scope="row">
+                      <Link href={program.href}>{program.name}</Link>
+                    </th>
+                    <td>{program.focus}</td>
+                    <td>{program.components}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-        <p className="curriculum-table-note">
-          Catatan: rincian mata kuliah dapat berbeda menurut program studi dan
-          periode kurikulum.
-        </p>
+        <p className="curriculum-table-note">{note}</p>
       </section>
     </ScrollReveal>
   );
 }
 
 export function KurikulumPage() {
+  const { data } = useApi("public-curriculum", () => curriculumApi.get());
+  const settings = data?.settings;
+  const programs =
+    data?.programs && data.programs.length > 0 ? data.programs : defaultPrograms;
+
   return (
     <main className="curriculum-page">
-      <CurriculumHero />
+      <CurriculumHero settings={settings} />
       <AcademicSectionNavigation />
       <div className="curriculum-content">
-        <OutcomeBasedEducation />
-        <CurriculumTable />
+        <OutcomeBasedEducation settings={settings} />
+        <CurriculumTable settings={settings} programs={programs} />
       </div>
     </main>
   );

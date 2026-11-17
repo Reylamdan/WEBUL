@@ -1,5 +1,4 @@
-import { PeriodeHeader } from "@/components/pmb/periode-pendaftaran/periode-header";
-import { PeriodeTable } from "@/components/pmb/periode-pendaftaran/periode-table";
+import { PeriodePageContent } from "@/components/pmb/periode-pendaftaran/periode-page-content";
 
 export const metadata = {
   title: "Periode Pendaftaran — Universitas LIA",
@@ -8,10 +7,5 @@ export const metadata = {
 };
 
 export default function PeriodePendaftaranPage() {
-  return (
-    <main className="pmb-period-page">
-      <PeriodeHeader />
-      <PeriodeTable />
-    </main>
-  );
+  return <PeriodePageContent />;
 }

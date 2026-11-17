@@ -14,6 +14,8 @@
     "test:organization": "node scripts/testOrganizationUnits.js",
     "test:profile": "node scripts/testProfilePage.js",
     "test:facility": "node scripts/testFacilities.js",
+    "test:curriculum": "node scripts/testCurriculum.js",
+    "test:registration-periods": "node scripts/testRegistrationPeriods.js",
     "test:drive": "node scripts/testGoogleDrive.js",
     "test:oauth": "node scripts/testGoogleOAuth.js",
     "test:tracer-study-aggregator": "node scripts/testTracerStudyAggregator.js",
