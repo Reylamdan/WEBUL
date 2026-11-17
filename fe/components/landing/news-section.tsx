@@ -8,6 +8,7 @@ import { categoryLabel, useContentLang } from "@/lib/content-language";
 import { newsDetailHref } from "@/lib/content-routes";
 import { useApi } from "@/lib/use-api";
 import { SectionHeading } from "./section-heading";
+import { SmartLink } from "@/components/smart-link";
 
 const NEWS_PAGE = "/kehidupan-kampus/berita-terkini";
 const FALLBACK_IMAGES = ["story-art", "story-students", "story-language"];
@@ -20,7 +21,7 @@ function StoryCard({ story, index, lang }: { story: NewsItem; index: number; lan
 
   return (
     <article className="story-card">
-      <a
+      <SmartLink
         aria-label={`Baca ${story.title}`}
         className={`story-image ${coverOk ? "" : FALLBACK_IMAGES[index % FALLBACK_IMAGES.length]}`}
         href={href}
@@ -32,17 +33,17 @@ function StoryCard({ story, index, lang }: { story: NewsItem; index: number; lan
       >
         <span className="story-image-tag">{tag}</span>
         <span className="story-image-decoration" />
-      </a>
+      </SmartLink>
       <div className="story-meta">
         <span>{tag}</span>
         <time dateTime={story.publishedAt ?? undefined}>{formatDate(story.publishedAt, lang)}</time>
       </div>
       <h3>
-        <a href={href}>{story.title}</a>
+        <SmartLink href={href}>{story.title}</SmartLink>
       </h3>
-      <a className="story-read-more" href={href}>
+      <SmartLink className="story-read-more" href={href}>
         Baca selengkapnya <Icon name="arrow" size={15} />
-      </a>
+      </SmartLink>
     </article>
   );
 }

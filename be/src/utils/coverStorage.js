@@ -9,6 +9,13 @@ const CACHE_CONTROL = "31536000"; // satu tahun
 const buildCoverPath = (newsId, extension) =>
   `covers/${newsId}/${crypto.randomUUID()}.${extension}`;
 
+// Gambar agenda acara memakai bucket yang sama dengan cover berita, dipisah lewat prefix "agenda/".
+const buildAgendaImagePath = (eventId, extension) =>
+  `agenda/${eventId}/${crypto.randomUUID()}.${extension}`;
+
+const buildOrganizationImagePath = (unitId, extension) =>
+  `organization/${unitId}/${crypto.randomUUID()}.${extension}`;
+
 const getCoverPublicUrl = (coverPath) => {
   if (!coverPath) return null;
   return supabase.storage.from(BUCKET).getPublicUrl(coverPath).data.publicUrl;
@@ -56,12 +63,36 @@ const removeCoverObjectQuietly = async (coverPath, context) => {
   }
 };
 
+// Ringkasan error provider yang AMAN dicatat: hanya kategori, status HTTP, dan kode pendek.
+// Pesan error tidak pernah dipakai karena bisa memuat kredensial.
+const SAFE_CODE = /^[A-Z][A-Z0-9_]{1,40}$/;
+
+const describeProviderError = (error) => {
+  const isObj = error && typeof error === "object";
+  const rawStatus = isObj ? Number(error.http_code ?? error.statusCode ?? error.status) : NaN;
+  const status = Number.isInteger(rawStatus) && rawStatus >= 100 && rawStatus <= 599 ? rawStatus : null;
+  const rawCode = isObj && typeof error.code === "string" ? error.code : "";
+  const code = SAFE_CODE.test(rawCode) ? rawCode : null;
+
+  let category = "unknown";
+  if (status === 401 || status === 403) category = "auth";
+  else if (status === 404) category = "not_found";
+  else if (status === 429) category = "rate_limit";
+  else if (status >= 500) category = "provider";
+  else if (status >= 400) category = "request";
+
+  return `kategori=${category} http=${status ?? "-"} kode=${code ?? "-"}`;
+};
+
 module.exports = {
   BUCKET,
   CACHE_CONTROL,
   buildCoverPath,
+  buildAgendaImagePath,
+  buildOrganizationImagePath,
   getCoverPublicUrl,
   uploadCoverObject,
   removeCoverObject,
   removeCoverObjectQuietly,
+  describeProviderError,
 };

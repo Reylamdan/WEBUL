@@ -1,4 +1,5 @@
 import { Icon } from "@/components/icons";
+import { SmartLink } from "@/components/smart-link";
 
 export function SectionHeading({
   eyebrow,
@@ -18,9 +19,9 @@ export function SectionHeading({
         <h2>{title}</h2>
       </div>
       {link && (
-        <a className="text-link" href={href}>
+        <SmartLink className="text-link" href={href}>
           {link} <Icon name="arrow" size={16} />
-        </a>
+        </SmartLink>
       )}
     </div>
   );

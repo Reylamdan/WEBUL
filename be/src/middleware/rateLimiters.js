@@ -1,4 +1,3 @@
-
 const { rateLimit } = require("express-rate-limit");
 
 // Pembatas upload cover.
@@ -82,6 +81,19 @@ const googleOAuthLimiter = rateLimit({
   },
 });
 
+// Pembatas upload video.
+const videoUploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Terlalu banyak upload video, coba lagi dalam 15 menit",
+    code: "TOO_MANY_VIDEO_UPLOADS",
+  },
+});
+
 module.exports = {
   loginLimiter,
   coverUploadLimiter,
@@ -89,4 +101,5 @@ module.exports = {
   regulationUploadLimiter,
   fileStreamLimiter,
   googleOAuthLimiter,
+  videoUploadLimiter,
 };

@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   },
 };
 
+// Berjalan SINKRON di <head>, sebelum browser mencat HTML Indonesia dari server. Jika pengunjung
+// memilih EN, seluruh halaman disembunyikan sampai SiteTranslator selesai menerjemahkan.
+// Pengaman: jika hydration/terjemahan gagal, halaman tetap ditampilkan setelah 7 detik.
+const ANTI_FLASH_SCRIPT = `(function(){try{if(window.localStorage.getItem("lia-content-lang")==="en"){var d=document.documentElement;d.setAttribute("data-lia-translating","all");setTimeout(function(){if(d.getAttribute("data-lia-translating")==="all")d.removeAttribute("data-lia-translating")},7000)}}catch(e){}})();`;
+
+const ANTI_FLASH_CSS = `html[data-lia-translating="all"] body{opacity:0!important;transition:none!important}`;
+
 export default function RootLayout({
   children,
 }: {
@@ -31,8 +38,13 @@ export default function RootLayout({
   return (
     <html
       lang="id"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: ANTI_FLASH_CSS }} />
+        <script dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <SiteHeader />
         <SiteBreadcrumb />

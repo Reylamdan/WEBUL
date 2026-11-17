@@ -2,11 +2,12 @@
 
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { announcementApi, calendarApi, dateParts, errorMessage, todayIso } from "@/lib/api";
+import { agendaApi, announcementApi, dateParts, errorMessage, todayIso } from "@/lib/api";
 import { announcementDetailHref } from "@/lib/content-routes";
 import { useContentLang } from "@/lib/content-language";
 import { useApi } from "@/lib/use-api";
 import { SectionHeading } from "./section-heading";
+import { SmartLink } from "@/components/smart-link";
 
 const ANNOUNCEMENT_PAGE = "/kehidupan-kampus/pengumuman";
 const AGENDA_PAGE = "/kehidupan-kampus/agenda-acara";
@@ -14,7 +15,7 @@ const AGENDA_PAGE = "/kehidupan-kampus/agenda-acara";
 function UpdateItem({ category, date, href, title }: { category: string; date: string | null; href: string; title: string }) {
   const { day, month } = dateParts(date);
   return (
-    <a className="update-item" href={href}>
+    <SmartLink className="update-item" href={href}>
       <span className="update-date">
         <strong>{day}</strong>
         <small>{month}</small>
@@ -24,14 +25,14 @@ function UpdateItem({ category, date, href, title }: { category: string; date: s
         <strong>{title}</strong>
       </span>
       <Icon name="arrow" size={17} />
-    </a>
+    </SmartLink>
   );
 }
 
 export function UpdatesSection() {
   const [lang] = useContentLang();
   const announcements = useApi(`landing-announcements:${lang}`, () => announcementApi.list({ page: 1, limit: 2, lang }));
-  const events = useApi("landing-agenda", () => calendarApi.list({ page: 1, limit: 2, from: todayIso() }));
+  const events = useApi("landing-agenda", () => agendaApi.list({ page: 1, limit: 2, from: todayIso() }));
 
   return (
     <ScrollReveal delay={140}>

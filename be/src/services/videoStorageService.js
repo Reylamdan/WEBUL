@@ -11,12 +11,18 @@ const DESTROY_TIMEOUT_MS = 60_000;
 const MEDIA_TABLE = "media_videos";
 const CLEANUP_QUEUE_TABLE = "media_cleanup_queue";
 
+const safeModuleName = (moduleName) =>
+  String(moduleName || "general").toLowerCase().replace(/[^a-z0-9_-]/g, "");
+
 // Membuat public_id Cloudinary yang unik & berstruktur hierarkis
 // Format: {rootFolder}/videos/{module}/{recordId}/{uuid}
-const buildVideoPublicId = (moduleName, recordId) => {
-  const safeModule = String(moduleName || "general").toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  return `${cloudinaryConfig.rootFolder}/videos/${safeModule}/${recordId}/${crypto.randomUUID()}`;
-};
+const buildVideoPublicId = (moduleName, recordId) =>
+  `${cloudinaryConfig.rootFolder}/videos/${safeModuleName(moduleName)}/${recordId}/${crypto.randomUUID()}`;
+
+// Folder yang tampil di Media Library (dynamic folder mode)
+// Format: {rootFolder}/videos/{module}/{recordId}
+const buildVideoAssetFolder = (moduleName, recordId) =>
+  `${cloudinaryConfig.rootFolder}/videos/${safeModuleName(moduleName)}/${recordId}`;
 
 // Menghasilkan URL thumbnail poster dinamis dari frame video via Cloudinary Transformation
 const buildVideoThumbnailUrl = (publicId, options = {}) => {
@@ -51,6 +57,7 @@ const uploadVideoObject = async (moduleName, recordId, buffer) => {
       const stream = client.uploader.upload_stream(
         {
           public_id: publicId,
+          asset_folder: buildVideoAssetFolder(moduleName, recordId),
           resource_type: "video",
           type: "upload",
           overwrite: false,
@@ -202,10 +209,10 @@ module.exports = {
   MEDIA_TABLE,
   CLEANUP_QUEUE_TABLE,
   buildVideoPublicId,
+  buildVideoAssetFolder,
   buildVideoThumbnailUrl,
   uploadVideoObject,
   removeCloudinaryVideo,
   removeVideoQuietly,
   removeNewVideoQuietly,
 };
-

@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
 import { GlobalSearch, SearchToggle } from "@/components/search/global-search";
+import { SiteTranslator } from "@/components/site-translator";
+import { useContentLang } from "@/lib/content-language";
 
 export type MenuNode = {
   id: string;
@@ -420,7 +422,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [lang, setLang] = useState<"ID" | "EN">("ID");
+  const [lang, setLang] = useContentLang();
   const [searchOpen, setSearchOpen] = useState(false);
   const [isFloating, setIsFloating] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -553,17 +555,19 @@ export function SiteHeader() {
             />
           </Link>
           <div className="header-meta-actions">
-            <div aria-label="Pilih Bahasa" className="lang-switcher" role="group">
+            <div aria-label="Pilih Bahasa" className="lang-switcher" role="group" translate="no">
               <button
-                className={`lang-btn${lang === "ID" ? " is-active" : ""}`}
-                onClick={() => setLang("ID")}
+                aria-pressed={lang === "id"}
+                className={`lang-btn${lang === "id" ? " is-active" : ""}`}
+                onClick={() => setLang("id")}
                 type="button"
               >
                 ID
               </button>
               <button
-                className={`lang-btn${lang === "EN" ? " is-active" : ""}`}
-                onClick={() => setLang("EN")}
+                aria-pressed={lang === "en"}
+                className={`lang-btn${lang === "en" ? " is-active" : ""}`}
+                onClick={() => setLang("en")}
                 type="button"
               >
                 EN
@@ -695,6 +699,7 @@ export function SiteHeader() {
         onClose={closeSearch}
         triggerRef={searchTriggerRef}
       />
+      <SiteTranslator />
     </header>
   );
 }

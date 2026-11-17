@@ -1,5 +1,6 @@
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { SmartLink } from "@/components/smart-link";
 
 export function AboutSection() {
   return (
@@ -41,9 +42,9 @@ export function AboutSection() {
             </div>
           </li>
         </ul>
-        <a className="text-link" href="/profil">
+        <SmartLink className="text-link" href="/profil">
           Tentang Universitas LIA <Icon name="arrow" size={16} />
-        </a>
+        </SmartLink>
       </div>
       <div className="intro-media">
         <div className="intro-media-art">

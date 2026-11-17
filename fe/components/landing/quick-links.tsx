@@ -1,5 +1,6 @@
 import { Icon, IconName } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { SmartLink } from "@/components/smart-link";
 
 export interface QuickLinkItem {
   name: string;
@@ -22,7 +23,7 @@ export function QuickLinks({ items = defaultQuickLinks }: { items?: QuickLinkIte
       <section aria-label="Layanan kampus" className="quick-links">
         <div className="quick-links-inner">
           {items.map((item) => (
-            <a className="quick-link" href={item.href ?? "#footer"} key={item.name}>
+            <SmartLink className="quick-link" href={item.href ?? "#footer"} key={item.name}>
               <span className="quick-icon">
                 <Icon name={item.icon} size={25} />
               </span>
@@ -33,7 +34,7 @@ export function QuickLinks({ items = defaultQuickLinks }: { items?: QuickLinkIte
               <span className="quick-arrow">
                 <Icon name="arrow" size={15} />
               </span>
-            </a>
+            </SmartLink>
           ))}
         </div>
       </section>

@@ -15,11 +15,17 @@ const publicLpmArchiveRoutes = require("./publicLpmArchiveRoutes");
 const fileRoutes = require("./fileRoutes");
 const adminAcademicCalendarRoutes = require("./adminAcademicCalendarRoutes");
 const publicAcademicCalendarRoutes = require("./publicAcademicCalendarRoutes");
+const adminAgendaEventRoutes = require("./adminAgendaEventRoutes");
+const publicAgendaEventRoutes = require("./publicAgendaEventRoutes");
+const adminOrganizationUnitRoutes = require("./adminOrganizationUnitRoutes");
+const publicOrganizationUnitRoutes = require("./publicOrganizationUnitRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
 const publicTracerStudyRoutes = require("./publicTracerStudyRoutes");
 const googleOAuthRoutes = require("./googleOAuthRoutes");
+const adminVideoRoutes = require("./adminVideoRoutes");
+const publicVideoRoutes = require("./publicVideoRoutes");
 
 const router = express.Router();
 
@@ -43,10 +49,22 @@ router.use("/banpt-regulations", publicBanptRegulationRoutes);
 router.use("/admin/lpm-archives", adminLpmArchiveRoutes);
 router.use("/lpm-archives", publicLpmArchiveRoutes);
 
+// Video (Cloudinary)
+router.use("/admin/videos", adminVideoRoutes);
+router.use("/videos", publicVideoRoutes);
+
 router.use("/files", fileRoutes);
 
 router.use("/admin/academic-calendar", adminAcademicCalendarRoutes);
 router.use("/academic-calendar", publicAcademicCalendarRoutes);
+
+// Agenda Acara (kehidupan kampus) — terpisah dari Kalender Akademik
+router.use("/admin/agenda-events", adminAgendaEventRoutes);
+router.use("/agenda-events", publicAgendaEventRoutes);
+
+// Struktur Organisasi (profil)
+router.use("/admin/organization-units", adminOrganizationUnitRoutes);
+router.use("/organization-units", publicOrganizationUnitRoutes);
 
 // Google Drive OAuth 2.0
 router.use("/admin/google-drive", googleOAuthRoutes);

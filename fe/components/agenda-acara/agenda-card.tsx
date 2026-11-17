@@ -6,6 +6,10 @@ export interface AgendaCardProps {
   title: string;
   description: string;
   meta: string;
+  organizer?: string | null;
+  registrationUrl?: string | null;
+  // Opsional: tanpa gambar kartu tampil dengan desain ringkas tanpa blok foto.
+  imageUrl?: string | null;
 }
 
 export function AgendaCard({
@@ -15,12 +19,19 @@ export function AgendaCard({
   title,
   description,
   meta,
+  organizer,
+  registrationUrl,
+  imageUrl,
+  id: _id,
 }: AgendaCardProps) {
   return (
-    <article className="agenda-card">
-      <div aria-hidden="true" className="agenda-card-image">
-        <span className="agenda-placeholder-hint-small">Foto acara</span>
-      </div>
+    <article className={`agenda-card ${imageUrl ? "has-image" : "no-image"}`}>
+      {imageUrl && (
+        <div className="agenda-card-image">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img alt={title} decoding="async" loading="lazy" src={imageUrl} />
+        </div>
+      )}
 
       <div className="agenda-card-content">
         <div className="agenda-card-top">
@@ -35,13 +46,21 @@ export function AgendaCard({
           </div>
         </div>
 
-        <p className="agenda-card-desc">{description}</p>
+        {description && <p className="agenda-card-desc">{description}</p>}
 
         <div className="agenda-card-meta">
           <span>{meta}</span>
+          {organizer && <span> · {organizer}</span>}
+          {registrationUrl && (
+            <>
+              {" · "}
+              <a href={registrationUrl} rel="noopener noreferrer" target="_blank">
+                Daftar
+              </a>
+            </>
+          )}
         </div>
       </div>
     </article>
   );
 }
-

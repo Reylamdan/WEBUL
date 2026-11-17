@@ -190,6 +190,37 @@ export interface CalendarEvent {
   category: CalendarCategory;
 }
 
+// Agenda Acara (kehidupan kampus) — terpisah dari Kalender Akademik.
+export interface AgendaEvent {
+  id: string;
+  title: string;
+  description: string | null;
+  startDate: string;
+  endDate: string;
+  startTime: string | null; // "HH:MM"
+  endTime: string | null;
+  location: string | null;
+  organizer: string | null;
+  registrationUrl: string | null;
+  category: CalendarCategory;
+  // Gambar acara bersifat opsional; null = tampil dengan desain tanpa gambar.
+  imageUrl?: string | null;
+}
+
+// Struktur Organisasi (profil): "bagan" = gambar bagan, "unit" = kartu unit / pimpinan.
+export type OrganizationCategorySlug = "bagan" | "unit";
+
+export interface OrganizationUnit {
+  id: string;
+  title: string;
+  position: string | null;
+  description: string | null;
+  category: { slug: OrganizationCategorySlug; name: string };
+  sortOrder: number;
+  // Gambar opsional; null = tampil tanpa gambar.
+  imageUrl: string | null;
+}
+
 export type ExpiryStatus = "active" | "expiring" | "expired" | "unknown";
 
 export interface StudyProgramAccreditation {
@@ -313,6 +344,18 @@ export const calendarApi = {
   categories: () => apiGet<{ categories: CalendarCategory[] }>("/academic-calendar/categories").then((d) => d.categories),
   list: (params: { page?: number; limit?: number; category?: string; from?: string; to?: string }) =>
     apiGet<Paged<CalendarEvent>>("/academic-calendar", params),
+};
+
+export const organizationApi = {
+  list: (params: { category?: OrganizationCategorySlug; limit?: number } = {}) =>
+    apiGet<{ items: OrganizationUnit[] }>("/organization-units", params).then((d) => d.items),
+};
+
+export const agendaApi = {
+  categories: () => apiGet<{ categories: CalendarCategory[] }>("/agenda-events/categories").then((d) => d.categories),
+  list: (params: { page?: number; limit?: number; category?: string; from?: string; to?: string; search?: string }) =>
+    apiGet<Paged<AgendaEvent>>("/agenda-events", params),
+  detail: (id: string) => apiGet<{ event: AgendaEvent }>(`/agenda-events/${encodeURIComponent(id)}`).then((d) => d.event),
 };
 
 export interface InstitutionAccreditation {

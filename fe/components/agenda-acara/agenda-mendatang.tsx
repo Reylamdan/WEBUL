@@ -3,12 +3,12 @@
 import { useId, useMemo, useState } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { Icon } from "@/components/icons";
-import { calendarApi, dateParts, errorMessage } from "@/lib/api";
+import { agendaApi, dateParts, errorMessage } from "@/lib/api";
 import { useApi } from "@/lib/use-api";
 import { AgendaCard } from "./agenda-card";
-import { eventDateRange, fetchUpcomingEvents } from "./agenda-data";
+import { eventMeta, fetchUpcomingEvents } from "./agenda-data";
 
-const ALL_CATEGORIES = "Semua acara";
+const ALL_CATEGORIES = "Semua Acara";
 
 export function AgendaMendatang() {
   const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORIES);
@@ -16,7 +16,7 @@ export function AgendaMendatang() {
   const searchInputId = useId();
 
   const events = useApi("agenda-upcoming", fetchUpcomingEvents);
-  const categoriesResult = useApi("agenda-categories", calendarApi.categories);
+  const categoriesResult = useApi("agenda-categories", agendaApi.categories);
   const categories = [ALL_CATEGORIES, ...(categoriesResult.data?.map((c) => c.name) ?? [])];
 
   const items = events.data?.items;
@@ -100,8 +100,11 @@ export function AgendaMendatang() {
                   dateMonth={month}
                   description={item.description ?? ""}
                   id={item.id}
+                  imageUrl={item.imageUrl}
                   key={item.id}
-                  meta={eventDateRange(item)}
+                  meta={eventMeta(item)}
+                  organizer={item.organizer}
+                  registrationUrl={item.registrationUrl}
                   title={item.title}
                 />
               );
@@ -112,4 +115,3 @@ export function AgendaMendatang() {
     </ScrollReveal>
   );
 }
-

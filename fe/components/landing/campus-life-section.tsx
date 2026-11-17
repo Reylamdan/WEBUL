@@ -1,5 +1,6 @@
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { SmartLink } from "@/components/smart-link";
 
 export function CampusLifeSection() {
   return (
@@ -18,9 +19,9 @@ export function CampusLifeSection() {
           Temukan teman, kembangkan minat, dan ciptakan pengalaman berharga
           bersama komunitas Universitas LIA.
         </p>
-        <a className="text-link" href="/kehidupan-kampus/kegiatan-mahasiswa">
+        <SmartLink className="text-link" href="/kehidupan-kampus/kegiatan-mahasiswa">
           Jelajahi kehidupan kampus <Icon name="arrow" size={16} />
-        </a>
+        </SmartLink>
       </div>
     </section>
     </ScrollReveal>

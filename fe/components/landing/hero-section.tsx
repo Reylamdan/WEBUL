@@ -1,5 +1,6 @@
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { SmartLink } from "@/components/smart-link";
 
 export function HeroSection({ onPlayVideo }: { onPlayVideo: () => void }) {
   return (
@@ -31,12 +32,12 @@ export function HeroSection({ onPlayVideo }: { onPlayVideo: () => void }) {
           mendukungmu tumbuh dan siap menghadapi dunia.
         </p>
         <div className="hero-actions">
-          <a className="button button-light" href="#program">
+          <SmartLink className="button button-light" href="#program">
             Temukan program studi <Icon name="arrow" size={16} />
-          </a>
-          <a className="hero-secondary-link" href="/profil">
+          </SmartLink>
+          <SmartLink className="hero-secondary-link" href="/profil">
             Kenali Universitas LIA
-          </a>
+          </SmartLink>
         </div>
       </div>
       <div className="hero-pagination">

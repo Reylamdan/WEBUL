@@ -326,6 +326,26 @@ const googleDrive = Object.freeze({
   deleteMode: googleDeleteMode,
 });
 
+// ---------- CLOUDINARY (video) ----------
+const cloudinaryCloudName = read("CLOUDINARY_CLOUD_NAME");
+const cloudinaryApiKey = read("CLOUDINARY_API_KEY");
+const cloudinaryApiSecret = read("CLOUDINARY_API_SECRET");
+const cloudinaryRootFolder = read("CLOUDINARY_ROOT_FOLDER") || "universitas-lia";
+
+const cloudinary = Object.freeze({
+  enabled: Boolean(cloudinaryCloudName && cloudinaryApiKey && cloudinaryApiSecret),
+  cloudName: cloudinaryCloudName,
+  apiKey: cloudinaryApiKey,
+  apiSecret: cloudinaryApiSecret,
+  rootFolder: cloudinaryRootFolder.replace(/^\/+|\/+$/g, ""),
+});
+
+// Kosong = pakai default di videoValidator.js
+const cloudinaryVideo = Object.freeze({
+  maxBytes: Number(read("CLOUDINARY_VIDEO_MAX_BYTES")) || undefined,
+  maxDurationSeconds: Number(read("CLOUDINARY_VIDEO_MAX_DURATION_SECONDS")) || undefined,
+});
+
 // ---------- HENTIKAN SERVER JIKA ADA YANG SALAH ----------
 if (errors.length > 0) {
   console.error("\n[KONFIGURASI] Server tidak dapat dijalankan:");
@@ -397,6 +417,9 @@ module.exports = Object.freeze({
 
   googleDrive,
   googleOAuth,
+
+  cloudinary,
+  cloudinaryVideo,
 
   supabaseUrl,
   supabaseServiceRoleKey,

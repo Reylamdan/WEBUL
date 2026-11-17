@@ -1,6 +1,7 @@
 import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "./section-heading";
+import { SmartLink } from "@/components/smart-link";
 
 export interface ProgramItem {
   eyebrow: string;
@@ -46,17 +47,17 @@ export function ProgramSection({ programs = defaultPrograms }: { programs?: Prog
             <h3>{program.title}</h3>
             <div className="program-card-bottom">
               <span>{program.code}</span>
-              <a aria-label={`Pelajari ${program.title}`} href={program.href ?? "#pmb"}>
+              <SmartLink aria-label={`Pelajari ${program.title}`} href={program.href ?? "#pmb"}>
                 <Icon name="arrow" size={18} />
-              </a>
+              </SmartLink>
             </div>
           </article>
           </ScrollReveal>
         ))}
       </div>
-      <a className="text-link programs-mobile-link" href="/akademik/fakultas">
+      <SmartLink className="text-link programs-mobile-link" href="/akademik/fakultas">
         Lihat semua program <Icon name="arrow" size={16} />
-      </a>
+      </SmartLink>
     </section>
     </ScrollReveal>
   );
