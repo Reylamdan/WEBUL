@@ -536,3 +536,113 @@ export const registrationPeriodApi = {
   get: (signal?: AbortSignal) =>
     apiGet<PublicRegistrationPeriodData>("/registration-periods", undefined, signal),
 };
+
+export interface TuitionFeeItem {
+  program: string;
+  amount: number;
+}
+
+export interface TuitionSettings {
+  id?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  studyPrograms?: string[];
+  updatedAt?: string;
+}
+
+export interface TuitionWaveItem {
+  id: string;
+  name: string;
+  period: string;
+  fees: TuitionFeeItem[];
+  tuition?: number[];
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicTuitionData {
+  settings: TuitionSettings;
+  waves: TuitionWaveItem[];
+  studyPrograms?: string[];
+}
+
+export const tuitionFeeApi = {
+  get: (signal?: AbortSignal) =>
+    apiGet<PublicTuitionData>("/tuition-fees", undefined, signal),
+};
+
+export interface RplSettings {
+  id?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  heroArtMark?: string;
+  heroArtCaption?: string;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  benefits?: string[];
+  scheduleNote?: string;
+  registrationDeadline?: string;
+  registrationUrl?: string;
+  transferCreditTitle?: string;
+  transferCreditDescription?: string;
+  updatedAt?: string;
+}
+
+export interface RplStepItem {
+  id: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface RplRequirementItem {
+  id: string;
+  type: "syarat" | "dokumen";
+  title: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface RplScheduleItem {
+  id: string;
+  day: string;
+  hours: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface RplFeeItem {
+  id: string;
+  type: string;
+  amount: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicRplData {
+  settings: RplSettings;
+  steps: RplStepItem[];
+  requirements: RplRequirementItem[];
+  documents: RplRequirementItem[];
+  schedules: RplScheduleItem[];
+  fees: RplFeeItem[];
+}
+
+export const rplApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicRplData>("/rpl", undefined, signal),
+};

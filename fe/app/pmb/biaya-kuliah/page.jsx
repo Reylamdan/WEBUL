@@ -1,17 +1,11 @@
-import { BiayaHeader } from "@/components/pmb/biaya-kuliah/biaya-header";
-import { BiayaTable } from "@/components/pmb/biaya-kuliah/biaya-table";
+import { BiayaPageContent } from "@/components/pmb/biaya-kuliah/biaya-page-content";
 
 export const metadata = {
   title: "Biaya Kuliah — Universitas LIA",
   description:
-    "Informasi contoh UKT Universitas LIA berdasarkan gelombang pendaftaran.",
+    "Informasi rincian biaya kuliah (UKT) Universitas LIA berdasarkan program studi dan gelombang pendaftaran.",
 };
 
 export default function BiayaKuliahPage() {
-  return (
-    <main className="pmb-tuition-page">
-      <BiayaHeader />
-      <BiayaTable />
-    </main>
-  );
+  return <BiayaPageContent />;
 }

@@ -27,6 +27,10 @@ const adminCurriculumRoutes = require("./adminCurriculumRoutes");
 const publicCurriculumRoutes = require("./publicCurriculumRoutes");
 const adminRegistrationPeriodRoutes = require("./adminRegistrationPeriodRoutes");
 const publicRegistrationPeriodRoutes = require("./publicRegistrationPeriodRoutes");
+const adminTuitionFeeRoutes = require("./adminTuitionFeeRoutes");
+const publicTuitionFeeRoutes = require("./publicTuitionFeeRoutes");
+const adminRplRoutes = require("./adminRplRoutes");
+const publicRplRoutes = require("./publicRplRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
@@ -89,6 +93,14 @@ router.use("/curriculum", publicCurriculumRoutes);
 // Periode Pendaftaran PMB (FE /pmb/periode-pendaftaran)
 router.use("/admin/registration-periods", adminRegistrationPeriodRoutes);
 router.use("/registration-periods", publicRegistrationPeriodRoutes);
+
+// Biaya Kuliah PMB (FE /pmb/biaya-kuliah)
+router.use("/admin/tuition-fees", adminTuitionFeeRoutes);
+router.use("/tuition-fees", publicTuitionFeeRoutes);
+
+// Jalur RPL PMB (FE /pmb/jalur-rpl)
+router.use("/admin/rpl", adminRplRoutes);
+router.use("/rpl", publicRplRoutes);
 
 // Google Drive OAuth 2.0
 router.use("/admin/google-drive", googleOAuthRoutes);

@@ -1,5 +1,5 @@
 import { Icon } from "@/components/icons";
-import { studyPrograms, tuitionWaves } from "./biaya-data";
+import { studyPrograms as defaultStudyPrograms, tuitionWaves as defaultTuitionWaves } from "./biaya-data";
 
 const currencyFormatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -8,6 +8,8 @@ const currencyFormatter = new Intl.NumberFormat("id-ID", {
 });
 
 function WaveTable({ wave, index }) {
+  const hasCustomFees = Array.isArray(wave.fees) && wave.fees.length > 0;
+
   return (
     <article className={`pmb-tuition-card pmb-tuition-card-${index + 1}`}>
       <header className="pmb-tuition-card-heading">
@@ -28,12 +30,23 @@ function WaveTable({ wave, index }) {
             </tr>
           </thead>
           <tbody>
-            {studyPrograms.map((program, programIndex) => (
-              <tr key={program}>
-                <td>{program}</td>
-                <td>{currencyFormatter.format(wave.tuition[programIndex])}</td>
-              </tr>
-            ))}
+            {hasCustomFees
+              ? wave.fees.map((fee, feeIdx) => (
+                  <tr key={fee.program || feeIdx}>
+                    <td>{fee.program}</td>
+                    <td>{currencyFormatter.format(fee.amount || 0)}</td>
+                  </tr>
+                ))
+              : defaultStudyPrograms.map((program, programIndex) => (
+                  <tr key={program}>
+                    <td>{program}</td>
+                    <td>
+                      {currencyFormatter.format(
+                        Array.isArray(wave.tuition) ? wave.tuition[programIndex] || 0 : 0
+                      )}
+                    </td>
+                  </tr>
+                ))}
           </tbody>
         </table>
       </div>
@@ -41,20 +54,23 @@ function WaveTable({ wave, index }) {
   );
 }
 
-export function BiayaTable() {
+export function BiayaTable({ settings, waves }) {
+  const displayWaves = Array.isArray(waves) && waves.length > 0 ? waves : defaultTuitionWaves;
+  const sectionEyebrow = settings?.sectionEyebrow || "RINCIAN BIAYA";
+  const sectionTitle = settings?.sectionTitle || "UKT setiap Gelombang";
+
   return (
     <section aria-label="UKT berdasarkan gelombang pendaftaran" className="pmb-tuition-list">
       <div className="pmb-wrap">
         <div className="pmb-tuition-heading">
           <div>
-            <span className="pmb-eyebrow">RINCIAN BIAYA</span>
-            <h2>UKT setiap Gelombang</h2>
+            <span className="pmb-eyebrow">{sectionEyebrow}</span>
+            <h2>{sectionTitle}</h2>
           </div>
-          
         </div>
         <div className="pmb-tuition-grid">
-          {tuitionWaves.map((wave, index) => (
-            <WaveTable index={index} key={wave.name} wave={wave} />
+          {displayWaves.map((wave, index) => (
+            <WaveTable index={index} key={wave.id || wave.name || index} wave={wave} />
           ))}
         </div>
       </div>
