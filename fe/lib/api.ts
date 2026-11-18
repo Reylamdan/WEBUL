@@ -646,3 +646,86 @@ export interface PublicRplData {
 export const rplApi = {
   get: (signal?: AbortSignal) => apiGet<PublicRplData>("/rpl", undefined, signal),
 };
+
+export interface PaymentGuideSettings {
+  id?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  vaSectionEyebrow?: string;
+  vaSectionTitle?: string;
+  vaSectionDescription?: string;
+  vaImage1Url?: string;
+  vaImage1Alt?: string;
+  vaImage1Caption?: string;
+  vaImage2Url?: string;
+  vaImage2Alt?: string;
+  vaImage2Caption?: string;
+  methodsSectionEyebrow?: string;
+  methodsSectionTitle?: string;
+  methodsSectionDescription?: string;
+  updatedAt?: string;
+}
+
+export interface PaymentVaStepItem {
+  id: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PaymentChannelItem {
+  id: string;
+  channelId: string;
+  name: string;
+  steps: string[];
+  note?: string | null;
+  technicalNoteTitle?: string | null;
+  technicalNote?: string | null;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicPaymentGuideData {
+  settings: PaymentGuideSettings;
+  vaSteps: PaymentVaStepItem[];
+  channels: PaymentChannelItem[];
+}
+
+export const paymentGuideApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicPaymentGuideData>("/payment-guide", undefined, signal),
+};
+
+export interface ResignationSettings {
+  id?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroDescription?: string | null;
+  sectionTitle?: string;
+  updatedAt?: string;
+}
+
+export interface ResignationTermItem {
+  id: string;
+  title?: string | null;
+  description: string;
+  refundPercentage?: number | null;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicResignationData {
+  settings: ResignationSettings;
+  terms: ResignationTermItem[];
+}
+
+export const resignationApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicResignationData>("/resignation", undefined, signal),
+};

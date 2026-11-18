@@ -31,6 +31,10 @@ const adminTuitionFeeRoutes = require("./adminTuitionFeeRoutes");
 const publicTuitionFeeRoutes = require("./publicTuitionFeeRoutes");
 const adminRplRoutes = require("./adminRplRoutes");
 const publicRplRoutes = require("./publicRplRoutes");
+const adminPaymentGuideRoutes = require("./adminPaymentGuideRoutes");
+const publicPaymentGuideRoutes = require("./publicPaymentGuideRoutes");
+const adminResignationRoutes = require("./adminResignationRoutes");
+const publicResignationRoutes = require("./publicResignationRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
@@ -102,6 +106,14 @@ router.use("/tuition-fees", publicTuitionFeeRoutes);
 // Jalur RPL PMB (FE /pmb/jalur-rpl)
 router.use("/admin/rpl", adminRplRoutes);
 router.use("/rpl", publicRplRoutes);
+
+// Cara Pembayaran PMB (FE /pmb/cara-pembayaran)
+router.use("/admin/payment-guide", adminPaymentGuideRoutes);
+router.use("/payment-guide", publicPaymentGuideRoutes);
+
+// Syarat & Ketentuan Pengunduran Diri (FE /pengunduran-diri)
+router.use("/admin/resignation", adminResignationRoutes);
+router.use("/resignation", publicResignationRoutes);
 
 // Google Drive OAuth 2.0
 router.use("/admin/google-drive", googleOAuthRoutes);
