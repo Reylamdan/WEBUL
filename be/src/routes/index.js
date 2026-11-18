@@ -35,6 +35,7 @@ const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes")
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
 const publicTracerStudyRoutes = require("./publicTracerStudyRoutes");
+const adminTracerStudyRoutes = require("./adminTracerStudyRoutes");
 const googleOAuthRoutes = require("./googleOAuthRoutes");
 const adminVideoRoutes = require("./adminVideoRoutes");
 const publicVideoRoutes = require("./publicVideoRoutes");
@@ -116,5 +117,8 @@ router.use("/search", publicSearchRoutes);
 
 // Tracer Study publik
 router.use("/tracer-study", publicTracerStudyRoutes);
+
+// Tracer Study khusus admin (data responden, import)
+router.use("/admin/tracer-study", adminTracerStudyRoutes);
 
 module.exports = router;
