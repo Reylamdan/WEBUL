@@ -1,78 +1,92 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
+import { useApi } from "@/lib/use-api";
+import { ukmApi, type UkmCategory, type UkmItemData } from "@/lib/api";
 
-export interface UkmItem {
-  id: string;
-  category: string;
-  categoryLabel: string;
-  title: string;
-  description: string;
-  meta: string;
-}
-
-const UKM_CATEGORIES = [
+const DEFAULT_CATEGORIES: UkmCategory[] = [
   { id: "seni", label: "Seni & Kreativitas" },
   { id: "olahraga", label: "Olahraga" },
   { id: "teknologi", label: "Teknologi" },
   { id: "organisasi", label: "Organisasi" },
   { id: "sosial", label: "Sosial & Kerohanian" },
-] as const;
+];
 
-const UKM_ITEMS: UkmItem[] = [
+const DEFAULT_ITEMS: UkmItemData[] = [
   {
-    id: "seni",
+    id: "default-ukm-1",
+    title: "Seni dan kreativitas",
     category: "seni",
     categoryLabel: "Seni & Kreativitas",
-    title: "Seni dan kreativitas",
     description: "Ruang untuk berekspresi melalui karya, pertunjukan, dan kegiatan kreatif.",
     meta: "Tanggal / informasi selengkapnya",
+    sortOrder: 1,
   },
   {
-    id: "olahraga",
+    id: "default-ukm-2",
+    title: "Olahraga dan kebugaran",
     category: "olahraga",
     categoryLabel: "Olahraga",
-    title: "Olahraga dan kebugaran",
     description: "Bangun kerja sama tim, disiplin, dan semangat sportif melalui aktivitas olahraga.",
     meta: "Tanggal / informasi selengkapnya",
+    sortOrder: 2,
   },
   {
-    id: "teknologi",
+    id: "default-ukm-3",
+    title: "Teknologi dan komunitas",
     category: "teknologi",
     categoryLabel: "Teknologi",
-    title: "Teknologi dan komunitas",
     description: "Berbagi pengetahuan, mengembangkan keterampilan, dan mencoba ide baru bersama.",
     meta: "Tanggal / informasi selengkapnya",
+    sortOrder: 3,
   },
   {
-    id: "organisasi",
+    id: "default-ukm-4",
+    title: "Organisasi dan kepemimpinan",
     category: "organisasi",
     categoryLabel: "Organisasi",
-    title: "Organisasi dan kepemimpinan",
     description: "Kembangkan jiwa kepemimpinan, manajemen organisasi, dan jejaring kolaboratif.",
     meta: "Tanggal / informasi selengkapnya",
+    sortOrder: 4,
   },
   {
-    id: "sosial",
+    id: "default-ukm-5",
+    title: "Sosial dan kerohanian",
     category: "sosial",
     categoryLabel: "Sosial & Kerohanian",
-    title: "Sosial dan kerohanian",
     description: "Menumbuhkan empati sosial, kebersamaan, dan pembinaan nilai-nilai spiritual di kampus.",
     meta: "Tanggal / informasi selengkapnya",
+    sortOrder: 5,
   },
 ];
 
 export function UkmContent() {
+  const { data } = useApi("public-ukm", () => ukmApi.get());
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const s = data?.settings;
+  const introEyebrow = s?.introEyebrow || "KOMUNITAS MAHASISWA";
+  const introTitle = s?.introTitle || "Temukan komunitas yang sesuai dengan minatmu";
+  const introDescription =
+    s?.introDescription ||
+    "UKM menjadi ruang untuk belajar bersama, mengasah kemampuan, dan menciptakan pengalaman kampus yang berkesan.";
+  const categoryTitle = s?.categoryTitle || "Jelajahi bidang kegiatan";
+  const categoryDesc = s?.categoryDesc || "Pilih bidang yang paling dekat dengan minat dan ketertarikanmu.";
+  const cardsTitle = s?.cardsTitle || "Kenali komunitas mahasiswa";
+  const cardsDesc =
+    s?.cardsDesc || "Profil UKM, jadwal, dan informasi pendaftaran dapat dilengkapi setelah data resmi tersedia.";
+
+  const categories = data?.categories && data.categories.length > 0 ? data.categories : DEFAULT_CATEGORIES;
+  const allItems = data?.items && data.items.length > 0 ? data.items : DEFAULT_ITEMS;
 
   const displayedItems = useMemo(() => {
     if (!activeCategory) {
-      // By default show all or the primary 3 featured cards matching the mockup
-      return UKM_ITEMS.slice(0, 3);
+      return allItems;
     }
-    const filtered = UKM_ITEMS.filter((item) => item.category === activeCategory);
-    return filtered.length > 0 ? filtered : UKM_ITEMS.slice(0, 3);
-  }, [activeCategory]);
+    const filtered = allItems.filter((item) => item.category === activeCategory);
+    return filtered.length > 0 ? filtered : allItems;
+  }, [activeCategory, allItems]);
 
   const handlePillClick = (categoryId: string) => {
     if (activeCategory === categoryId) {
@@ -86,26 +100,22 @@ export function UkmContent() {
     <div className="ukm-content-area">
       {/* Section: Temukan komunitas yang sesuai dengan minatmu */}
       <section aria-labelledby="ukm-minat-title" className="ukm-intro-section">
-        <span className="ukm-eyebrow-sub">KOMUNITAS MAHASISWA</span>
+        <span className="ukm-eyebrow-sub">{introEyebrow}</span>
         <h2 className="ukm-section-main-title" id="ukm-minat-title">
-          Temukan komunitas yang sesuai dengan minatmu
+          {introTitle}
         </h2>
-        <p className="ukm-section-main-desc">
-          UKM menjadi ruang untuk belajar bersama, mengasah kemampuan, dan menciptakan pengalaman kampus yang berkesan.
-        </p>
+        <p className="ukm-section-main-desc">{introDescription}</p>
       </section>
 
       {/* Section: Jelajahi bidang kegiatan */}
       <section aria-labelledby="ukm-bidang-title" className="ukm-bidang-section">
         <h3 className="ukm-sub-title" id="ukm-bidang-title">
-          Jelajahi bidang kegiatan
+          {categoryTitle}
         </h3>
-        <p className="ukm-sub-desc">
-          Pilih bidang yang paling dekat dengan minat dan ketertarikanmu.
-        </p>
+        <p className="ukm-sub-desc">{categoryDesc}</p>
 
         <div aria-label="Bidang Kegiatan UKM" className="ukm-pills-row" role="tablist">
-          {UKM_CATEGORIES.map((cat) => {
+          {categories.map((cat) => {
             const isSelected = activeCategory === cat.id;
             return (
               <button
@@ -125,27 +135,40 @@ export function UkmContent() {
       {/* Section: Kenali komunitas mahasiswa */}
       <section aria-labelledby="ukm-komunitas-title" className="ukm-komunitas-section">
         <h3 className="ukm-sub-title" id="ukm-komunitas-title">
-          Kenali komunitas mahasiswa
+          {cardsTitle}
         </h3>
-        <p className="ukm-sub-desc">
-          Profil UKM, jadwal, dan informasi pendaftaran dapat dilengkapi setelah data resmi tersedia.
-        </p>
+        <p className="ukm-sub-desc">{cardsDesc}</p>
 
         <div className="ukm-cards-grid">
           {displayedItems.map((item) => (
             <article className="ukm-card" key={item.id}>
               <div aria-hidden="true" className="ukm-card-header">
-                <div className="ukm-card-image-placeholder">
-                  <span className="ukm-card-hint">Dokumentasi kegiatan</span>
-                </div>
+                {item.imageUrl ? (
+                  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                    <Image
+                      alt={item.title}
+                      className="ukm-card-image"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 360px"
+                      src={item.imageUrl}
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
+                ) : (
+                  <div className="ukm-card-image-placeholder">
+                    <span className="ukm-card-hint">Dokumentasi kegiatan</span>
+                  </div>
+                )}
               </div>
               <div className="ukm-card-body">
-                <span className="ukm-card-tag">UKM</span>
+                <span className="ukm-card-tag">{item.categoryLabel || "UKM"}</span>
                 <h4 className="ukm-card-title">{item.title}</h4>
                 <p className="ukm-card-desc">{item.description}</p>
-                <div className="ukm-card-footer">
-                  <span>{item.meta}</span>
-                </div>
+                {item.meta && (
+                  <div className="ukm-card-footer">
+                    <span>{item.meta}</span>
+                  </div>
+                )}
               </div>
             </article>
           ))}
@@ -154,4 +177,3 @@ export function UkmContent() {
     </div>
   );
 }
-

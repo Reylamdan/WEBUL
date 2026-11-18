@@ -35,6 +35,10 @@ const adminPaymentGuideRoutes = require("./adminPaymentGuideRoutes");
 const publicPaymentGuideRoutes = require("./publicPaymentGuideRoutes");
 const adminResignationRoutes = require("./adminResignationRoutes");
 const publicResignationRoutes = require("./publicResignationRoutes");
+const adminForeignStudentRoutes = require("./adminForeignStudentRoutes");
+const publicForeignStudentRoutes = require("./publicForeignStudentRoutes");
+const adminUkmRoutes = require("./adminUkmRoutes");
+const publicUkmRoutes = require("./publicUkmRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
@@ -79,6 +83,10 @@ router.use("/academic-calendar", publicAcademicCalendarRoutes);
 router.use("/admin/agenda-events", adminAgendaEventRoutes);
 router.use("/agenda-events", publicAgendaEventRoutes);
 
+// Kegiatan Mahasiswa / UKM (kehidupan kampus)
+router.use("/admin/ukm", adminUkmRoutes);
+router.use("/ukm", publicUkmRoutes);
+
 // Struktur Organisasi (profil)
 router.use("/admin/organization-units", adminOrganizationUnitRoutes);
 router.use("/organization-units", publicOrganizationUnitRoutes);
@@ -114,6 +122,10 @@ router.use("/payment-guide", publicPaymentGuideRoutes);
 // Syarat & Ketentuan Pengunduran Diri (FE /pengunduran-diri)
 router.use("/admin/resignation", adminResignationRoutes);
 router.use("/resignation", publicResignationRoutes);
+
+// Syarat & Ketentuan Mahasiswa Asing (FE /pmb/mahasiswa-asing)
+router.use("/admin/foreign-students", adminForeignStudentRoutes);
+router.use("/foreign-students", publicForeignStudentRoutes);
 
 // Google Drive OAuth 2.0
 router.use("/admin/google-drive", googleOAuthRoutes);

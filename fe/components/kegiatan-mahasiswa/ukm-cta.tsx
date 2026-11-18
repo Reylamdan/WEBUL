@@ -2,9 +2,29 @@
 
 import { useState } from "react";
 import { Icon } from "@/components/icons";
+import { useApi } from "@/lib/use-api";
+import { ukmApi } from "@/lib/api";
 
 export function UkmCta() {
   const [modalOpen, setModalOpen] = useState(false);
+  const { data } = useApi("public-ukm", () => ukmApi.get());
+
+  const s = data?.settings;
+  const ctaTitle = s?.ctaTitle || "Tertarik bergabung dengan UKM?";
+  const ctaDesc =
+    s?.ctaDescription ||
+    "Informasi kontak, jadwal open recruitment, dan tautan pendaftaran akan ditambahkan di sini.";
+  const ctaButtonLabel = s?.ctaButtonLabel || "Informasi Pendaftaran";
+
+  const modalTitle = s?.modalTitle || "Pendaftaran Kegiatan Mahasiswa (UKM)";
+  const modalSubtitle = s?.modalSubtitle || "Informasi Open Recruitment Universitas LIA";
+  const modalSchedule =
+    s?.modalScheduleText ||
+    "Pendaftaran terbuka untuk mahasiswa baru dan aktif pada awal Semester Ganjil dan Genap setiap tahun akademik.";
+  const modalRequirements =
+    s?.modalRequirementsText ||
+    "Mahasiswa aktif Universitas LIA dengan komitmen mengikuti pelatihan rutin dan kegiatan ormawa.";
+  const modalEmail = s?.modalContactEmail || "kemahasiswaan@universitaslia.ac.id";
 
   return (
     <>
@@ -12,11 +32,9 @@ export function UkmCta() {
         <div className="ukm-cta-card">
           <div className="ukm-cta-content">
             <h3 className="ukm-cta-title" id="ukm-cta-title">
-              Tertarik bergabung dengan UKM?
+              {ctaTitle}
             </h3>
-            <p className="ukm-cta-desc">
-              Informasi kontak, jadwal open recruitment, dan tautan pendaftaran akan ditambahkan di sini.
-            </p>
+            <p className="ukm-cta-desc">{ctaDesc}</p>
           </div>
 
           <div className="ukm-cta-action">
@@ -25,7 +43,7 @@ export function UkmCta() {
               onClick={() => setModalOpen(true)}
               type="button"
             >
-              Informasi Pendaftaran
+              {ctaButtonLabel}
             </button>
           </div>
         </div>
@@ -50,10 +68,10 @@ export function UkmCta() {
               </div>
               <div>
                 <h4 className="ukm-modal-title" id="ukm-modal-title">
-                  Pendaftaran Kegiatan Mahasiswa (UKM)
+                  {modalTitle}
                 </h4>
                 <p className="ukm-modal-subtitle">
-                  Informasi Open Recruitment Universitas LIA
+                  {modalSubtitle}
                 </p>
               </div>
               <button
@@ -72,9 +90,7 @@ export function UkmCta() {
                   <Icon name="calendar" size={16} />
                   <span>Jadwal Open Recruitment</span>
                 </div>
-                <p>
-                  Pendaftaran terbuka untuk mahasiswa baru dan aktif pada awal Semester Ganjil dan Genap setiap tahun akademik.
-                </p>
+                <p>{modalSchedule}</p>
               </div>
 
               <div className="ukm-modal-item">
@@ -82,9 +98,7 @@ export function UkmCta() {
                   <Icon name="graduate" size={16} />
                   <span>Persyaratan Pendaftaran</span>
                 </div>
-                <p>
-                  Mahasiswa aktif Universitas LIA dengan komitmen mengikuti pelatihan rutin dan kegiatan ormawa.
-                </p>
+                <p>{modalRequirements}</p>
               </div>
 
               <div className="ukm-modal-item">
@@ -94,8 +108,8 @@ export function UkmCta() {
                 </div>
                 <p>
                   Untuk informasi selengkapnya, hubungi Bagian Kemahasiswaan melalui email:{" "}
-                  <a className="ukm-modal-link" href="mailto:kemahasiswaan@universitaslia.ac.id">
-                    kemahasiswaan@universitaslia.ac.id
+                  <a className="ukm-modal-link" href={`mailto:${modalEmail}`}>
+                    {modalEmail}
                   </a>{" "}
                   atau Biro Humas.
                 </p>
@@ -104,11 +118,11 @@ export function UkmCta() {
 
             <div className="ukm-modal-footer">
               <button
-                className="ukm-modal-btn-primary"
+                className="ukm-modal-btn-close"
                 onClick={() => setModalOpen(false)}
                 type="button"
               >
-                Mengerti
+                Tutup
               </button>
             </div>
           </div>
@@ -117,4 +131,3 @@ export function UkmCta() {
     </>
   );
 }
-

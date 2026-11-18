@@ -20,6 +20,8 @@
     "test:rpl": "node scripts/testRpl.js",
     "test:payment-guide": "node scripts/testPaymentGuide.js",
     "test:resignation": "node scripts/testResignation.js",
+    "test:foreign-students": "node scripts/testForeignStudents.js",
+    "test:ukm": "node scripts/testUkm.js",
     "test:drive": "node scripts/testGoogleDrive.js",
     "test:oauth": "node scripts/testGoogleOAuth.js",
     "test:tracer-study-aggregator": "node scripts/testTracerStudyAggregator.js",

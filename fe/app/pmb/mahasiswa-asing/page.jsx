@@ -1,5 +1,4 @@
 import { MahasiswaAsingContent } from "@/components/pmb/mahasiswa-asing/mahasiswa-asing-content";
-import { MahasiswaAsingHeader } from "@/components/pmb/mahasiswa-asing/mahasiswa-asing-header";
 import "@/components/pmb/mahasiswa-asing/mahasiswa-asing.css";
 
 export const metadata = {
@@ -9,10 +8,5 @@ export const metadata = {
 };
 
 export default function MahasiswaAsingPage() {
-  return (
-    <main className="mahasiswa-asing-page">
-      <MahasiswaAsingHeader />
-      <MahasiswaAsingContent />
-    </main>
-  );
+  return <MahasiswaAsingContent />;
 }

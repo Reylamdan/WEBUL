@@ -729,3 +729,92 @@ export interface PublicResignationData {
 export const resignationApi = {
   get: (signal?: AbortSignal) => apiGet<PublicResignationData>("/resignation", undefined, signal),
 };
+
+export interface ForeignStudentSettings {
+  id?: string;
+  heroTitle?: string;
+  introEyebrow?: string;
+  introTitle?: string;
+  introDescription?: string;
+  requirementsEyebrow?: string;
+  requirementsTitle?: string;
+  requirementsDescription?: string;
+  referenceTitle?: string;
+  referenceDescription?: string;
+  referenceUrl?: string;
+  referenceLabel?: string;
+  updatedAt?: string;
+}
+
+export interface ForeignStudentRequirementItem {
+  id: string;
+  title?: string | null;
+  description: string;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicForeignStudentData {
+  settings: ForeignStudentSettings;
+  requirements: ForeignStudentRequirementItem[];
+}
+
+export const foreignStudentApi = {
+  get: (signal?: AbortSignal) =>
+    apiGet<PublicForeignStudentData>("/foreign-students", undefined, signal),
+};
+
+export interface UkmSettings {
+  id?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroBadge?: string;
+  introEyebrow?: string;
+  introTitle?: string;
+  introDescription?: string;
+  categoryTitle?: string;
+  categoryDesc?: string;
+  cardsTitle?: string;
+  cardsDesc?: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaButtonLabel?: string;
+  modalTitle?: string;
+  modalSubtitle?: string;
+  modalScheduleText?: string;
+  modalRequirementsText?: string;
+  modalContactEmail?: string;
+  updatedAt?: string;
+}
+
+export interface UkmCategory {
+  id: string;
+  label: string;
+}
+
+export interface UkmItemData {
+  id: string;
+  title: string;
+  category: string;
+  categoryLabel: string;
+  description: string;
+  meta?: string | null;
+  imageUrl?: string | null;
+  sortOrder: number;
+  status?: "draft" | "published";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublicUkmData {
+  settings: UkmSettings;
+  items: UkmItemData[];
+  categories: UkmCategory[];
+}
+
+export const ukmApi = {
+  get: (signal?: AbortSignal) => apiGet<PublicUkmData>("/ukm", undefined, signal),
+};
