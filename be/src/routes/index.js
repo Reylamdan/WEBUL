@@ -39,6 +39,8 @@ const adminForeignStudentRoutes = require("./adminForeignStudentRoutes");
 const publicForeignStudentRoutes = require("./publicForeignStudentRoutes");
 const adminUkmRoutes = require("./adminUkmRoutes");
 const publicUkmRoutes = require("./publicUkmRoutes");
+const adminRectorReportRoutes = require("./adminRectorReportRoutes");
+const publicRectorReportRoutes = require("./publicRectorReportRoutes");
 const adminAssistantKnowledgeRoutes = require("./adminAssistantKnowledgeRoutes");
 const publicAssistantRoutes = require("./publicAssistantRoutes");
 const publicSearchRoutes = require("./publicSearchRoutes");
@@ -86,6 +88,10 @@ router.use("/agenda-events", publicAgendaEventRoutes);
 // Kegiatan Mahasiswa / UKM (kehidupan kampus)
 router.use("/admin/ukm", adminUkmRoutes);
 router.use("/ukm", publicUkmRoutes);
+
+// Laporan Tahunan Rektor (FE /laporan-tahunan-rektor)
+router.use("/admin/rector-reports", adminRectorReportRoutes);
+router.use("/rector-reports", publicRectorReportRoutes);
 
 // Struktur Organisasi (profil)
 router.use("/admin/organization-units", adminOrganizationUnitRoutes);

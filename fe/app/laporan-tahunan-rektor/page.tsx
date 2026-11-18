@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import {
+  rectorReportPublicApi,
+  type RectorReportItem,
+  type RectorReportSettings,
+} from "@/lib/rector-report-admin-api";
 
 export const metadata: Metadata = {
   title: "Laporan Tahunan Rektor — Universitas LIA",
@@ -9,24 +14,57 @@ export const metadata: Metadata = {
     "Arsip laporan tahunan Rektor Universitas LIA yang dipublikasikan setiap tahun.",
 };
 
-const reports = [
+const defaultSettings: RectorReportSettings = {
+  id: "main",
+  heroTitle: "Laporan Tahunan Rektor Universitas LIA",
+  heroDescription:
+    "Akses dokumen laporan tahunan rektor yang dipublikasikan oleh Universitas LIA.",
+  archiveTitle: "Arsip laporan",
+  contactEmail: "humas@universitaslia.ac.id",
+};
+
+const defaultReports: RectorReportItem[] = [
   {
-    year: "2024",
+    id: "default-rector-report-2024",
+    year: 2024,
     title: "Laporan Tahunan Rektor 2024",
     description:
       "Dokumen laporan tahunan Rektor Universitas LIA tahun 2024 yang dipublikasikan melalui situs resmi universitas.",
-    cover: "/Laporantahunanrektor2024.jpg",
+    coverUrl: "/Laporantahunanrektor2024.jpg",
+    fileUrl: null,
+    contactEmail: null,
+    sortOrder: 1,
   },
   {
-    year: "2025",
+    id: "default-rector-report-2025",
+    year: 2025,
     title: "Laporan Tahunan Rektor 2025",
     description:
       "Dokumen laporan tahunan Rektor Universitas LIA tahun 2025 yang dipublikasikan melalui situs resmi universitas.",
-    cover: "/Laporantahunanrektor2025.jpg",
+    coverUrl: "/Laporantahunanrektor2025.jpg",
+    fileUrl: null,
+    contactEmail: null,
+    sortOrder: 2,
   },
 ];
 
-export default function RectorReportsPage() {
+async function getRectorReportsData() {
+  try {
+    return await rectorReportPublicApi.getPublicData();
+  } catch {
+    return {
+      settings: defaultSettings,
+      reports: defaultReports,
+    };
+  }
+}
+
+export default async function RectorReportsPage() {
+  const data = await getRectorReportsData();
+  const settings = data?.settings || defaultSettings;
+  const reports =
+    data?.reports && data.reports.length > 0 ? data.reports : defaultReports;
+
   return (
     <main className="rector-reports-page">
       <ScrollReveal>
@@ -37,13 +75,8 @@ export default function RectorReportsPage() {
               <span aria-hidden="true">›</span>
               <span aria-current="page">Laporan Tahunan Rektor</span>
             </nav>
-            <h1 id="rector-reports-title">
-              Laporan Tahunan Rektor Universitas LIA
-            </h1>
-            <p>
-              Akses dokumen laporan tahunan rektor yang dipublikasikan oleh
-              Universitas LIA.
-            </p>
+            <h1 id="rector-reports-title">{settings.heroTitle}</h1>
+            <p>{settings.heroDescription}</p>
           </div>
         </section>
       </ScrollReveal>
@@ -54,17 +87,17 @@ export default function RectorReportsPage() {
           className="rector-report-archive rector-reports-wrap"
         >
           <div className="rector-report-heading">
-            <h2 id="rector-report-archive-title">Arsip laporan</h2>
+            <h2 id="rector-report-archive-title">{settings.archiveTitle || "Arsip laporan"}</h2>
             <span>{reports.length} dokumen</span>
           </div>
           <div className="rector-report-grid">
             {reports.map((report) => (
-              <article className="rector-report-card" key={report.year}>
+              <article className="rector-report-card" key={report.id || report.year}>
                 <Image
                   alt={`Sampul ${report.title}`}
                   className="rector-report-cover"
                   height={300}
-                  src={report.cover}
+                  src={report.coverUrl || "/Laporantahunanrektor2024.jpg"}
                   width={212}
                 />
                 <div className="rector-report-copy">
@@ -73,9 +106,16 @@ export default function RectorReportsPage() {
                   <p>{report.description}</p>
                   <a
                     className="rector-report-link"
-                    href={`mailto:humas@universitaslia.ac.id?subject=${encodeURIComponent(`Permintaan ${report.title}`)}`}
+                    href={
+                      report.fileUrl
+                        ? report.fileUrl
+                        : `mailto:${report.contactEmail || settings.contactEmail}?subject=${encodeURIComponent(
+                            `Permintaan ${report.title}`
+                          )}`
+                    }
+                    {...(report.fileUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   >
-                    Minta Laporan
+                    {report.fileUrl ? "Buka Laporan" : "Minta Laporan"}
                   </a>
                 </div>
               </article>
