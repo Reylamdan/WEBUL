@@ -9,15 +9,7 @@ export interface QuickLinkItem {
   href?: string;
 }
 
-const defaultQuickLinks: QuickLinkItem[] = [
-  { name: "SIAKAD UL", detail: "Sistem informasi akademik", icon: "graduate", href: "#footer" },
-  { name: "E-Learning", detail: "Pembelajaran melalui Edlink", icon: "monitor", href: "#footer" },
-  { name: "Perpustakaan", detail: "Sumber belajar dan referensi", icon: "book", href: "#footer" },
-  { name: "Informasi PMB", detail: "Panduan calon mahasiswa", icon: "file", href: "/pmb" },
-  { name: "E-Journal", detail: "Publikasi ilmiah dan jurnal", icon: "book", href: "#footer" },
-];
-
-export function QuickLinks({ items = defaultQuickLinks }: { items?: QuickLinkItem[] }) {
+export function QuickLinks({ items }: { items: QuickLinkItem[] }) {
   return (
     <ScrollReveal>
       <section aria-label="Layanan kampus" className="quick-links">

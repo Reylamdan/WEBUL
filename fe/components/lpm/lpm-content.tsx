@@ -6,6 +6,8 @@ type LpmEntry = {
   description: string;
   meta?: string;
   href?: string;
+  /** Tombol aksi (mis. lihat/unduh dokumen). Kartu dengan aksi tidak dijadikan tautan utuh. */
+  actions?: { label: string; href: string; download?: boolean }[];
 };
 
 type LpmSection = {
@@ -243,12 +245,25 @@ export const lpmSections: LpmSection[] = [
   },
 ];
 
-export function LpmContent({ sectionId }: { sectionId: string }) {
-  const section = lpmSections.find((item) => item.id === sectionId);
+export type LpmSectionOverride = Partial<
+  Pick<LpmSection, "label" | "title" | "description" | "contentTitle" | "entries">
+>;
 
-  if (!section) {
+export function LpmContent({
+  sectionId,
+  override,
+}: {
+  sectionId: string;
+  /** Mengganti isi section statis dengan data dinamis dari API. */
+  override?: LpmSectionOverride;
+}) {
+  const base = lpmSections.find((item) => item.id === sectionId);
+
+  if (!base) {
     return null;
   }
+
+  const section: LpmSection = { ...base, ...override };
 
   return (
     <main className="lpm-content-page">
@@ -327,6 +342,21 @@ export function LpmContent({ sectionId }: { sectionId: string }) {
                   {entry.meta ? <span className="lpm-entry-meta">{entry.meta}</span> : null}
                   <h3>{entry.title}</h3>
                   <p>{entry.description}</p>
+                  {entry.actions?.length ? (
+                    <div className="lpm-entry-actions">
+                      {entry.actions.map((action) => (
+                        <a
+                          className="lpm-entry-action"
+                          href={action.href}
+                          key={action.label}
+                          rel="noopener noreferrer"
+                          target={action.download ? undefined : "_blank"}
+                        >
+                          {action.label}
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
                   {entry.href ? (
                     <span aria-hidden="true" className="lpm-entry-arrow">
                       →

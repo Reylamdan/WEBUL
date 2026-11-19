@@ -2,6 +2,7 @@ import { Icon } from "@/components/icons";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "./section-heading";
 import { SmartLink } from "@/components/smart-link";
+import type { HomepageContent } from "@/lib/homepage-api";
 
 export interface ProgramItem {
   eyebrow: string;
@@ -11,28 +12,18 @@ export interface ProgramItem {
   href?: string;
 }
 
-const defaultPrograms: ProgramItem[] = [
-  { eyebrow: "FAKULTAS HUMANIORA & DESAIN", title: "Desain Komunikasi Visual", code: "S1 · 8 semester", color: "coral", href: "/akademik/fakultas" },
-  { eyebrow: "FAKULTAS HUMANIORA & DESAIN", title: "Bahasa Inggris", code: "S1 · 8 semester", color: "blue", href: "/akademik/fakultas" },
-  { eyebrow: "FAKULTAS HUMANIORA & DESAIN", title: "Bahasa Jepang", code: "S1 · 8 semester", color: "yellow", href: "/akademik/fakultas" },
-  { eyebrow: "FAKULTAS SAINS & BISNIS", title: "Bisnis Digital", code: "S1 · 8 semester", color: "green", href: "/akademik/fakultas" },
-  { eyebrow: "FAKULTAS SAINS & BISNIS", title: "Sistem Informasi", code: "S1 · 8 semester", color: "lavender", href: "/akademik/fakultas" },
-  { eyebrow: "FAKULTAS SAINS & BISNIS", title: "Informatika", code: "S1 · 8 semester", color: "orange", href: "/akademik/fakultas" },
-];
-
-export function ProgramSection({ programs = defaultPrograms }: { programs?: ProgramItem[] }) {
+export function ProgramSection({ content }: { content: HomepageContent["programs"] }) {
+  const programs: ProgramItem[] = content.items;
   return (
     <ScrollReveal delay={210}>
     <section className="program-section content-wrap" id="program">
       <SectionHeading
-        eyebrow="TEMUKAN MINATMU"
-        href="/akademik/fakultas"
-        link="Lihat semua program"
-        title="Belajar sesuatu yang berarti"
+        eyebrow={content.eyebrow || undefined}
+        href={content.linkHref}
+        link={content.linkLabel}
+        title={content.title}
       />
-      <p className="section-lead program-lead">
-        Pilih program yang sesuai dengan rasa ingin tahu dan cita-citamu.
-      </p>
+      {content.lead ? <p className="section-lead program-lead">{content.lead}</p> : null}
       <div className="program-grid">
         {programs.map((program, index) => (
           <ScrollReveal delay={(index % 4) * 70} key={program.title}>
@@ -55,8 +46,8 @@ export function ProgramSection({ programs = defaultPrograms }: { programs?: Prog
           </ScrollReveal>
         ))}
       </div>
-      <SmartLink className="text-link programs-mobile-link" href="/akademik/fakultas">
-        Lihat semua program <Icon name="arrow" size={16} />
+      <SmartLink className="text-link programs-mobile-link" href={content.linkHref}>
+        {content.linkLabel} <Icon name="arrow" size={16} />
       </SmartLink>
     </section>
     </ScrollReveal>

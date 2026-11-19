@@ -1,5 +1,5 @@
-import { LpmContent } from "@/components/lpm/lpm-content";
+import { RtmRtlReportList } from "@/components/lpm/rtm-rtl/rtm-rtl-reports";
 
 export default function LaporanTahunanRtmRtlPage() {
-  return <LpmContent sectionId="laporan-tahunan-rtm-rtl" />;
+  return <RtmRtlReportList />;
 }
