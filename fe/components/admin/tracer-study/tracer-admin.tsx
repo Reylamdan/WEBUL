@@ -560,11 +560,17 @@ export function TracerAdmin() {
   const [notice, setNotice] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
+  const [currentYear, setCurrentYear] = useState(2025);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
   const years = useApi(`tracer-admin-years:${refresh}`, tracerAdminApi.years);
   const yearRows = years.data?.years ?? [];
   const programs = years.data?.programs ?? [];
   const existingByYear = new Map(yearRows.map((row) => [row.year, row.total]));
-  const defaultYear = yearRows[0]?.year ?? new Date().getFullYear();
+  const defaultYear = yearRows[0]?.year ?? currentYear;
   const totalResponses = yearRows.reduce((sum, row) => sum + row.total, 0);
 
   const changed = (message: string) => {

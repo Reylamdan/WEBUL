@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AdminIcon } from "./admin-icons";
 import { ADMIN_NAV_GROUPS } from "./admin-nav-data";
 
@@ -16,6 +16,35 @@ export function AdminSidebar({
 }) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
+  const navRef = useRef<HTMLElement>(null);
+  const activeRef = useRef<HTMLAnchorElement>(null);
+  const hasScrolledRef = useRef(false);
+
+  // Scroll active item into view on pathname change
+  useEffect(() => {
+    hasScrolledRef.current = false;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (hasScrolledRef.current) return;
+    const el = activeRef.current;
+    const nav = navRef.current;
+    if (el && nav) {
+      hasScrolledRef.current = true;
+      // Use requestAnimationFrame to ensure layout is settled
+      requestAnimationFrame(() => {
+        el.scrollIntoView({ block: "center", behavior: "instant" });
+      });
+    }
+  });
+
+  const activeRefCallback = useCallback(
+    (node: HTMLAnchorElement | null) => {
+      activeRef.current = node;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pathname]
+  );
 
   const filteredGroups = useMemo(() => {
     if (!searchQuery.trim()) return ADMIN_NAV_GROUPS;
@@ -31,8 +60,22 @@ export function AdminSidebar({
     }).filter((group) => group.items.length > 0);
   }, [searchQuery]);
 
-  const isItemActive = (href: string) => {
-    return pathname === href || (href !== "/admin" && pathname.startsWith(`${href}/`));
+  const isItemActive = (href: string, id: string) => {
+    if (pathname === href) return true;
+    // Only match child routes if no other sibling item is an exact match
+    if (href !== "/admin" && pathname.startsWith(`${href}/`)) {
+      const group = filteredGroups.find((g) =>
+        g.items.some((item) => item.id === id)
+      );
+      if (group) {
+        const hasExactMatch = group.items.some(
+          (item) => item.id !== id && pathname === item.href
+        );
+        if (hasExactMatch) return false;
+      }
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -99,13 +142,13 @@ export function AdminSidebar({
         </div>
 
         {/* Navigation Groups */}
-        <nav className="admin-sidebar-nav">
+        <nav className="admin-sidebar-nav" ref={navRef}>
           {filteredGroups.map((group) => (
             <div className="admin-nav-group" key={group.groupTitle}>
               <div className="admin-group-title">{group.groupTitle}</div>
               <ul className="admin-group-list">
                 {group.items.map((item) => {
-                  const active = isItemActive(item.href);
+                  const active = isItemActive(item.href, item.id);
                   return (
                     <li key={item.id}>
                       <Link
@@ -113,6 +156,7 @@ export function AdminSidebar({
                         className={`admin-nav-link ${active ? "is-active" : ""}`}
                         href={item.href}
                         onClick={onClose}
+                        ref={active ? activeRefCallback : undefined}
                         title={item.label}
                       >
                         <span className="admin-nav-icon">

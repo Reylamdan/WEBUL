@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import {
@@ -16,13 +16,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
-  const [accessResult, setAccessResult] = useState<{
-    pathname: string;
-    retryCount: number;
-    status: "authorized" | "error";
-    message?: string;
-  } | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(() => {
+    if (typeof window === "undefined") return null;
+    return !!getAdminSession();
+  });
+
+  const verifiedRef = useRef(false);
 
   // Close sidebar on window resize to desktop
   useEffect(() => {
@@ -38,89 +37,47 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (pathname === "/admin/login") return;
 
-    let active = true;
     const session = getAdminSession();
     if (!session) {
+      setIsAuthorized(false);
       router.replace("/admin/login");
-      return () => {
-        active = false;
-      };
+      return;
     }
 
-    verifyAdminSession(session.token)
-      .then((admin) => {
-        if (
-          admin.id !== session.admin.id ||
-          admin.email.toLowerCase() !== session.admin.email.toLowerCase()
-        ) {
-          throw new ApiError(
-            "Sesi tidak sesuai dengan akun administrator yang diverifikasi.",
-            403,
-            "ADMIN_SESSION_MISMATCH",
-          );
-        }
-        if (active) {
-          setAccessResult({ pathname, retryCount, status: "authorized" });
-        }
-      })
-      .catch((error: unknown) => {
-        if (!active) return;
-        if (
-          error instanceof ApiError &&
-          (error.status === 401 || error.status === 403)
-        ) {
-          clearAdminSession();
-          router.replace("/admin/login");
-          return;
-        }
-        setAccessResult({
-          pathname,
-          retryCount,
-          status: "error",
-          message:
-            error instanceof Error
-              ? error.message
-              : "Sesi admin tidak dapat diverifikasi.",
-        });
-      });
+    setIsAuthorized(true);
 
-    return () => {
-      active = false;
-    };
-  }, [pathname, retryCount, router]);
+    // Verifikasi sesi ke backend di background (cukup sekali per session load)
+    if (!verifiedRef.current) {
+      verifiedRef.current = true;
+      verifyAdminSession(session.token)
+        .then((admin) => {
+          if (
+            admin.id !== session.admin.id ||
+            admin.email.toLowerCase() !== session.admin.email.toLowerCase()
+          ) {
+            clearAdminSession();
+            router.replace("/admin/login");
+          }
+        })
+        .catch((error: unknown) => {
+          if (
+            error instanceof ApiError &&
+            (error.status === 401 || error.status === 403)
+          ) {
+            clearAdminSession();
+            router.replace("/admin/login");
+          }
+        });
+    }
+  }, [pathname, router]);
 
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
 
-  const currentAccess =
-    accessResult?.pathname === pathname &&
-    accessResult.retryCount === retryCount
-      ? accessResult
-      : null;
-
-  if (!currentAccess) {
-    return (
-      <main aria-live="polite" className="admin-auth-checking">
-        Memverifikasi sesi administrator...
-      </main>
-    );
-  }
-
-  if (currentAccess.status === "error") {
-    return (
-      <main className="admin-auth-checking">
-        <p role="alert">{currentAccess.message}</p>
-        <div className="admin-auth-checking-actions">
-          <button onClick={() => setRetryCount((count) => count + 1)} type="button">
-            Coba lagi
-          </button>
-          <button onClick={() => router.replace("/admin/login")} type="button">
-            Kembali ke login
-          </button>
-        </div>
-      </main>
-    );
+  // Jika tidak ada session / belum login, jangan render layout admin (langsung redirect)
+  if (isAuthorized === false) {
+    return null;
   }
 
   return (
@@ -146,4 +103,3 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
