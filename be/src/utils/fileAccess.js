@@ -30,6 +30,8 @@ const KINDS = {
   regulationDocument: "regulation_document",
   regulationAttachment: "regulation_attachment",
   lpmArchiveDocument: "lpm_archive_document",
+  lpmBenchmarkingDocument: "lpm_benchmarking_document",
+  lpmAuditReportDocument: "lpm_audit_report_document",
 };
 
 const apiUrl = (path) => `${env.backendPublicUrl}${path}`;
@@ -91,6 +93,12 @@ const PUBLIC_PATHS = {
 
   [KINDS.lpmArchiveDocument]: ({ recordId }) =>
     `/api/lpm-archives/${recordId}/document`,
+
+  [KINDS.lpmBenchmarkingDocument]: ({ recordId }) =>
+    `/api/lpm-benchmarkings/${recordId}/document`,
+
+  [KINDS.lpmAuditReportDocument]: ({ recordId }) =>
+    `/api/lpm-audit-reports/${recordId}/document`,
 };
 
 // Membuat URL preview, download, dan waktu kedaluwarsa.

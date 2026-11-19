@@ -7,6 +7,8 @@
 //            GET /api/banpt-regulations/:id/document
 //            GET /api/banpt-regulations/:id/attachments/:attachmentId
 //            GET /api/lpm-archives/:id/document
+//            GET /api/lpm-benchmarkings/:id/document
+//            GET /api/lpm-audit-reports/:id/document
 //            -> hanya data berstatus published (selain itu 404)
 //
 //   admin  : GET /api/files/:token -> token berumur pendek dari respons API admin
@@ -22,6 +24,8 @@ const drive = require("../services/googleDriveService");
 const accreditationService = require("../services/accreditationService");
 const regulationService = require("../services/banptRegulationService");
 const lpmArchiveService = require("../services/lpmArchiveService");
+const lpmBenchmarkingService = require("../services/lpmBenchmarkingService");
+const lpmAuditReportService = require("../services/lpmAuditReportService");
 const { KINDS, verifyFileToken } = require("../utils/fileAccess");
 
 // Hanya tipe ini yang boleh tampil inline. Tipe lain selalu diunduh.
@@ -244,6 +248,34 @@ const publicLpmArchiveDocument = async (req, res) => {
   });
 };
 
+// Dokumen benchmarking LPM hanya dapat diakses publik jika sudah published.
+const publicLpmBenchmarkingDocument = async (req, res) => {
+  const file = await lpmBenchmarkingService.getDriveFile(
+    req.validated.params.id,
+    null,
+    { published: true }
+  );
+
+  return streamDriveFile(req, res, file, {
+    download: wantsDownload(req.query),
+    cacheControl: PUBLIC_CACHE,
+  });
+};
+
+// Dokumen laporan audit mutu hanya dapat diakses publik jika sudah published.
+const publicLpmAuditReportDocument = async (req, res) => {
+  const file = await lpmAuditReportService.getDriveFile(
+    req.validated.params.id,
+    null,
+    { published: true }
+  );
+
+  return streamDriveFile(req, res, file, {
+    download: wantsDownload(req.query),
+    cacheControl: PUBLIC_CACHE,
+  });
+};
+
 // ---------- ADMIN (TOKEN) ----------
 
 const resolveByToken = (payload) => {
@@ -265,6 +297,22 @@ const resolveByToken = (payload) => {
 
   if (payload.kind === KINDS.lpmArchiveDocument) {
     return lpmArchiveService.getDriveFile(
+      payload.recordId,
+      null,
+      { published: false }
+    );
+  }
+
+  if (payload.kind === KINDS.lpmBenchmarkingDocument) {
+    return lpmBenchmarkingService.getDriveFile(
+      payload.recordId,
+      null,
+      { published: false }
+    );
+  }
+
+  if (payload.kind === KINDS.lpmAuditReportDocument) {
+    return lpmAuditReportService.getDriveFile(
       payload.recordId,
       null,
       { published: false }
@@ -311,5 +359,7 @@ module.exports = {
   publicRegulationDocument,
   publicRegulationAttachment,
   publicLpmArchiveDocument,
+  publicLpmBenchmarkingDocument,
+  publicLpmAuditReportDocument,
   adminFileByToken,
 };

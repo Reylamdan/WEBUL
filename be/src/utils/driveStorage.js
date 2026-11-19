@@ -15,6 +15,8 @@ const CATEGORIES = {
   accreditationStudyProgram: { folderName: "akreditasi-program-studi" },
   banptRegulation: { folderName: "regulasi-banpt" },
   lpmArchive: { folderName: "lpm-manajemen-arsip" },
+  lpmBenchmarking: { folderName: "lpm-benchmarking" },
+  lpmAuditReport: { folderName: "lpm-laporan-audit-mutu" },
 };
 
 const CLEANUP_TABLE = "drive_cleanup_queue";
