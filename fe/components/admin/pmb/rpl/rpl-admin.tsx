@@ -735,7 +735,7 @@ export function RplAdmin() {
   };
 
   return (
-    <section className="aa-page">
+    <section className="aa-page pmb-admin-editor">
       <header className="aa-header">
         <div>
           <h1 className="aa-title">Jalur RPL (Rekognisi Pembelajaran Lampau)</h1>

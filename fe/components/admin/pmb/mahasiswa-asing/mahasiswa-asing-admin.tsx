@@ -258,7 +258,7 @@ export function MahasiswaAsingAdmin() {
   }
 
   return (
-    <section className="aa-page">
+    <section className="aa-page pmb-admin-editor">
       <header className="aa-header">
         <div>
           <h1 className="aa-title">Mahasiswa Asing (Syarat & Ketentuan)</h1>

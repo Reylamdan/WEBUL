@@ -527,7 +527,7 @@ export function BiayaKuliahAdmin() {
   const defaultPrograms = settingsForm.studyPrograms || DEFAULT_STUDY_PROGRAMS;
 
   return (
-    <section className="aa-page">
+    <section className="aa-page pmb-admin-editor">
       <header className="aa-header">
         <div>
           <h1 className="aa-title">Biaya Kuliah (UKT)</h1>
