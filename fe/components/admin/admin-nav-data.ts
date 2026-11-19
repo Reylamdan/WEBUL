@@ -43,20 +43,20 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         icon: "users",
         section: "Profil",
       },
-      {
-        id: "sambutan-rektor",
-        label: "Sambutan Rektor",
-        href: "/admin/profil/sambutan-rektor",
-        icon: "speech",
-        section: "Profil",
-      },
-      {
-        id: "pimpinan",
-        label: "Pimpinan",
-        href: "/admin/profil/pimpinan",
-        icon: "users",
-        section: "Profil",
-      },
+      // {
+      //   id: "sambutan-rektor",
+      //   label: "Sambutan Rektor",
+      //   href: "/admin/profil/sambutan-rektor",
+      //   icon: "speech",
+      //   section: "Profil",
+      // },
+      // {
+      //   id: "pimpinan",
+      //   label: "Pimpinan",
+      //   href: "/admin/profil/pimpinan",
+      //   icon: "users",
+      //   section: "Profil",
+      // },
       {
         id: "akreditasi",
         label: "Akreditasi",
@@ -149,13 +149,13 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         icon: "activity",
         section: "Kehidupan Kampus",
       },
-      {
-        id: "kegiatan-mahasiswa",
-        label: "Kegiatan Mahasiswa",
-        href: "/admin/kehidupan-kampus/kegiatan-mahasiswa",
-        icon: "activity",
-        section: "Kehidupan Kampus",
-      },
+      // {
+      //   id: "kegiatan-mahasiswa",
+      //   label: "Kegiatan Mahasiswa",
+      //   href: "/admin/kehidupan-kampus/kegiatan-mahasiswa",
+      //   icon: "activity",
+      //   section: "Kehidupan Kampus",
+      // },
       {
         id: "berita-terkini",
         label: "Berita Terkini",
@@ -194,13 +194,13 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     groupTitle: "Lembaga Penjaminan Mutu (LPM)",
     items: [
-      {
-        id: "laporan-lpm",
-        label: "Laporan LPM",
-        href: "/admin/lpm/laporan",
-        icon: "fileText",
-        section: "LPM",
-      },
+      // {
+      //   id: "laporan-lpm",
+      //   label: "Laporan LPM",
+      //   href: "/admin/lpm/laporan",
+      //   icon: "fileText",
+      //   section: "LPM",
+      // },
       {
         id: "kegiatan-lpm",
         label: "Kegiatan LPM",
