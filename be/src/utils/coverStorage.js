@@ -22,6 +22,9 @@ const buildProfileImagePath = (section, extension) =>
 const buildFacilityImagePath = (facilityId, extension) =>
   `facilities/${facilityId}/${crypto.randomUUID()}.${extension}`;
 
+const buildHomepageImagePath = (photoId, extension) =>
+  `homepage/${photoId}/${crypto.randomUUID()}.${extension}`;
+
 const getCoverPublicUrl = (coverPath) => {
   if (!coverPath) return null;
   return supabase.storage.from(BUCKET).getPublicUrl(coverPath).data.publicUrl;
@@ -98,6 +101,7 @@ module.exports = {
   buildOrganizationImagePath,
   buildProfileImagePath,
   buildFacilityImagePath,
+  buildHomepageImagePath,
   getCoverPublicUrl,
   uploadCoverObject,
   removeCoverObject,

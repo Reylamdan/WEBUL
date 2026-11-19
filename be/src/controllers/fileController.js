@@ -9,6 +9,7 @@
 //            GET /api/lpm-archives/:id/document
 //            GET /api/lpm-benchmarkings/:id/document
 //            GET /api/lpm-audit-reports/:id/document
+//            GET /api/lpm-rtm-rtl-reports/:id/document
 //            -> hanya data berstatus published (selain itu 404)
 //
 //   admin  : GET /api/files/:token -> token berumur pendek dari respons API admin
@@ -26,6 +27,7 @@ const regulationService = require("../services/banptRegulationService");
 const lpmArchiveService = require("../services/lpmArchiveService");
 const lpmBenchmarkingService = require("../services/lpmBenchmarkingService");
 const lpmAuditReportService = require("../services/lpmAuditReportService");
+const lpmRtmRtlReportService = require("../services/lpmRtmRtlReportService");
 const { KINDS, verifyFileToken } = require("../utils/fileAccess");
 
 // Hanya tipe ini yang boleh tampil inline. Tipe lain selalu diunduh.
@@ -276,6 +278,20 @@ const publicLpmAuditReportDocument = async (req, res) => {
   });
 };
 
+// Dokumen laporan RTM & RTL hanya dapat diakses publik jika sudah published.
+const publicLpmRtmRtlReportDocument = async (req, res) => {
+  const file = await lpmRtmRtlReportService.getDriveFile(
+    req.validated.params.id,
+    null,
+    { published: true }
+  );
+
+  return streamDriveFile(req, res, file, {
+    download: wantsDownload(req.query),
+    cacheControl: PUBLIC_CACHE,
+  });
+};
+
 // ---------- ADMIN (TOKEN) ----------
 
 const resolveByToken = (payload) => {
@@ -313,6 +329,14 @@ const resolveByToken = (payload) => {
 
   if (payload.kind === KINDS.lpmAuditReportDocument) {
     return lpmAuditReportService.getDriveFile(
+      payload.recordId,
+      null,
+      { published: false }
+    );
+  }
+
+  if (payload.kind === KINDS.lpmRtmRtlReportDocument) {
+    return lpmRtmRtlReportService.getDriveFile(
       payload.recordId,
       null,
       { published: false }
@@ -361,5 +385,6 @@ module.exports = {
   publicLpmArchiveDocument,
   publicLpmBenchmarkingDocument,
   publicLpmAuditReportDocument,
+  publicLpmRtmRtlReportDocument,
   adminFileByToken,
 };

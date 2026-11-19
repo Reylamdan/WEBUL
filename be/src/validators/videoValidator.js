@@ -6,7 +6,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 // (lihat MODULE_TABLES di adminVideoController dan pemeriksaan published di publicVideoController).
 // Modul lain (student-activities, campus-profile, academic-info, promotions, documentation) belum punya
 // tabel induk, jadi DITOLAK sampai tabelnya ada; tambahkan di sini dan di kedua controller sekaligus.
-const ALLOWED_MODULES = ["news", "announcements"];
+const ALLOWED_MODULES = ["news", "announcements", "homepage-videos"];
 
 const videoParamsSchema = z.object({
   module: z

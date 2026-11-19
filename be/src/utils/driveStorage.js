@@ -17,6 +17,7 @@ const CATEGORIES = {
   lpmArchive: { folderName: "lpm-manajemen-arsip" },
   lpmBenchmarking: { folderName: "lpm-benchmarking" },
   lpmAuditReport: { folderName: "lpm-laporan-audit-mutu" },
+  lpmRtmRtlReport: { folderName: "lpm-laporan-rtm-rtl" },
 };
 
 const CLEANUP_TABLE = "drive_cleanup_queue";

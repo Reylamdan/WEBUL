@@ -18,6 +18,10 @@ const adminLpmActivityRoutes = require("./adminLpmActivityRoutes");
 const publicLpmActivityRoutes = require("./publicLpmActivityRoutes");
 const adminLpmAuditReportRoutes = require("./adminLpmAuditReportRoutes");
 const publicLpmAuditReportRoutes = require("./publicLpmAuditReportRoutes");
+const adminHomepageRoutes = require("./adminHomepageRoutes");
+const publicHomepageRoutes = require("./publicHomepageRoutes");
+const adminLpmRtmRtlReportRoutes = require("./adminLpmRtmRtlReportRoutes");
+const publicLpmRtmRtlReportRoutes = require("./publicLpmRtmRtlReportRoutes");
 const fileRoutes = require("./fileRoutes");
 const adminAcademicCalendarRoutes = require("./adminAcademicCalendarRoutes");
 const publicAcademicCalendarRoutes = require("./publicAcademicCalendarRoutes");
@@ -74,6 +78,10 @@ router.use("/accreditation", publicAccreditationRoutes);
 router.use("/admin/banpt-regulations", adminBanptRegulationRoutes);
 router.use("/banpt-regulations", publicBanptRegulationRoutes);
 
+// Beranda (FE "/" dan admin /admin/beranda): teks, foto, video
+router.use("/admin/homepage", adminHomepageRoutes);
+router.use("/homepage", publicHomepageRoutes);
+
 // LPM - Manajemen Arsip
 router.use("/admin/lpm-archives", adminLpmArchiveRoutes);
 router.use("/lpm-archives", publicLpmArchiveRoutes);
@@ -81,6 +89,10 @@ router.use("/lpm-archives", publicLpmArchiveRoutes);
 // LPM - Laporan Tahunan Audit Mutu Internal (FE /lpm/laporan-lpm/laporan-tahunan-audit-mutu-internal)
 router.use("/admin/lpm-audit-reports", adminLpmAuditReportRoutes);
 router.use("/lpm-audit-reports", publicLpmAuditReportRoutes);
+
+// LPM - Laporan Tahunan RTM & RTL (FE /lpm/laporan-lpm/laporan-tahunan-rtm-rtl)
+router.use("/admin/lpm-rtm-rtl-reports", adminLpmRtmRtlReportRoutes);
+router.use("/lpm-rtm-rtl-reports", publicLpmRtmRtlReportRoutes);
 
 // LPM - Kegiatan LPM (FE /lpm/kegiatan-lpm)
 router.use("/admin/lpm-activities", adminLpmActivityRoutes);

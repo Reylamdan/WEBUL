@@ -21,6 +21,7 @@ const recordNotFound = (moduleName) =>
 const MODULE_TABLES = {
   news: "news",
   announcements: "announcements",
+  "homepage-videos": "homepage_videos",
 };
 
 // Memverifikasi apakah data induk benar-benar ada di tabel modulnya

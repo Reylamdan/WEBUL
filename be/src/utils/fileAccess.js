@@ -32,6 +32,7 @@ const KINDS = {
   lpmArchiveDocument: "lpm_archive_document",
   lpmBenchmarkingDocument: "lpm_benchmarking_document",
   lpmAuditReportDocument: "lpm_audit_report_document",
+  lpmRtmRtlReportDocument: "lpm_rtm_rtl_report_document",
 };
 
 const apiUrl = (path) => `${env.backendPublicUrl}${path}`;
@@ -99,6 +100,9 @@ const PUBLIC_PATHS = {
 
   [KINDS.lpmAuditReportDocument]: ({ recordId }) =>
     `/api/lpm-audit-reports/${recordId}/document`,
+
+  [KINDS.lpmRtmRtlReportDocument]: ({ recordId }) =>
+    `/api/lpm-rtm-rtl-reports/${recordId}/document`,
 };
 
 // Membuat URL preview, download, dan waktu kedaluwarsa.

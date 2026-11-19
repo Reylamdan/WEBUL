@@ -48,6 +48,15 @@ const getPublicVideo = async (req, res) => {
     if (!ann || ann.status !== "published" || !ann.published_at || new Date(ann.published_at) > new Date()) {
       throw videoNotFound();
     }
+  } else if (module === "homepage-videos") {
+    const { data: hv, error: hvErr } = await supabase
+      .from("homepage_videos")
+      .select("id, status")
+      .eq("id", recordId)
+      .maybeSingle();
+
+    if (hvErr) throwDbError("public: verifikasi video beranda", hvErr);
+    if (!hv || hv.status !== "published") throw videoNotFound();
   } else {
     // Fail closed: modul tanpa verifikasi konten induk tidak pernah dipublikasikan.
     throw videoNotFound();
