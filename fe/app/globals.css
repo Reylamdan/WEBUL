@@ -352,7 +352,7 @@ main nav[aria-label="Breadcrumb"] {
   gap: 0;
   padding: 3px;
   border: 1px solid #e0e8ec;
-  border-radius: 3px;
+  border-radius: 7px;
   background: #fff;
   white-space: nowrap;
 }
@@ -360,9 +360,9 @@ main nav[aria-label="Breadcrumb"] {
 .lang-btn {
   min-width: 24px;
   min-height: 22px;
-  padding: 3px 5px;
+  padding: 3px 6px;
   border: 0;
-  border-radius: 2px;
+  border-radius: 5px;
   background: transparent;
   color: #647276;
   cursor: pointer;
@@ -899,6 +899,7 @@ main nav[aria-label="Breadcrumb"] {
   bottom: 0;
   left: 0;
   height: 3px;
+  border-radius: 3px 3px 0 0;
   background: var(--blue);
   content: "";
 }
@@ -912,7 +913,7 @@ main nav[aria-label="Breadcrumb"] {
   max-height: 0;
   overflow: visible;
   padding: 0;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 12px 12px;
   background: #0c5592;
   box-shadow: 0 14px 28px #102e431f;
   color: white;
@@ -925,6 +926,14 @@ main nav[aria-label="Breadcrumb"] {
     opacity .2s ease,
     transform .2s ease,
     visibility 0s linear .28s;
+}
+
+.menu-tree > .menu-branch:last-child,
+.menu-tree > .menu-branch:last-child > .menu-link,
+.menu-tree > .menu-branch:last-child > .menu-link-branch,
+.menu-tree > .menu-branch:last-child > .menu-link-label {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 .nav-dropdown.is-open {
@@ -1050,6 +1059,7 @@ main nav[aria-label="Breadcrumb"] {
   max-height: 0;
   overflow: hidden;
   border-left: 1px solid #ffffff4d;
+  border-radius: 0 10px 10px 10px;
   background: #0c5592;
   box-shadow: 0 14px 28px #102e431f;
   opacity: 0;
@@ -1109,7 +1119,7 @@ main nav[aria-label="Breadcrumb"] {
   align-items: center;
   padding: 3px 8px;
   border: 1px solid #d3dfe5;
-  border-radius: 4px;
+  border-radius: 7px;
   background: #ffffff;
   font-size: 11px;
   font-weight: 600;
@@ -1117,8 +1127,9 @@ main nav[aria-label="Breadcrumb"] {
 }
 
 .lang-btn {
-  padding: 1px 3px;
+  padding: 1px 4px;
   border: 0;
+  border-radius: 4px;
   background: transparent;
   color: #718087;
   cursor: pointer;
@@ -1216,7 +1227,7 @@ main nav[aria-label="Breadcrumb"] {
   gap: 10px;
   padding: 0 20px;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
@@ -1225,7 +1236,7 @@ main nav[aria-label="Breadcrumb"] {
 }
 
 .button.nav-apply {
-  border-radius: 3px;
+  border-radius: 8px;
 }
 
 .site-header.is-floating .button.nav-apply {
