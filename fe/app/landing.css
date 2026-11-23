@@ -1,0 +1,1068 @@
+/* ==========================================================================
+   Beranda Universitas LIA — layout baru
+   Warna & font mengikuti globals.css (--blue, Inter). Semua class berawalan
+   "lp-" agar tidak bentrok dengan halaman lain.
+   ========================================================================== */
+
+.lp {
+  --lp-blue: var(--blue, #005b8c);
+  --lp-blue-dark: var(--blue-dark, #004d78);
+  --lp-ink: #172a35;
+  --lp-text: #23373d;
+  --lp-muted: #5d6d72;
+  --lp-line: #dce4e2;
+  --lp-pale: #f3f6f4;
+  --lp-radius: 4px;
+  --lp-gutter: 64px;
+
+  color: var(--lp-text);
+}
+
+@media (max-width: 640px) {
+  .lp {
+    --lp-gutter: 40px;
+  }
+}
+
+/* ---------- Dasar ---------- */
+
+.lp-wrap {
+  width: min(1120px, calc(100% - var(--lp-gutter)));
+  margin-inline: auto;
+}
+
+.lp-section {
+  padding-block: clamp(56px, 7vw, 96px);
+}
+
+.lp section[id] {
+  scroll-margin-top: 130px;
+}
+
+.lp h1,
+.lp h2,
+.lp h3 {
+  margin: 0;
+  color: var(--lp-ink);
+}
+
+.lp h2 {
+  font-size: clamp(28px, 3.3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+.lp-eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--lp-blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.lp-lead {
+  margin: 0;
+  color: var(--lp-muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.lp-empty {
+  margin: 0;
+  padding: 24px 0;
+  color: var(--lp-muted);
+  font-size: 15px;
+}
+
+.lp-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.lp-head .lp-eyebrow {
+  margin-bottom: 10px;
+}
+
+.lp-photo-label {
+  position: absolute;
+  bottom: 20px;
+  left: 24px;
+  z-index: 1;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-shadow: 0 1px 6px #0f2a3466;
+}
+
+/* ---------- Tombol & tautan ---------- */
+
+.lp-btn {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
+  border-radius: var(--lp-radius);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lp-btn:hover {
+  transform: translateY(-1px);
+}
+
+.lp-btn-primary {
+  background: var(--lp-blue);
+  color: #fff;
+}
+
+.lp-btn-primary:hover {
+  background: #00466e;
+}
+
+.lp-btn-light {
+  background: #fff;
+  color: var(--lp-blue-dark);
+}
+
+.lp-btn-light:hover {
+  background: #eaf3f7;
+}
+
+.lp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--lp-blue);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.lp-link svg {
+  transition: transform 0.18s ease;
+}
+
+.lp-link:hover svg {
+  transform: translateX(4px);
+}
+
+.lp-link-quiet {
+  color: var(--lp-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--lp-line);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.lp-link-quiet:hover {
+  text-decoration-color: var(--lp-blue);
+}
+
+.lp a:focus-visible,
+.lp button:focus-visible {
+  outline: 2px solid var(--lp-blue);
+  outline-offset: 3px;
+}
+
+/* ---------- 1. Hero ---------- */
+
+.lp-hero {
+  background: var(--lp-pale);
+}
+
+.lp-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 80px);
+  padding-block: clamp(40px, 6vw, 72px);
+}
+
+.lp-hero-copy h1 {
+  margin-bottom: 22px;
+  font-size: clamp(36px, 4.6vw, 54px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.lp-hero-copy h1 span {
+  display: block;
+}
+
+.lp-hero-accent {
+  color: var(--lp-blue);
+}
+
+.lp-hero-copy p {
+  max-width: 44ch;
+  margin: 0 0 32px;
+  color: var(--lp-muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.lp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+}
+
+.lp-hero-media {
+  margin: 0;
+  min-width: 0;
+}
+
+.lp-hero-photo {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  border-radius: var(--lp-radius);
+  background:
+    repeating-linear-gradient(90deg, #ffffff24 0 1px, transparent 1px 56px),
+    linear-gradient(130deg, #e0e9e4, #aebfba 48%, #d2d7cd);
+  background-position: center;
+  background-size: cover;
+}
+
+.lp-hero-photo::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  background: linear-gradient(transparent, #10293480);
+  content: "";
+  pointer-events: none;
+}
+
+.lp-play {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px 8px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--lp-blue-dark);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lp-play:hover {
+  box-shadow: 0 10px 24px #10293440;
+  transform: translateY(-2px);
+}
+
+.lp-play-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--lp-blue);
+  color: #fff;
+}
+
+.lp-hero-media figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+  color: var(--lp-muted);
+  font-size: 14px;
+}
+
+.lp-hero-note {
+  flex-shrink: 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-align: right;
+}
+
+/* ---------- 2. Akses cepat ---------- */
+
+.lp-access {
+  border-bottom: 1px solid var(--lp-line);
+  background: #fff;
+}
+
+.lp-access-list {
+  display: grid;
+  grid-template-columns: repeat(var(--lp-cols, 5), minmax(0, 1fr));
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-access-list > li {
+  border-left: 1px solid var(--lp-line);
+}
+
+.lp-access-list > li:first-child {
+  border-left: 0;
+}
+
+.lp-access-item {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 20px 24px 24px;
+}
+
+.lp-access-list > li:first-child .lp-access-item {
+  padding-left: 0;
+}
+
+.lp-access-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  color: var(--lp-blue);
+}
+
+.lp-access-arrow {
+  opacity: 0.4;
+  transform: rotate(-45deg);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.lp-access-item:hover .lp-access-arrow {
+  opacity: 1;
+  transform: translate(2px, -2px) rotate(-45deg);
+}
+
+.lp-access-item strong {
+  color: var(--lp-ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.lp-access-item small {
+  color: var(--lp-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ---------- 3. Tentang ---------- */
+
+.lp-about-head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: end;
+  gap: clamp(24px, 5vw, 64px);
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.lp-about-body {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: stretch;
+  gap: clamp(32px, 6vw, 80px);
+}
+
+.lp-about-media {
+  margin: 0;
+}
+
+.lp-about-photo {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--lp-radius);
+  background:
+    linear-gradient(180deg, transparent 55%, #183b4655),
+    linear-gradient(140deg, #cddbd6, #a9c5c6 56%, #bdd3c8);
+  background-position: center;
+  background-size: cover;
+}
+
+.lp-about-media figcaption {
+  margin-top: 12px;
+  color: var(--lp-muted);
+  font-size: 13px;
+}
+
+.lp-about-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.lp-values {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--lp-line);
+  list-style: none;
+}
+
+.lp-values li {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.lp-values-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: var(--lp-radius);
+  background: #e8f1f3;
+  color: var(--lp-blue);
+}
+
+.lp-values strong {
+  display: block;
+  color: var(--lp-ink);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.lp-values p {
+  margin: 4px 0 0;
+  color: var(--lp-muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.lp-about-side .lp-link {
+  align-self: flex-start;
+}
+
+/* ---------- 4. Program studi ---------- */
+
+.lp-programs {
+  border-top: 1px solid var(--lp-line);
+}
+
+.lp-programs-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  align-items: start;
+  gap: clamp(32px, 6vw, 80px);
+}
+
+.lp-programs-intro {
+  position: sticky;
+  top: 140px;
+}
+
+.lp-programs-intro .lp-lead {
+  margin: 16px 0 24px;
+}
+
+.lp-faculty + .lp-faculty {
+  margin-top: 44px;
+}
+
+.lp-faculty-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--lp-ink);
+}
+
+.lp .lp-faculty-head h3 {
+  color: var(--lp-blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lp-faculty-head span {
+  flex-shrink: 0;
+  color: var(--lp-muted);
+  font-size: 13px;
+}
+
+.lp-faculty ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-faculty li {
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.lp-prog {
+  --c: var(--lp-blue);
+
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto 38px;
+  align-items: center;
+  gap: 20px;
+  margin-inline: -12px;
+  padding: 20px 12px;
+  border-radius: var(--lp-radius);
+  transition: background 0.2s ease;
+}
+
+.lp-prog:hover {
+  background: var(--lp-pale);
+}
+
+.lp-c-coral { --c: #17668a; }
+.lp-c-blue { --c: #245c79; }
+.lp-c-yellow { --c: #9c7131; }
+.lp-c-green { --c: #347667; }
+.lp-c-lavender { --c: #515c83; }
+.lp-c-orange { --c: #a45e40; }
+
+.lp-prog-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--c);
+}
+
+.lp-prog-title {
+  color: var(--lp-ink);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  transition: color 0.2s ease;
+}
+
+.lp-prog:hover .lp-prog-title {
+  color: var(--lp-blue);
+}
+
+.lp-prog-code {
+  color: var(--lp-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.lp-prog-arrow {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--lp-line);
+  border-radius: 50%;
+  color: var(--lp-blue);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.lp-prog:hover .lp-prog-arrow {
+  border-color: var(--lp-blue);
+  background: var(--lp-blue);
+  color: #fff;
+}
+
+/* ---------- 5. Berita ---------- */
+
+.lp-news {
+  background: var(--lp-pale);
+}
+
+.lp-news-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(28px, 5vw, 64px);
+  margin-top: 36px;
+}
+
+.lp-news-grid.is-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.lp-story-media {
+  position: relative;
+  display: grid;
+  aspect-ratio: 16 / 10;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--lp-radius);
+  background: linear-gradient(140deg, #c7d7d2, #a9c0bd 60%, #bdd0c6);
+}
+
+.lp-media-icon {
+  color: #ffffffb3;
+}
+
+.lp-story-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin-top: 20px;
+  color: var(--lp-muted);
+  font-size: 13px;
+}
+
+.lp-story-tag {
+  color: var(--lp-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.lp-story h3 {
+  margin: 10px 0 16px;
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.28;
+  text-wrap: balance;
+}
+
+.lp-story h3 a:hover {
+  color: var(--lp-blue);
+}
+
+.lp-news-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-story.is-compact {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  padding-block: 24px;
+  border-top: 1px solid var(--lp-line);
+}
+
+.lp-story.is-compact:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.lp-story.is-compact .lp-story-media {
+  aspect-ratio: 4 / 3;
+}
+
+.lp-story.is-compact .lp-story-meta {
+  margin-top: 0;
+}
+
+.lp-story.is-compact h3 {
+  margin: 8px 0 0;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+/* ---------- 6. Pengumuman & agenda ---------- */
+
+.lp-updates-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(20px, 3vw, 32px);
+}
+
+.lp-panel {
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: var(--lp-radius);
+  background: var(--lp-pale);
+}
+
+.lp-panel > .lp-head {
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--lp-blue);
+}
+
+.lp .lp-panel .lp-head h2 {
+  font-size: 24px;
+}
+
+.lp-update {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 0;
+  border-bottom: 1px solid #d3dcd9;
+}
+
+.lp-panel .lp-update:last-child {
+  border-bottom: 0;
+}
+
+.lp-update-date {
+  display: flex;
+  height: 60px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--lp-radius);
+  background: #fff;
+  line-height: 1;
+}
+
+.lp-update-date strong {
+  color: var(--lp-ink);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.lp-update-date small {
+  margin-top: 4px;
+  color: var(--lp-blue);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.lp-update-copy small {
+  color: var(--lp-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.lp-update-copy strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--lp-text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.45;
+  transition: color 0.2s ease;
+}
+
+.lp-update:hover .lp-update-copy strong {
+  color: var(--lp-blue);
+}
+
+.lp-update > svg {
+  color: #66797c;
+  transform: rotate(-45deg);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.lp-update:hover > svg {
+  color: var(--lp-blue);
+  transform: translate(2px, -2px) rotate(-45deg);
+}
+
+/* ---------- 7. Kehidupan kampus ---------- */
+
+.lp-campus {
+  padding-top: 0;
+}
+
+.lp-campus-photo {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  min-height: 260px;
+  overflow: hidden;
+  border-radius: var(--lp-radius);
+  background:
+    linear-gradient(180deg, transparent 50%, #183b4666),
+    linear-gradient(145deg, #c8d6cf, #8ca9a2 53%, #dfc5a5);
+  background-position: center;
+  background-size: cover;
+}
+
+.lp-campus-body {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: clamp(24px, 5vw, 64px);
+  margin-top: 40px;
+}
+
+.lp-campus-text p {
+  margin: 0 0 22px;
+  color: var(--lp-muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ---------- 8. PMB ---------- */
+
+.lp-admission {
+  background: var(--lp-blue);
+  color: #fff;
+}
+
+.lp-admission-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(32px, 6vw, 80px);
+  padding-block: clamp(48px, 6vw, 72px);
+}
+
+.lp-admission .lp-eyebrow {
+  color: #c3dce8;
+}
+
+.lp .lp-admission h2 {
+  max-width: 20ch;
+  color: #fff;
+}
+
+.lp-admission p {
+  max-width: 52ch;
+  margin: 16px 0 0;
+  color: #d3e4ec;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.lp-admission-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding-left: clamp(32px, 6vw, 80px);
+  border-left: 1px solid #ffffff3d;
+}
+
+.lp-admission .lp-link {
+  color: #fff;
+}
+
+.lp-admission a:focus-visible {
+  outline-color: #fff;
+}
+
+/* ---------- 9. Mitra ---------- */
+
+.lp-partners {
+  padding-block: clamp(48px, 6vw, 72px);
+}
+
+.lp-partners-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  align-items: start;
+  gap: clamp(24px, 5vw, 64px);
+}
+
+.lp .lp-partners-title {
+  padding-top: 16px;
+  color: var(--lp-blue);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.lp-partners-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 32px;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--lp-line);
+  list-style: none;
+}
+
+.lp-partners-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0;
+  border-top: 1px solid var(--lp-line);
+  color: #7f8d8b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lp-mark {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border: 2px solid #aebcb8;
+  border-radius: 50%;
+}
+
+.lp-mark-1 {
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.lp-mark-2 {
+  border-width: 0 2px;
+  border-radius: 0;
+}
+
+.lp-mark-3 {
+  border-radius: 2px 8px 2px 8px;
+}
+
+/* ==========================================================================
+   Responsif
+   ========================================================================== */
+
+@media (max-width: 1000px) {
+  .lp-hero-grid,
+  .lp-about-head,
+  .lp-about-body,
+  .lp-programs-grid,
+  .lp-news-grid,
+  .lp-updates-grid,
+  .lp-campus-body,
+  .lp-admission-inner,
+  .lp-partners-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-hero-photo {
+    aspect-ratio: 16 / 10;
+  }
+
+  .lp-about-photo {
+    aspect-ratio: 16 / 10;
+  }
+
+  .lp-programs-intro {
+    position: static;
+  }
+
+  .lp-admission-actions {
+    padding-top: 28px;
+    padding-left: 0;
+    border-top: 1px solid #ffffff3d;
+    border-left: 0;
+  }
+
+  .lp .lp-partners-title {
+    padding-top: 0;
+  }
+
+  .lp-partners-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Akses cepat: 2 kolom, item ganjil terakhir melebar */
+  .lp-access-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-access-list > li {
+    border-top: 1px solid var(--lp-line);
+    border-left: 0;
+  }
+
+  .lp-access-list > li:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .lp-access-list > li:nth-child(even) {
+    border-left: 1px solid var(--lp-line);
+  }
+
+  .lp-access-list > li .lp-access-item {
+    padding: 20px 12px 20px 0;
+  }
+
+  .lp-access-list > li:nth-child(even) .lp-access-item {
+    padding-left: 20px;
+  }
+
+  .lp-access-list > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .lp-hero-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lp-hero-media figcaption {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .lp-hero-note {
+    text-align: left;
+  }
+
+  .lp-play {
+    bottom: 14px;
+    left: 14px;
+  }
+
+  .lp-prog {
+    grid-template-columns: 10px minmax(0, 1fr) 36px;
+    gap: 6px 16px;
+  }
+
+  .lp-prog-code {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .lp-prog-arrow {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    width: 36px;
+    height: 36px;
+  }
+
+  .lp-prog-title {
+    font-size: 18px;
+  }
+
+  .lp-story.is-compact {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .lp-update {
+    grid-template-columns: 52px minmax(0, 1fr) 16px;
+    gap: 14px;
+  }
+
+  .lp-update-date {
+    height: 56px;
+  }
+
+  .lp-campus-photo {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+
+  .lp-partners-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp *,
+  .lp *::before,
+  .lp *::after {
+    transition: none !important;
+  }
+}

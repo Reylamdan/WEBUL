@@ -17,6 +17,8 @@ import {
 import { DEFAULT_HOMEPAGE_CONTENT, homepageApi } from "@/lib/homepage-api";
 import { useApi } from "@/lib/use-api";
 
+import "./landing.css";
+
 export default function Home() {
   const [videoOpen, setVideoOpen] = useState(false);
 
@@ -26,13 +28,13 @@ export default function Home() {
   const content = data?.content ?? DEFAULT_HOMEPAGE_CONTENT;
 
   return (
-    <main>
-      <QuickLinks items={content.quickLinks} />
+    <main className="lp">
       <HeroSection
         content={content.hero}
         onPlayVideo={() => setVideoOpen(true)}
         photoUrl={data?.photos.hero[0]?.imageUrl}
       />
+      <QuickLinks items={content.quickLinks} />
       <AboutSection content={content.about} photoUrl={data?.photos.about[0]?.imageUrl} />
       <ProgramSection content={content.programs} />
       <NewsSection />

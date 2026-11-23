@@ -11,34 +11,30 @@ export function CampusLifeSection({
   photoUrl?: string | null;
 }) {
   return (
-    <ScrollReveal delay={210}>
-    <section className="campus-life-section content-wrap" id="kehidupan">
-      <div
-        className={`campus-life-image${photoUrl ? " has-photo" : ""}`}
-        style={
-          photoUrl
-            ? { backgroundImage: `url("${photoUrl}")`, backgroundSize: "cover", backgroundPosition: "center" }
-            : undefined
-        }
-      >
-        {photoUrl ? null : (
-          <>
-            <span className="life-art-person life-person-one" />
-            <span className="life-art-person life-person-two" />
-            <span className="life-art-table" />
-          </>
-        )}
-        {content.photoLabel ? <span className="life-photo-label">{content.photoLabel}</span> : null}
-      </div>
-      <div className="campus-life-copy">
-        <span className="eyebrow">{content.eyebrow}</span>
-        <h2>{content.title}</h2>
-        <p>{content.description}</p>
-        <SmartLink className="text-link" href={content.linkHref}>
-          {content.linkLabel} <Icon name="arrow" size={16} />
-        </SmartLink>
-      </div>
-    </section>
+    <ScrollReveal>
+      <section className="lp-section lp-campus" id="kehidupan">
+        <div className="lp-wrap">
+          <div
+            className={`lp-campus-photo${photoUrl ? " has-photo" : ""}`}
+            style={photoUrl ? { backgroundImage: `url("${photoUrl}")` } : undefined}
+          >
+            {content.photoLabel ? <span className="lp-photo-label">{content.photoLabel}</span> : null}
+          </div>
+
+          <div className="lp-campus-body">
+            <div>
+              <span className="lp-eyebrow">{content.eyebrow}</span>
+              <h2>{content.title}</h2>
+            </div>
+            <div className="lp-campus-text">
+              <p>{content.description}</p>
+              <SmartLink className="lp-link" href={content.linkHref}>
+                {content.linkLabel} <Icon name="arrow" size={16} />
+              </SmartLink>
+            </div>
+          </div>
+        </div>
+      </section>
     </ScrollReveal>
   );
 }

@@ -1,4 +1,3 @@
-import { SectionHeading } from "./section-heading";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function PartnersSection({
@@ -9,20 +8,20 @@ export function PartnersSection({
   title?: string;
 }) {
   return (
-    <ScrollReveal delay={70}>
-    <section className="partners-section">
-      <div className="content-wrap">
-        <SectionHeading title={title} />
-        <div aria-label="Logo mitra" className="partners-grid">
-          {partners.map((partner, index) => (
-            <div className="partner-logo" key={partner}>
-              <span className={`partner-mark partner-mark-${index % 4}`} />
-              <span>{partner}</span>
-            </div>
-          ))}
+    <ScrollReveal>
+      <section className="lp-partners">
+        <div className="lp-wrap lp-partners-grid">
+          <h2 className="lp-partners-title">{title}</h2>
+          <ul aria-label="Daftar mitra" className="lp-partners-list">
+            {partners.map((partner, index) => (
+              <li key={partner}>
+                <span aria-hidden="true" className={`lp-mark lp-mark-${index % 4}`} />
+                {partner}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-    </section>
+      </section>
     </ScrollReveal>
   );
 }

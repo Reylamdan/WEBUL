@@ -11,19 +11,26 @@ import { SectionHeading } from "./section-heading";
 import { SmartLink } from "@/components/smart-link";
 
 const NEWS_PAGE = "/kehidupan-kampus/berita-terkini";
-const FALLBACK_IMAGES = ["story-art", "story-students", "story-language"];
 
-function StoryCard({ story, index, lang }: { story: NewsItem; index: number; lang: ContentLang }) {
-  // Cover dipakai sebagai background; bila gagal dimuat, kembali ke gambar dekoratif bawaan.
+function Story({
+  story,
+  lang,
+  variant,
+}: {
+  story: NewsItem;
+  lang: ContentLang;
+  variant: "featured" | "compact";
+}) {
+  // Cover dipakai sebagai background; bila gagal dimuat, tampilkan blok netral dengan ikon.
   const coverOk = useCoverLoadable(story.coverImageUrl);
   const href = newsDetailHref(story.slug);
   const tag = (story.category ? categoryLabel(story.category, lang) : "BERITA").toUpperCase();
 
   return (
-    <article className="story-card">
+    <article className={`lp-story is-${variant}`}>
       <SmartLink
         aria-label={`Baca ${story.title}`}
-        className={`story-image ${coverOk ? "" : FALLBACK_IMAGES[index % FALLBACK_IMAGES.length]}`}
+        className="lp-story-media"
         href={href}
         style={
           coverOk
@@ -31,19 +38,22 @@ function StoryCard({ story, index, lang }: { story: NewsItem; index: number; lan
             : undefined
         }
       >
-        <span className="story-image-tag">{tag}</span>
-        <span className="story-image-decoration" />
+        {coverOk ? null : <Icon className="lp-media-icon" name="book" size={34} />}
       </SmartLink>
-      <div className="story-meta">
-        <span>{tag}</span>
-        <time dateTime={story.publishedAt ?? undefined}>{formatDate(story.publishedAt, lang)}</time>
+      <div className="lp-story-body">
+        <div className="lp-story-meta">
+          <span className="lp-story-tag">{tag}</span>
+          <time dateTime={story.publishedAt ?? undefined}>{formatDate(story.publishedAt, lang)}</time>
+        </div>
+        <h3>
+          <SmartLink href={href}>{story.title}</SmartLink>
+        </h3>
+        {variant === "featured" ? (
+          <SmartLink className="lp-link" href={href}>
+            Baca selengkapnya <Icon name="arrow" size={16} />
+          </SmartLink>
+        ) : null}
       </div>
-      <h3>
-        <SmartLink href={href}>{story.title}</SmartLink>
-      </h3>
-      <SmartLink className="story-read-more" href={href}>
-        Baca selengkapnya <Icon name="arrow" size={15} />
-      </SmartLink>
     </article>
   );
 }
@@ -52,34 +62,38 @@ export function NewsSection() {
   const [lang] = useContentLang();
   const { data, error, loading } = useApi(`landing-news:${lang}`, () => newsApi.list({ page: 1, limit: 3, lang }));
   const stories = data?.items ?? [];
+  const [featured, ...rest] = stories;
 
   return (
-    <ScrollReveal delay={140}>
-    <section className="news-section" id="kabar">
-      <div className="content-wrap">
-        <SectionHeading
-          eyebrow="CERITA DARI KAMPUS"
-          href={NEWS_PAGE}
-          link="Semua kabar"
-          title="Kabar dan inspirasi"
-        />
-        {error && !data ? (
-          <p className="berita-empty-state" role="alert">{errorMessage(error)}</p>
-        ) : loading && !data ? (
-          <p className="berita-empty-state" aria-live="polite">Memuat berita...</p>
-        ) : stories.length === 0 ? (
-          <p className="berita-empty-state">Belum ada berita yang dipublikasikan.</p>
-        ) : (
-        <div className="story-grid">
-          {stories.map((story, index) => (
-            <ScrollReveal delay={(index % 4) * 70} key={story.id}>
-              <StoryCard index={index} lang={lang} story={story} />
-            </ScrollReveal>
-          ))}
+    <ScrollReveal>
+      <section className="lp-section lp-news" id="kabar">
+        <div className="lp-wrap">
+          <SectionHeading
+            eyebrow="CERITA DARI KAMPUS"
+            href={NEWS_PAGE}
+            link="Semua kabar"
+            title="Kabar dan inspirasi"
+          />
+          {error && !data ? (
+            <p className="lp-empty" role="alert">{errorMessage(error)}</p>
+          ) : loading && !data ? (
+            <p aria-live="polite" className="lp-empty">Memuat berita...</p>
+          ) : !featured ? (
+            <p className="lp-empty">Belum ada berita yang dipublikasikan.</p>
+          ) : (
+            <div className={`lp-news-grid${rest.length === 0 ? " is-single" : ""}`}>
+              <Story lang={lang} story={featured} variant="featured" />
+              {rest.length > 0 ? (
+                <div className="lp-news-side">
+                  {rest.map((story) => (
+                    <Story key={story.id} lang={lang} story={story} variant="compact" />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
-        )}
-      </div>
-    </section>
+      </section>
     </ScrollReveal>
   );
 }
