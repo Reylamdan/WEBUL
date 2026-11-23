@@ -823,7 +823,7 @@
 
 .lp .lp-admission h2 {
   max-width: 20ch;
-  color: #fff;
+  color: #fff !important;
 }
 
 .lp-admission p {
@@ -871,28 +871,119 @@
   letter-spacing: -0.02em;
 }
 
-.lp-partners-list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: 32px;
-  margin: 0;
-  padding: 0;
-  border-bottom: 1px solid var(--lp-line);
-  list-style: none;
+
+/* ---------- 9. Mitra: infinite horizontal scroll ---------- */
+
+.lp-partners-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.lp-partners-list li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 0;
-  border-top: 1px solid var(--lp-line);
-  color: #7f8d8b;
-  font-size: 13px;
+.lp .lp-partners-title {
+  padding-top: 0;
+  color: var(--lp-blue) !important;
+  font-size: clamp(22px, 2.4vw, 28px);
   font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.lp-partners-list {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: -16px 0;
+  padding: 32px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  list-style: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  scrollbar-width: none;
+  scroll-behavior: auto;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent 100%
+  );
+}
+
+.lp-partners-list::-webkit-scrollbar {
+  display: none;
+}
+
+.lp-partners-list.is-dragging {
+  cursor: grabbing;
+}
+
+.lp-partners-list:focus-visible {
+  outline: 2px solid var(--lp-blue);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.lp-rope-item {
+  display: flex;
+  flex: 0 0 200px;
+  justify-content: center;
+}
+
+.lp-rope-logo {
+  display: flex;
+  height: 88px;
+  align-items: center;
+  gap: 12px;
+  color: #7f8d8b;
+  font-size: 16px;
+  font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: color 0.2s ease;
 }
+
+.lp-rope-item:hover .lp-rope-logo {
+  color: var(--lp-blue);
+}
+
+.lp-mark {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border: 2px solid #aebcb8;
+  border-radius: 50%;
+}
+
+.lp-mark-1 {
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.lp-mark-2 {
+  border-width: 0 2px;
+  border-radius: 0;
+}
+
+.lp-mark-3 {
+  border-radius: 2px 8px 2px 8px;
+}
+
 
 .lp-mark {
   width: 12px;
