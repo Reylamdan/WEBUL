@@ -40,6 +40,7 @@ type ChatMessage =
 export function VirtualAssistant() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
@@ -47,33 +48,50 @@ export function VirtualAssistant() {
   const closeRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const nextId = useRef(1);
 
   const closeAssistant = () => {
-    setIsOpen(false);
-    triggerRef.current?.focus();
+    if (!isOpen || isClosing) return;
+    setIsClosing(true);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+      triggerRef.current?.focus();
+    }, 200);
   };
 
   // Percakapan disimpan selama sesi halaman (state komponen), jadi tetap ada saat panel ditutup lalu dibuka lagi.
-  const toggleAssistant = () => setIsOpen((open) => !open);
+  const toggleAssistant = () => {
+    if (isOpen) {
+      closeAssistant();
+    } else {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+      setIsClosing(false);
+      setIsOpen(true);
+    }
+  };
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isClosing) return;
 
     closeRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
-        triggerRef.current?.focus();
+        closeAssistant();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, isClosing]);
 
-  // Batalkan permintaan yang masih berjalan saat komponen dilepas.
-  useEffect(() => () => abortRef.current?.abort(), []);
+  // Batalkan permintaan dan timer saat komponen dilepas.
+  useEffect(() => () => {
+    abortRef.current?.abort();
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const element = contentRef.current;
@@ -136,10 +154,10 @@ export function VirtualAssistant() {
 
   return (
     <div className="virtual-assistant">
-      {isOpen && (
+      {(isOpen || isClosing) && (
         <div
           aria-labelledby="virtual-assistant-title"
-          className="virtual-assistant-panel"
+          className={`virtual-assistant-panel${isClosing ? " is-closing" : ""}`}
           id="virtual-assistant-panel"
           role="dialog"
         >
@@ -328,16 +346,16 @@ export function VirtualAssistant() {
       )}
 
       <button
-        aria-controls={isOpen ? "virtual-assistant-panel" : undefined}
-        aria-expanded={isOpen}
+        aria-controls={isOpen || isClosing ? "virtual-assistant-panel" : undefined}
+        aria-expanded={isOpen && !isClosing}
         aria-haspopup="dialog"
-        aria-label={isOpen ? "Tutup Virtual Assistance" : "Buka Virtual Assistance"}
+        aria-label={isOpen && !isClosing ? "Tutup Virtual Assistance" : "Buka Virtual Assistance"}
         className="virtual-assistant-toggle"
         onClick={toggleAssistant}
         ref={triggerRef}
         type="button"
       >
-        <Icon name={isOpen ? "x" : "message"} size={21} />
+        <Icon name={isOpen && !isClosing ? "x" : "message"} size={21} />
       </button>
     </div>
   );

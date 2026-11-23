@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import {
   rectorReportPublicApi,
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
   description:
     "Arsip laporan tahunan Rektor Universitas LIA yang dipublikasikan setiap tahun.",
 };
+
+export const instant = false;
 
 const defaultSettings: RectorReportSettings = {
   id: "main",
@@ -59,14 +62,14 @@ async function getRectorReportsData() {
   }
 }
 
-export default async function RectorReportsPage() {
+async function RectorReportsContent() {
   const data = await getRectorReportsData();
   const settings = data?.settings || defaultSettings;
   const reports =
     data?.reports && data.reports.length > 0 ? data.reports : defaultReports;
 
   return (
-    <main className="rector-reports-page">
+    <>
       <ScrollReveal>
         <section aria-labelledby="rector-reports-title" className="rector-reports-hero">
           <div className="rector-reports-wrap">
@@ -123,6 +126,40 @@ export default async function RectorReportsPage() {
           </div>
         </section>
       </ScrollReveal>
+    </>
+  );
+}
+
+function RectorReportsFallback() {
+  return (
+    <>
+      <section aria-labelledby="rector-reports-title-fallback" className="rector-reports-hero">
+        <div className="rector-reports-wrap">
+          <nav aria-label="Breadcrumb" className="rector-reports-breadcrumb">
+            <Link href="/">Beranda</Link>
+            <span aria-hidden="true">›</span>
+            <span aria-current="page">Laporan Tahunan Rektor</span>
+          </nav>
+          <h1 id="rector-reports-title-fallback">{defaultSettings.heroTitle}</h1>
+          <p>{defaultSettings.heroDescription}</p>
+        </div>
+      </section>
+      <section className="rector-report-archive rector-reports-wrap">
+        <div className="rector-report-heading">
+          <h2>{defaultSettings.archiveTitle}</h2>
+          <span>Memuat arsip laporan...</span>
+        </div>
+      </section>
+    </>
+  );
+}
+
+export default function RectorReportsPage() {
+  return (
+    <main className="rector-reports-page">
+      <Suspense fallback={<RectorReportsFallback />}>
+        <RectorReportsContent />
+      </Suspense>
     </main>
   );
 }

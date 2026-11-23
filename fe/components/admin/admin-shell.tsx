@@ -17,10 +17,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(() => {
-    if (typeof window === "undefined") return null;
-    return !!getAdminSession();
-  });
+  const [isAuthorized, setIsAuthorized] = useState(true);
 
   const verifiedRef = useRef(false);
 

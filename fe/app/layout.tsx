@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { SiteBreadcrumb, SiteFooter, SiteHeader } from "@/components/site-shell";
 import { VirtualAssistant } from "@/components/virtual-assistant";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono", 
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -39,13 +35,13 @@ export default function RootLayout({
     <html
       lang="id"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${inter.className} font-sans h-full antialiased`}
     >
       <head>
         <style dangerouslySetInnerHTML={{ __html: ANTI_FLASH_CSS }} />
         <script dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }} />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className={`${inter.className} min-h-full flex flex-col font-sans`}>
         <SiteHeader />
         {children}
         <SiteFooter />
