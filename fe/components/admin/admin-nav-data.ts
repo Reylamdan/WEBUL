@@ -239,6 +239,18 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     ],
   },
   {
+    groupTitle: "AI Assistant",
+    items: [
+      {
+        id: "assistant-knowledge",
+        label: "Knowledge AI Assistant",
+        href: "/admin/asisten-ai/knowledge",
+        icon: "ai",
+        section: "AI Assistant",
+      },
+    ],
+  },
+  {
     groupTitle: "Laporan Rektor",
     items: [
       {

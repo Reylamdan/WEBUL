@@ -11,6 +11,7 @@ import {
 import { AdminHeader } from "./admin-header";
 import { AdminSidebar } from "./admin-sidebar";
 import { AdminFooter } from "./admin-footer";
+import { AdminGate } from "./admin-gate";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -71,35 +72,42 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
   }, [pathname, router]);
 
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
+    if (pathname === "/admin/login") {
+    return (
+      <>
+        <AdminGate />
+        {children}
+      </>
+    );
   }
 
   // Jika tidak ada session / belum login, jangan render layout admin (langsung redirect)
   if (isAuthorized === false) {
-    return null;
+    return <AdminGate />;
   }
 
   return (
-    <div className="admin-root-layout">
-      {/* Sidebar Navigation */}
-      <AdminSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+    <>
+      <AdminGate />
 
-      {/* Main Content Area */}
-      <div className="admin-main-wrapper">
-        <AdminHeader onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+      <div className="admin-root-layout">
+        {/* Sidebar Navigation */}
+        <AdminSidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
-        <main className="admin-main-content">
-          <div className="admin-content-container">
-            {children}
-          </div>
-        </main>
+        {/* Main Content Area */}
+        <div className="admin-main-wrapper">
+          <AdminHeader onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
-        <AdminFooter />
+          <main className="admin-main-content">
+            <div className="admin-content-container">{children}</div>
+          </main>
+
+          <AdminFooter />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

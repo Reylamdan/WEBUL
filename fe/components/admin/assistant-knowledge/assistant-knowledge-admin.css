@@ -1,0 +1,23 @@
+/* Tambahan khusus halaman Assistant Knowledge. Gaya dasar (aa-*) ada di app/admin/admin.css. */
+.ak-info { padding: 12px 14px; border-radius: 10px; background: #eef5fb; color: #25506f; font-size: 13.5px; line-height: 1.55; margin: 0; }
+.ak-info strong { color: #173d57; }
+.ak-filters { grid-template-columns: 1fr 220px 160px; }
+.ak-title-cell { display: flex; flex-direction: column; gap: 3px; min-width: 220px; }
+.ak-title-cell small { color: var(--admin-muted); font-size: 12px; }
+.ak-badge-expired { background: #fdecea; color: #b3261e; }
+.ak-badge-soon { background: #fff4d6; color: #8a5a00; }
+.ak-textarea { min-height: 220px; resize: vertical; line-height: 1.55; font-family: inherit; }
+.ak-counter { align-self: flex-end; font-size: 12px; color: var(--admin-muted); }
+.ak-counter.is-over { color: #b3261e; font-weight: 600; }
+.ak-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px solid var(--admin-line); border-radius: 8px; background: var(--admin-surface); }
+.ak-chips:focus-within { outline: 2px solid var(--admin-blue); border-color: var(--admin-blue); }
+.ak-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 10px; border-radius: 999px; background: #e8f0f6; color: #1f4663; font-size: 12.5px; }
+.ak-chip button { border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 15px; line-height: 1; padding: 0 6px; border-radius: 999px; }
+.ak-chip button:hover { background: rgba(0, 0, 0, .08); }
+.aa-field .ak-chips input { flex: 1; min-width: 160px; border: 0; padding: 4px 6px; outline: none; background: transparent; }
+.aa-field .ak-chips input:focus { outline: none; }
+.ak-row-actions { display: flex; gap: 8px; align-items: center; }
+.ak-clear { align-self: flex-start; }
+@media (max-width: 720px) {
+  .ak-filters { grid-template-columns: 1fr; }
+}

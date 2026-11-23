@@ -273,7 +273,7 @@ function formatBreadcrumbLabel(segment: string) {
 }
 
 function getBreadcrumbItems(pathname: string): BreadcrumbItem[] {
-  if (pathname === "/") return [{ label: "Beranda" }];
+  if (pathname === "/") return [{ label: "" }];
 
   if (pathname === "/pengunduran-diri") {
     return [
