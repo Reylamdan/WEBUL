@@ -1,9 +1,9 @@
 import { AlumniHero } from "@/components/alumni";
-import { TracerStudy } from "@/components/alumni/tracer-study";
+import { TracerForm } from "@/components/alumni/tracer-study";
 
 export const metadata = {
   title: "Tracer Study - Universitas LIA",
-  description: "Statistik tracer study alumni Universitas LIA",
+  description: "Isi form tracer study alumni Universitas LIA",
 };
 
 export default function TracerStudyPage() {
@@ -15,11 +15,11 @@ export default function TracerStudyPage() {
           { label: "Alumni", href: "/alumni" },
           { label: "Tracer Study" },
         ]}
-        subtitle="Gambaran perjalanan karier alumni Universitas LIA berdasarkan hasil survei tracer study."
+        subtitle="Isi data diri dan jawaban tracer study Anda untuk membantu Universitas LIA terus berkembang. Kirim langsung, atau lewat tembakan basketball!"
         title="Tracer Study Alumni"
       />
 
-      <TracerStudy />
+      <TracerForm />
     </main>
   );
 }

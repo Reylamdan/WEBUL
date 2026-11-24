@@ -1,0 +1,183 @@
+/* ==========================================================
+   Form Tracer Study + animasi basketball.
+   Warna mengikuti tema situs (globals.css): --blue, --ink, --pale, --line.
+   ========================================================== */
+.tf-root {
+  --tf-brand: var(--blue, #005b8c);
+  --tf-brand-dark: var(--blue-dark, #004d78);
+  --tf-ink: var(--ink, #172a35);
+  --tf-muted: #5d6f78;
+  --tf-line: var(--line, #dce4e2);
+  --tf-pale: var(--pale, #f2f5f3);
+  --tf-orange: #e8782b;
+  --tf-danger: #c2412d;
+  color: var(--tf-ink);
+  width: min(880px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 72px;
+}
+
+/* ---------- stepper ---------- */
+.tf-steps { list-style: none; margin: 0 0 24px; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; counter-reset: s; }
+.tf-steps li { position: relative; }
+.tf-steps li + li::before { content: ""; position: absolute; top: 17px; right: 50%; width: 100%; height: 2px; background: var(--tf-line); z-index: 0; }
+.tf-steps li.is-done + li::before, .tf-steps li.is-current::before { background: var(--tf-brand); }
+.tf-steps button { position: relative; z-index: 1; display: grid; justify-items: center; gap: 6px; width: 100%; background: none; border: 0; padding: 0; font: inherit; cursor: default; color: var(--tf-muted); }
+.tf-steps li.is-done button { cursor: pointer; }
+.tf-step-dot { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 2px solid var(--tf-line); font-weight: 700; font-size: 0.85rem; transition: all 0.25s; }
+.tf-steps li.is-current .tf-step-dot { border-color: var(--tf-brand); background: var(--tf-brand); color: #fff; box-shadow: 0 0 0 5px color-mix(in srgb, var(--tf-brand) 16%, transparent); }
+.tf-steps li.is-done .tf-step-dot { border-color: var(--tf-brand); color: var(--tf-brand); }
+.tf-step-name { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; }
+.tf-steps li.is-current .tf-step-name { color: var(--tf-ink); }
+
+/* ---------- kartu ---------- */
+.tf-card { background: #fff; border: 1px solid var(--tf-line); border-radius: 16px; padding: 32px; box-shadow: 0 1px 2px rgb(23 42 53 / 0.04), 0 12px 40px rgb(0 91 140 / 0.06); animation: tf-in 0.35s ease both; }
+.tf-head { margin-bottom: 24px; }
+.tf-head h2 { margin: 10px 0 4px; font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; }
+.tf-head p { margin: 0; color: var(--tf-muted); font-size: 0.92rem; line-height: 1.55; }
+.tf-chip { display: inline-flex; padding: 3px 10px; border-radius: 999px; background: var(--tf-pale); border: 1px solid var(--tf-line); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tf-brand-dark); }
+
+/* ---------- field ---------- */
+.tf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 20px; }
+.tf-field { display: grid; gap: 6px; align-content: start; }
+.tf-field > label:first-child { font-size: 0.82rem; font-weight: 600; }
+.tf-field > label em { font-style: normal; font-weight: 400; color: var(--tf-muted); }
+.tf-field small { font-size: 0.76rem; color: var(--tf-muted); }
+.tf-field input:not([type="checkbox"]), .tf-field select, .tf-money { width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--tf-line); border-radius: 10px; background: #fff; color: var(--tf-ink); font: inherit; font-size: 0.95rem; transition: border-color 0.15s, box-shadow 0.15s; }
+.tf-field select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 40px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%23005b8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center; }
+.tf-field select:hover { border-color: var(--tf-brand); }
+.tf-field select:focus-visible { outline: none; border-color: var(--tf-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tf-brand) 18%, transparent); }
+.tf-field.has-error select { border-color: var(--tf-danger); }
+.tf-field input:disabled { background: var(--tf-pale); color: var(--tf-muted); }
+.tf-field input:hover:not(:disabled) { border-color: var(--tf-brand); }
+.tf-field input:focus-visible, .tf-money:focus-within { outline: none; border-color: var(--tf-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tf-brand) 18%, transparent); }
+.tf-field.has-error input:not([type="checkbox"]), .tf-field.has-error .tf-money { border-color: var(--tf-danger); }
+.tf-error { color: var(--tf-danger) !important; font-weight: 600; }
+.tf-money { display: flex; align-items: center; gap: 8px; padding: 0 0 0 14px; }
+.tf-money span { color: var(--tf-muted); font-weight: 600; font-size: 0.9rem; }
+.tf-money input { border: 0 !important; box-shadow: none !important; min-height: 42px !important; padding-left: 0 !important; background: transparent; }
+.tf-check { display: flex !important; align-items: center; gap: 8px; font-size: 0.84rem !important; font-weight: 500 !important; color: var(--tf-ink); cursor: pointer; margin-top: 2px; }
+.tf-check input { width: 16px; height: 16px; accent-color: var(--tf-brand); }
+
+/* ---------- pertanyaan pilihan ---------- */
+.tf-q { border: 0; margin: 0 0 24px; padding: 0; min-width: 0; }
+.tf-q legend { padding: 0; margin-bottom: 12px; font-size: 0.95rem; font-weight: 600; line-height: 1.45; }
+.tf-q legend b { display: inline-block; margin-right: 8px; padding: 2px 8px; border-radius: 6px; background: var(--tf-pale); border: 1px solid var(--tf-line); color: var(--tf-brand-dark); font-size: 0.7rem; letter-spacing: 0.06em; }
+.tf-choices { display: grid; gap: 8px; }
+.tf-choice { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border: 1px solid var(--tf-line); border-radius: 12px; cursor: pointer; font-size: 0.92rem; line-height: 1.4; transition: border-color 0.15s, background 0.15s, transform 0.15s; }
+.tf-choice:hover { border-color: var(--tf-brand); background: var(--tf-pale); }
+.tf-choice input { position: absolute; opacity: 0; pointer-events: none; }
+.tf-choice::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #b9c7cc; transition: all 0.15s; }
+.tf-choice.is-on { border-color: var(--tf-brand); background: color-mix(in srgb, var(--tf-brand) 7%, #fff); font-weight: 600; }
+.tf-choice.is-on::before { border-color: var(--tf-brand); background: radial-gradient(circle, var(--tf-brand) 0 45%, #fff 50%); }
+.tf-choice:has(input:focus-visible) { box-shadow: 0 0 0 3px color-mix(in srgb, var(--tf-brand) 25%, transparent); }
+.tf-reveal { animation: tf-in 0.3s ease both; }
+
+/* ---------- aksi ---------- */
+.tf-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--tf-line); }
+.tf-btn { display: inline-flex; align-items: center; justify-content: center; padding: 0 22px; min-height: 44px; border-radius: 10px; border: 1px solid var(--tf-brand); background: var(--tf-brand); color: #fff; font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; }
+.tf-btn:hover:not(:disabled) { background: var(--tf-brand-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgb(0 91 140 / 0.25); }
+.tf-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--tf-brand) 35%, transparent); outline-offset: 2px; }
+.tf-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.tf-btn-ghost { background: #fff; color: var(--tf-brand-dark); }
+.tf-btn-ghost:hover:not(:disabled) { background: var(--tf-pale); box-shadow: none; }
+
+/* ---------- ringkasan & pilihan kirim ---------- */
+.tf-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin: 0 0 24px; border: 1px solid var(--tf-line); border-radius: 12px; overflow: hidden; background: var(--tf-line); }
+.tf-summary div { background: #fff; padding: 11px 16px; }
+.tf-summary dt { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--tf-muted); }
+.tf-summary dd { margin: 2px 0 0; font-size: 0.9rem; font-weight: 600; word-break: break-word; }
+.tf-alert { margin-bottom: 18px; padding: 12px 16px; border-radius: 10px; background: #fdf0ed; border: 1px solid #f1c4ba; color: #8f2f1f; font-size: 0.88rem; }
+.tf-send { display: grid; grid-template-columns: 190px auto 1fr; gap: 20px; align-items: stretch; }
+.tf-send h3 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; }
+.tf-send-direct { align-self: start; display: grid; align-content: start; gap: 8px; padding: 18px; border: 1px solid var(--tf-line); border-radius: 14px; }
+.tf-send-direct p { margin: 0 0 6px; color: var(--tf-muted); font-size: 0.84rem; }
+.tf-send-or { display: grid; place-items: center; position: relative; }
+.tf-send-or::before { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--tf-line); }
+.tf-send-or span { position: relative; padding: 6px 0; background: #fff; color: var(--tf-muted); font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.tf-send-ball { min-width: 0; }
+
+/* ---------- sukses ---------- */
+.tf-done { text-align: center; display: grid; justify-items: center; gap: 12px; padding: 56px 32px; }
+.tf-done-icon { display: grid; place-items: center; width: 68px; height: 68px; border-radius: 50%; background: #e6f5ee; color: #1b8a5a; font-size: 2rem; font-weight: 700; animation: tf-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.tf-done h2 { margin: 0; font-size: 1.7rem; letter-spacing: -0.02em; }
+.tf-done p { margin: 0 0 8px; max-width: 460px; color: var(--tf-muted); line-height: 1.6; }
+
+/* ==========================================================
+   Kartu "upload" basketball: seret berkas, lepas, masuk ring
+   ========================================================== */
+.bb-card { --bb-brand: var(--tf-brand, #005b8c); padding: 22px; border-radius: 24px; background: #fff; border: 1px solid #e6e9ef; box-shadow: 0 1px 2px rgb(28 43 74 / 0.05), 0 18px 48px rgb(28 43 74 / 0.10); user-select: none; -webkit-user-select: none; }
+.bb-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.bb-head h4 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+.bb-head p { margin: 4px 0 0; font-size: 0.82rem; color: var(--tf-muted); }
+.bb-pill { flex: none; padding: 6px 12px; border-radius: 999px; background: #eef1f7; font-size: 0.74rem; font-weight: 600; color: #4a5878; }
+.bb-pill b { color: var(--tf-ink); }
+
+.bb-arena { position: relative; width: 100%; max-width: 440px; margin: 0 auto; aspect-ratio: 440 / 500; }
+.bb-zone { position: absolute; inset: 0 0 auto 0; height: 66%; border: 2px dashed #b8c0d0; border-radius: 22px; background: #fbfcfe; transition: border-color 0.2s, background 0.2s; }
+.bb-card.is-hot .bb-zone { border-color: var(--bb-brand); background: color-mix(in srgb, var(--bb-brand) 5%, #fff); }
+.bb-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+
+.bb-row { position: absolute; left: 5%; right: 5%; top: 4.4%; padding: 11px 14px 10px; background: #fff; border: 1px solid #e6e9ef; border-radius: 14px; box-shadow: 0 2px 8px rgb(28 43 74 / 0.06); }
+.bb-row-top { display: flex; align-items: center; gap: 8px; }
+.bb-badge { padding: 2px 6px; border-radius: 4px; background: #e8edf8; color: #3b4e87; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.04em; }
+.bb-name { flex: 1; min-width: 0; font-size: 0.82rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bb-pct { font-size: 0.78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bb-bar { height: 5px; margin: 8px 0 6px; border-radius: 999px; background: #e9edf5; overflow: hidden; }
+.bb-bar i { display: block; height: 100%; border-radius: inherit; background: var(--bb-brand); transition: width 0.18s linear, background 0.3s; }
+.bb-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 0.7rem; color: var(--tf-muted); }
+.bb-status { font-weight: 600; color: var(--bb-brand); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bb-sent .bb-bar i { background: #1b9a62; } .bb-sent .bb-status { color: #1b9a62; }
+.bb-error .bb-status { color: var(--tf-danger); white-space: normal; }
+
+.bb-rim { stroke: var(--bb-brand); transition: stroke 0.2s, filter 0.2s; }
+.bb-card.is-hot .bb-rim { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--bb-brand) 60%, transparent)); }
+.bb-board-mark { stroke: var(--bb-brand); }
+.bb-net { transform-box: fill-box; transform-origin: 50% 0; }
+.bb-card:not(.bb-ready):not(.bb-drag):not(.bb-error) .bb-net { animation: bb-swish 0.8s ease-out; }
+.bb-file { pointer-events: auto; cursor: grab; touch-action: none; transform-origin: 0 0; outline: none; }
+.bb-drag .bb-file { cursor: grabbing; }
+.bb-file:focus-visible .bb-file-badge { stroke: #fff; stroke-width: 3; }
+.bb-file:focus-visible { filter: drop-shadow(0 0 0 3px var(--bb-brand)); }
+.bb-file-badge { fill: var(--bb-brand); }
+.bb-guide { opacity: 0; fill: var(--bb-brand); transition: opacity 0.15s; pointer-events: none; }
+.bb-guide circle { opacity: 0.55; }
+.bb-fly .bb-file, .bb-upload .bb-file, .bb-sent .bb-file { cursor: default; }
+.bb-ready .bb-file { animation: bb-hover 2.4s ease-in-out infinite; }
+
+.bb-hint { margin: 14px 0 0; text-align: center; font-size: 0.78rem; color: #8993a8; }
+.bb-auto { display: block; margin: 8px auto 0; padding: 4px 8px; border: 0; background: none; font: inherit; font-size: 0.78rem; font-weight: 600; color: var(--bb-brand); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.bb-auto:disabled { opacity: 0.4; cursor: not-allowed; }
+
+@keyframes bb-swish { 0% { transform: scale(1, 1); } 20% { transform: scale(1.14, 1.25); } 45% { transform: scale(0.9, 0.9); } 70% { transform: scale(1.04, 1.08); } 100% { transform: scale(1, 1); } }
+@keyframes bb-hover { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+
+@keyframes tf-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes tf-pop { from { transform: scale(0.4); opacity: 0; } }
+/* ball di titik lantai = translateY(0); naik 84 unit; gepeng sedikit saat menyentuh lantai */
+@keyframes tf-dribble {
+  0%   { transform: translateY(0) scale(1.14, 0.86); }
+  8%   { transform: translateY(-4px) scale(1, 1); }
+  50%  { transform: translateY(-84px) scale(0.98, 1.02); }
+  92%  { transform: translateY(-4px) scale(1, 1); }
+  100% { transform: translateY(0) scale(1.14, 0.86); }
+}
+@keyframes tf-shadow { 0%, 100% { transform: scale(1.1); opacity: 0.32; } 50% { transform: scale(0.55); opacity: 0.12; } }
+@keyframes tf-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes tf-swish {
+  0% { transform: scale(1, 1); } 20% { transform: scale(1.12, 1.28); } 45% { transform: scale(0.92, 0.9); } 70% { transform: scale(1.04, 1.08); } 100% { transform: scale(1, 1); }
+}
+@keyframes tf-confetti { 0% { opacity: 1; transform: translate(0, 0) rotate(0); } 100% { opacity: 0; transform: translate(var(--dx), calc(var(--dy) + 60px)) rotate(540deg); } }
+
+@media (max-width: 760px) {
+  .tf-card { padding: 22px 18px; }
+  .tf-grid, .tf-summary { grid-template-columns: 1fr; }
+  .tf-send { grid-template-columns: 1fr; }
+  .tf-send-or { height: 20px; } .tf-send-or::before { top: 50%; bottom: auto; width: 100%; height: 1px; }
+  .tf-send-or span { padding: 0 12px; }
+  .tf-actions { flex-direction: column-reverse; } .tf-actions .tf-btn { width: 100%; }
+  .tf-step-name { font-size: 0.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tf-card, .tf-reveal, .tf-done-icon, .bb-file, .bb-net { animation: none !important; }
+}
