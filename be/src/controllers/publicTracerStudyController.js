@@ -1,4 +1,5 @@
 const { getTracerStudySummary, getTracerStudyFilters } = require("../services/tracerStudyService");
+const { createSubmission } = require("../services/tracerStudySubmissionService");
 
 // ---------------------------------------------------------------------
 // GET /api/tracer-study/summary?year=2025&program=Manajemen
@@ -19,4 +20,13 @@ const filters = async (req, res) => {
   return res.json({ success: true, data });
 };
 
-module.exports = { summary, filters };
+// ---------------------------------------------------------------------
+// POST /api/tracer-study/submissions
+// Publik: alumni mengirim data diri + jawaban tracer study.
+// ---------------------------------------------------------------------
+const submit = async (req, res) => {
+  const data = await createSubmission(req.body);
+  return res.status(201).json({ success: true, message: "Terima kasih, jawaban tracer study Anda sudah kami terima", data });
+};
+
+module.exports = { summary, filters, submit };
